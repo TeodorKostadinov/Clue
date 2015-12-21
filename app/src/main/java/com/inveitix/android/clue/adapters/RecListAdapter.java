@@ -13,11 +13,14 @@ import com.inveitix.android.clue.cmn.Museum;
 
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 
 public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHolder> {
 
-    List<Museum> museums;
-    Context context;
+    private List<Museum> museums;
+    private Context context;
 
     public RecListAdapter(Context context, List<Museum> museums) {
         this.museums = museums;
@@ -46,14 +49,15 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
 
 
     class ViewHolder extends RecyclerView.ViewHolder {
+        @Bind(R.id.txt_museum_name)
         TextView txtName;
+        @Bind(R.id.btn_download)
         Button btnDownload;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            txtName = (TextView) itemView.findViewById(R.id.txt_museum_name);
-            btnDownload = (Button) itemView.findViewById(R.id.btn_download);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

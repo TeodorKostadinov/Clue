@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Clue</string>
+    <string name="txt_name">Name</string>
+    <string name="txt_download">Download</string>
+    <string name="txt_search">Search</string>
+    <string name="txt_settings">Settings</string>
 </resources>
