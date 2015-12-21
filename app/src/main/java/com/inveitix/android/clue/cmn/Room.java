@@ -5,12 +5,12 @@ import java.util.List;
 /**
  * Created by Tito on 21.12.2015 г..
  */
-public class Floor {
+public class Room {
 
     int floorNumber;
     List<Exhibit> exhibits;
 
-    public Floor(int floorNumber, List<Exhibit> exhibits) {
+    public Room(int floorNumber, List<Exhibit> exhibits) {
         this.floorNumber = floorNumber;
         this.exhibits = exhibits;
     }
