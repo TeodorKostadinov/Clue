@@ -1,6 +1,5 @@
 package com.inveitix.android.clue;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,10 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
+import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
-    @Bind(R.id.recView)
+    @Bind(R.id.rec_view)
     RecyclerView recView;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -45,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
         recView.setLayoutManager(new LinearLayoutManager(this));
         RecListAdapter adapter = new RecListAdapter(this, museums);
         recView.setAdapter(adapter);
+        adapter.setOnItemClickListener(new RecyclerViewOnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+        });
     }
 
     @Override

@@ -14,7 +14,7 @@
         app:titleTextColor="#ffff"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recView"
+        android:id="@+id/rec_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </LinearLayout>
