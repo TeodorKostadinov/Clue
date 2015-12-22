@@ -24,8 +24,6 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements RecListAdapter.OnDownloadClickedListener {
 
-
-
     @Bind(R.id.rec_view)
     RecyclerView recView;
     @Bind(R.id.toolbar)
