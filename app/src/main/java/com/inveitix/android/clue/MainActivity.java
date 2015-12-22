@@ -97,7 +97,23 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     }
 
     @Override
-    public void onDownloadClicked(int museumID) {
+    public void onDownloadClicked(final int museumID) {
         adapter.updateItem(museumID, adapter.DOWNLOADING);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            onDownloadFinished(museumID);
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
