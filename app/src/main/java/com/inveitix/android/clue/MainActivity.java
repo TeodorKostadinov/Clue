@@ -1,5 +1,6 @@
 package com.inveitix.android.clue;
 
+import android.app.ActionBar;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,14 +25,12 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements RecListAdapter.OnDownloadClickedListener {
 
-
-
     @Bind(R.id.rec_view)
     RecyclerView recView;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
-    private List<Museum> museums;
     RecListAdapter adapter;
+    private List<Museum> museums;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     }
 
     public void onDownloadFinished(int museumID) {
-       adapter.updateItem(museumID, adapter.DOWNLOAD_FINISHED);
+        adapter.updateItem(museumID, adapter.DOWNLOAD_FINISHED);
     }
 
     @Override
