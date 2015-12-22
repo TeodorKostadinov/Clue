@@ -1,5 +1,8 @@
 package com.inveitix.android.clue;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.inveitix.android.clue.adapters.RecListAdapter;
@@ -34,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         museums = new ArrayList<>();
-        museums.add(new Museum("Vratsa", null));
+        museums.add(new Museum("Vratsa", null, "Vratsa museum 1"));
+        museums.add(new Museum("Vratsa2", null, "Vratsa museum 2"));
+        museums.add(new Museum("Vratsa3", null, "Vratsa museum 3"));
 
         initViews();
 
@@ -49,9 +55,22 @@ public class MainActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerViewOnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
+                showInfoDialog(position, museums);
             }
         });
+    }
+
+    public void showInfoDialog(int position, List<Museum> museums) {
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.setTitle(museums.get(position).name);
+        alertDialog.setMessage(museums.get(position).description);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
 
     @Override
