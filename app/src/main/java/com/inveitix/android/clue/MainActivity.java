@@ -24,12 +24,16 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecListAdapter.OnDownloadClickedListener {
+
+
+
     @Bind(R.id.rec_view)
     RecyclerView recView;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     private List<Museum> museums;
+    RecListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         museums = new ArrayList<>();
-        museums.add(new Museum("Vratsa", null, "Vratsa museum 1"));
-        museums.add(new Museum("Vratsa2", null, "Vratsa museum 2"));
-        museums.add(new Museum("Vratsa3", null, "Vratsa museum 3"));
+        museums.add(new Museum("Vratsa", null, "Vratsa museum 1", 1));
+        museums.add(new Museum("Vratsa2", null, "Vratsa museum 2", 2));
+        museums.add(new Museum("Vratsa3", null, "Vratsa museum 3", 3));
 
         initViews();
 
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         recView.setLayoutManager(new LinearLayoutManager(this));
-        RecListAdapter adapter = new RecListAdapter(this, museums);
+        adapter = new RecListAdapter(this, museums, this);
         recView.setAdapter(adapter);
         adapter.setOnItemClickListener(new RecyclerViewOnItemClickListener() {
             @Override
@@ -95,4 +99,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onDownloadFinished(int museumID) {
+       adapter.updateItem(museumID, adapter.DOWNLOAD_FINISHED);
+    }
+
+    @Override
+    public void onDownloadClicked(int museumID) {
+        adapter.updateItem(museumID, adapter.DOWNLOADING);
+    }
 }
