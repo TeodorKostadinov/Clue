@@ -52,7 +52,6 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         if (museum.getMapStatus() == Museum.DOWNLOADED_STATUS) {
             holder.btnDownload.setVisibility(View.INVISIBLE);
             holder.progressBar.setVisibility(View.GONE);
-
         } else if (museum.getMapStatus() == Museum.NOT_DOWNLOADED) {
             holder.btnDownload.setVisibility(View.VISIBLE);
             holder.progressBar.setVisibility(View.GONE);
@@ -76,7 +75,6 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
     public void updateItem(int museumID, int operationId) {
 
         for (int i = 0; i < museums.size(); i++) {
-
             if (museums.get(i).getMuseumID() == museumID) {
                 if (operationId == DOWNLOADING) {
                     museums.get(i).setMapStatus(Museum.DOWNLOADING_STATUS);
@@ -85,10 +83,8 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
                     museums.get(i).setMapStatus(Museum.DOWNLOADED_STATUS);
                     break;
                 }
-
             }
         }
-
         notifyDataSetChanged();
     }
 
@@ -106,10 +102,8 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         ProgressBar progressBar;
         int museumID;
 
-
         public ViewHolder(View itemView) {
             super(itemView);
-
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
             btnDownload.setOnClickListener(this);
@@ -118,19 +112,12 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.btn_download) {
-
                 listener.onDownloadClicked(museumID);
-
             } else {
-
                 if (itemClickListener != null) {
                     itemClickListener.onItemClick(v, this.getPosition());
                 }
             }
-
         }
-
     }
-
-
 }
