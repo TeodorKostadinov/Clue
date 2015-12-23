@@ -12,9 +12,6 @@ import com.inveitix.android.clue.cmn.Point;
 
 import java.util.List;
 
-/**
- * Created by fos on 23.12.2015 г..
- */
 public class RoomView extends View {
 
     private static final String TAG = "RoomView";
@@ -25,22 +22,20 @@ public class RoomView extends View {
     private int maxHeight;
     private int maxWidth;
     private List<Point> shape;
+    private float ratio;
 
     public RoomView(Context context) {
         super(context);
-        Log.e(TAG, "Room created");
         init();
     }
 
     public RoomView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Log.e(TAG, "Room created");
         init();
     }
 
     public RoomView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        Log.e(TAG, "Room created");
         init();
     }
 
@@ -58,19 +53,32 @@ public class RoomView extends View {
         textPaint.setColor(textColor);
     }
 
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        this.maxWidth = w;
-        this.maxHeight = h;
-        Log.e(TAG, "View width:" + maxWidth);
-        Log.e(TAG, "View height:" + maxHeight);
-    }
-
     public void setShape(List<Point> shape) {
         this.shape = shape;
         invalidate();
         requestLayout();
+    }
+
+    public void setWidthToHeightRatio(float ratio) {
+        this.ratio = ratio;
+        maxHeight = (int) (maxWidth / ratio);
+        invalidate();
+        requestLayout();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int minw = getPaddingLeft() + getPaddingRight() + getSuggestedMinimumWidth();
+        int minh = getPaddingBottom() + getPaddingTop() + getSuggestedMinimumHeight();
+        this.maxWidth = resolveSizeAndState(minw, widthMeasureSpec, 1);
+        this.maxHeight = resolveSizeAndState(minh, heightMeasureSpec, 1);
+        if(ratio != 0) {
+            maxHeight = (int) (maxWidth / ratio);
+        }
+
+        Log.e(TAG, "onMeasure width:" + maxWidth);
+        Log.e(TAG, "onMeasure height:" + maxHeight);
+        setMeasuredDimension(maxWidth, maxHeight);
     }
 
     @Override

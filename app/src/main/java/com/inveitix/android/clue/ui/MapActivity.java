@@ -32,6 +32,7 @@ public class MapActivity extends AppCompatActivity {
         List<Point> roomPoints = new ArrayList<>();
         generateFakeRoom(roomPoints);
         roomView.setShape(roomPoints);
+        roomView.setWidthToHeightRatio(0.89f);
     }
 
     private void generateFakeRoom(List<Point> roomPoints) {
