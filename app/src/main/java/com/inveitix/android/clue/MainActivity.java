@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
+import com.inveitix.android.clue.ui.MapActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,6 +100,10 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
 
     @Override
     public void onDownloadClicked(final int museumID) {
+        //TODO Remove this
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
+
         adapter.updateItem(museumID, Museum.STATUS_DOWNLOADING);
         new Thread(new Runnable() {
             @Override
