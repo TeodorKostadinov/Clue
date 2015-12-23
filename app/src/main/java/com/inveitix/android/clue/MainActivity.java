@@ -55,16 +55,27 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         museumFireBaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 for (DataSnapshot postMuseum : dataSnapshot.getChildren()) {
-
                     String name = (String) postMuseum.child("name").getValue();
-                    String description = "Hello world!";
+                    String description = (String) postMuseum.child("description").getValue();
                     int id = Integer.parseInt(postMuseum.child("id").getValue().toString());
                     String location = (String) postMuseum.child("location").getValue();
                     int mapSizeKB = Integer.parseInt(postMuseum.child("mapSizeKB").getValue().toString());
+                    Museum museum = new Museum(name, description, id, location, mapSizeKB);
 
-                    museums.add(new Museum(name, description, id, location, mapSizeKB));
+                    if (museums.size() < 1) {
+                        museums.add(museum);
+                    } else {
+                        for (int i = 0; i < museums.size(); i++) {
+                            if (museums.get(i).getId() == museum.getId()) {
+
+                                museums.remove(i);
+                                museums.add(museum);
+                            } else {
+                                museums.add(museum);
+                            }
+                        }
+                    }
 
                 }
                 adapter.notifyDataSetChanged();
