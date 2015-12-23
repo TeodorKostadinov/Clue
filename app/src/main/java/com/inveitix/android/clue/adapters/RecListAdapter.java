@@ -66,14 +66,14 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         this.itemClickListener = listener;
     }
 
-    public void updateItem(int museumID, int operationId) {
+    public void updateItem(int museumID, int museumStatus) {
 
         for (int i = 0; i < museums.size(); i++) {
             if (museums.get(i).getMuseumID() == museumID) {
-                if (operationId == Museum.STATUS_DOWNLOADING) {
+                if (museumStatus == Museum.STATUS_DOWNLOADING) {
                     museums.get(i).setMapStatus(Museum.STATUS_DOWNLOADING);
                     break;
-                } else if (operationId == Museum.STATUS_DOWNLOADED) {
+                } else if (museumStatus == Museum.STATUS_DOWNLOADED) {
                     museums.get(i).setMapStatus(Museum.STATUS_DOWNLOADED);
                     break;
                 }

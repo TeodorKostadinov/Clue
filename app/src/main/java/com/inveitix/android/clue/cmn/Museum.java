@@ -2,7 +2,6 @@ package com.inveitix.android.clue.cmn;
 
 import java.util.List;
 
-
 public class Museum {
 
     public static final int STATUS_DOWNLOADING = 1;
