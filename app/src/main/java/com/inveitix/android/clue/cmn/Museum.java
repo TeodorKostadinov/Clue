@@ -2,25 +2,24 @@ package com.inveitix.android.clue.cmn;
 
 import java.util.List;
 
-
 public class Museum {
 
-    public static final int DOWNLOADING_STATUS = 1;
-    public static final int DOWNLOADED_STATUS = 2;
-    public static final int NOT_DOWNLOADED = 0;
+    public static final int STATUS_DOWNLOADING = 1;
+    public static final int STATUS_DOWNLOADED = 2;
+    public static final int STATUS_NOT_DOWNLOADED = 0;
 
-    public String name;
-    public String description;
-    List<Room> rooms;
-    int museumID;
-    int mapStatus;
+    private String name;
+    private String description;
+    private List<Room> rooms;
+    private int museumID;
+    private int mapStatus;
 
     public Museum(String name, List<Room> rooms, String description, int museumID) {
         this.museumID = museumID;
         this.name = name;
         this.rooms = rooms;
         this.description = description;
-        setMapStatus(NOT_DOWNLOADED);
+        setMapStatus(STATUS_NOT_DOWNLOADED);
 
     }
 

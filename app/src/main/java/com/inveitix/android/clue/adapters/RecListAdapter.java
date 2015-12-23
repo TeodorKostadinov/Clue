@@ -18,11 +18,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-
 public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHolder> {
-    public static final int DOWNLOAD_FINISHED = 1;
-    public static final int DOWNLOADING = 2;
-
 
     private final OnDownloadClickedListener listener;
     private RecyclerViewOnItemClickListener itemClickListener;
@@ -35,7 +31,6 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         this.listener = listener;
     }
 
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_museum, parent, false);
@@ -46,22 +41,20 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Museum museum = museums.get(position);
-        holder.txtName.setText(museum.name);
+        holder.txtName.setText(museum.getName());
         holder.museumID = museum.getMuseumID();
 
-        if (museum.getMapStatus() == Museum.DOWNLOADED_STATUS) {
+        if (museum.getMapStatus() == Museum.STATUS_DOWNLOADED) {
             holder.btnDownload.setVisibility(View.INVISIBLE);
             holder.progressBar.setVisibility(View.GONE);
-        } else if (museum.getMapStatus() == Museum.NOT_DOWNLOADED) {
+        } else if (museum.getMapStatus() == Museum.STATUS_NOT_DOWNLOADED) {
             holder.btnDownload.setVisibility(View.VISIBLE);
             holder.progressBar.setVisibility(View.GONE);
         } else {
             holder.btnDownload.setVisibility(View.INVISIBLE);
             holder.progressBar.setVisibility(View.VISIBLE);
         }
-
     }
-
 
     @Override
     public int getItemCount() {
@@ -72,15 +65,15 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         this.itemClickListener = listener;
     }
 
-    public void updateItem(int museumID, int operationId) {
+    public void updateItem(int museumID, int museumStatus) {
 
         for (int i = 0; i < museums.size(); i++) {
             if (museums.get(i).getMuseumID() == museumID) {
-                if (operationId == DOWNLOADING) {
-                    museums.get(i).setMapStatus(Museum.DOWNLOADING_STATUS);
+                if (museumStatus == Museum.STATUS_DOWNLOADING) {
+                    museums.get(i).setMapStatus(Museum.STATUS_DOWNLOADING);
                     break;
-                } else if (operationId == DOWNLOAD_FINISHED) {
-                    museums.get(i).setMapStatus(Museum.DOWNLOADED_STATUS);
+                } else if (museumStatus == Museum.STATUS_DOWNLOADED) {
+                    museums.get(i).setMapStatus(Museum.STATUS_DOWNLOADED);
                     break;
                 }
             }
@@ -88,12 +81,12 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         notifyDataSetChanged();
     }
 
-
     public interface OnDownloadClickedListener {
         void onDownloadClicked(int museumID);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         @Bind(R.id.txt_museum_name)
         TextView txtName;
         @Bind(R.id.btn_download)
