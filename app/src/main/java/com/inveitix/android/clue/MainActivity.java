@@ -1,7 +1,9 @@
 package com.inveitix.android.clue;
 
+
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +23,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
 
 public class MainActivity extends AppCompatActivity implements RecListAdapter.OnDownloadClickedListener {
 

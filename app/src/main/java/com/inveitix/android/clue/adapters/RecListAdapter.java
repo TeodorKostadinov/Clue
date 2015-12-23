@@ -18,7 +18,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-
 public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHolder> {
 
     private final OnDownloadClickedListener listener;
@@ -87,6 +86,7 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         @Bind(R.id.txt_museum_name)
         TextView txtName;
         @Bind(R.id.btn_download)
