@@ -1,5 +1,6 @@
 package com.inveitix.android.clue.database;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
@@ -15,13 +16,26 @@ import java.util.List;
  * Created by Tito on 23.12.2015 г..
  */
 public class FireBaseLoader {
+    private static final String TAG = "FireBaseLoader";
+    private Firebase fireBaseRef;
 
-    private static Firebase museumFireBaseRef;
+    private static FireBaseLoader instance;
 
-    public static void loadingOnlineDataBase(final List<Museum> museums, final RecListAdapter adapter) {
+    public FireBaseLoader(Context context) {
+        Firebase.setAndroidContext(context);
+        fireBaseRef = new Firebase(FireBaseConstants.FIREBASE_URL);
+    }
 
-        museumFireBaseRef = new Firebase(FireBaseConstants.FIREBASE_URL).child("museums");
-        museumFireBaseRef.addValueEventListener(new ValueEventListener() {
+    public static FireBaseLoader getInstance(Context context) {
+        if (instance == null) {
+            instance = new FireBaseLoader(context);
+        }
+        return instance;
+    }
+
+    public void loadingOnlineDataBase(final List<Museum> museums, final RecListAdapter adapter) {
+
+        fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postMuseum : dataSnapshot.getChildren()) {
@@ -50,7 +64,7 @@ public class FireBaseLoader {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                Log.e("FB Error", firebaseError.toString());
+                Log.e(TAG, firebaseError.toString());
             }
         });
 

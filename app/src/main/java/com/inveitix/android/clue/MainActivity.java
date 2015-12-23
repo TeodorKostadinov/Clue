@@ -37,11 +37,10 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Firebase.setAndroidContext(this);
         museums = new ArrayList<>();
         ButterKnife.bind(this);
         initViews();
-        FireBaseLoader.loadingOnlineDataBase(museums, adapter);
+        FireBaseLoader.getInstance(this).loadingOnlineDataBase(museums, adapter);
     }
 
     private void initViews() {
