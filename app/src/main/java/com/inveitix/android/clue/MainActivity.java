@@ -7,19 +7,15 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
-import com.inveitix.android.clue.database.FireBaseConstants;
+import com.inveitix.android.clue.database.FireBaseLoader;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
 
 import java.util.ArrayList;
@@ -35,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     RecListAdapter adapter;
-    Firebase museumFireBaseRef;
     private List<Museum> museums;
 
     @Override
@@ -44,51 +39,10 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         setContentView(R.layout.activity_main);
         Firebase.setAndroidContext(this);
         museums = new ArrayList<>();
-        loadingOnlineDataBase();
         ButterKnife.bind(this);
         initViews();
+        FireBaseLoader.loadingOnlineDataBase(museums, adapter);
     }
-
-    private void loadingOnlineDataBase() {
-
-        museumFireBaseRef = new Firebase(FireBaseConstants.FIREBASE_URL).child("museums");
-        museumFireBaseRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postMuseum : dataSnapshot.getChildren()) {
-                    String name = (String) postMuseum.child("name").getValue();
-                    String description = (String) postMuseum.child("description").getValue();
-                    int id = Integer.parseInt(postMuseum.child("id").getValue().toString());
-                    String location = (String) postMuseum.child("location").getValue();
-                    int mapSizeKB = Integer.parseInt(postMuseum.child("mapSizeKB").getValue().toString());
-                    Museum museum = new Museum(name, description, id, location, mapSizeKB);
-
-                    if (museums.size() < 1) {
-                        museums.add(museum);
-                    } else {
-                        for (int i = 0; i < museums.size(); i++) {
-                            if (museums.get(i).getId() == museum.getId()) {
-
-                                museums.remove(i);
-                                museums.add(museum);
-                            } else {
-                                museums.add(museum);
-                            }
-                        }
-                    }
-
-                }
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
-
-    }
-
 
     private void initViews() {
         setSupportActionBar(toolbar);
