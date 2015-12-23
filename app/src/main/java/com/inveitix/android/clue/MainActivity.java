@@ -28,8 +28,8 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     RecyclerView recView;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
-    private List<Museum> museums;
     RecListAdapter adapter;
+    private List<Museum> museums;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
 
     public void showInfoDialog(int position, List<Museum> museums) {
         AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-        alertDialog.setTitle(museums.get(position).name);
-        alertDialog.setMessage(museums.get(position).description);
+        alertDialog.setTitle(museums.get(position).getName());
+        alertDialog.setMessage(museums.get(position).getDescription());
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -91,12 +91,12 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     }
 
     public void onDownloadFinished(int museumID) {
-       adapter.updateItem(museumID, adapter.DOWNLOAD_FINISHED);
+        adapter.updateItem(museumID, Museum.STATUS_DOWNLOADED);
     }
 
     @Override
     public void onDownloadClicked(final int museumID) {
-        adapter.updateItem(museumID, adapter.DOWNLOADING);
+        adapter.updateItem(museumID, Museum.STATUS_DOWNLOADING);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -114,4 +114,5 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
             }
         }).start();
     }
+
 }
