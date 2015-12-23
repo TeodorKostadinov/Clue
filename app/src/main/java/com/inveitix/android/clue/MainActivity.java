@@ -2,19 +2,24 @@ package com.inveitix.android.clue;
 
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
+import com.inveitix.android.clue.database.FireBaseConstants;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
 
 import java.util.ArrayList;
@@ -30,19 +35,49 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     RecListAdapter adapter;
+    Firebase museumFireBaseRef;
     private List<Museum> museums;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        Firebase.setAndroidContext(this);
         museums = new ArrayList<>();
-        museums.add(new Museum("Vratsa", null, "Vratsa museum 1", 1));
-        museums.add(new Museum("Vratsa2", null, "Vratsa museum 2", 2));
-        museums.add(new Museum("Vratsa3", null, "Vratsa museum 3", 3));
+        loadingOnlineDataBase();
+        ButterKnife.bind(this);
         initViews();
     }
+
+    private void loadingOnlineDataBase() {
+
+        museumFireBaseRef = new Firebase(FireBaseConstants.FIREBASE_URL).child("museums");
+        museumFireBaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot postMuseum : dataSnapshot.getChildren()) {
+
+                    String name = (String) postMuseum.child("name").getValue();
+                    String description = "Hello world!";
+                    int id = Integer.parseInt(postMuseum.child("id").getValue().toString());
+                    String location = (String) postMuseum.child("location").getValue();
+                    int mapSizeKB = Integer.parseInt(postMuseum.child("mapSizeKB").getValue().toString());
+
+                    museums.add(new Museum(name, description, id, location, mapSizeKB));
+
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+    }
+
 
     private void initViews() {
         setSupportActionBar(toolbar);
