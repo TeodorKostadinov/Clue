@@ -42,7 +42,7 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
         Museum museum = museums.get(position);
         holder.txtName.setText(museum.getName());
-        holder.museumID = museum.getMuseumID();
+        holder.museumID = museum.getId();
 
         if (museum.getMapStatus() == Museum.STATUS_DOWNLOADED) {
             holder.btnDownload.setVisibility(View.INVISIBLE);
@@ -68,7 +68,7 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
     public void updateItem(int museumID, int museumStatus) {
 
         for (int i = 0; i < museums.size(); i++) {
-            if (museums.get(i).getMuseumID() == museumID) {
+            if (museums.get(i).getId() == museumID) {
                 if (museumStatus == Museum.STATUS_DOWNLOADING) {
                     museums.get(i).setMapStatus(Museum.STATUS_DOWNLOADING);
                     break;

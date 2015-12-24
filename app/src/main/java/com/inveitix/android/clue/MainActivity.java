@@ -2,7 +2,6 @@ package com.inveitix.android.clue;
 
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,8 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
+import com.inveitix.android.clue.database.FireBaseLoader;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
 import com.inveitix.android.clue.ui.MapActivity;
 
@@ -37,12 +38,10 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
         museums = new ArrayList<>();
-        museums.add(new Museum("Vratsa", null, "Vratsa museum 1", 1));
-        museums.add(new Museum("Vratsa2", null, "Vratsa museum 2", 2));
-        museums.add(new Museum("Vratsa3", null, "Vratsa museum 3", 3));
+        ButterKnife.bind(this);
         initViews();
+        FireBaseLoader.getInstance(this).loadingOnlineDataBase(museums, adapter);
     }
 
     private void initViews() {

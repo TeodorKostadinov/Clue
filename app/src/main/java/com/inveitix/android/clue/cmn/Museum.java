@@ -1,7 +1,5 @@
 package com.inveitix.android.clue.cmn;
 
-import java.util.List;
-
 public class Museum {
 
     public static final int STATUS_DOWNLOADING = 1;
@@ -10,17 +8,39 @@ public class Museum {
 
     private String name;
     private String description;
-    private List<Room> rooms;
-    private int museumID;
+    private int id;
     private int mapStatus;
+    private String location;
+    private int mapSizeKB;
 
-    public Museum(String name, List<Room> rooms, String description, int museumID) {
-        this.museumID = museumID;
+    public Museum(){
+
+    }
+
+    public Museum(String name, String description, int id, String location, int mapSizeKB) {
+        this.id = id;
         this.name = name;
-        this.rooms = rooms;
         this.description = description;
+        this.location = location;
+        this.mapSizeKB = mapSizeKB;
         setMapStatus(STATUS_NOT_DOWNLOADED);
 
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public int getMapSizeKB() {
+        return mapSizeKB;
+    }
+
+    public void setMapSizeKB(int mapSizeKB) {
+        this.mapSizeKB = mapSizeKB;
     }
 
     public int getMapStatus() {
@@ -31,12 +51,12 @@ public class Museum {
         this.mapStatus = mapStatus;
     }
 
-    public int getMuseumID() {
-        return museumID;
+    public int getId() {
+        return id;
     }
 
-    public void setMuseumID(int museumID) {
-        this.museumID = museumID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getDescription() {
@@ -53,13 +73,5 @@ public class Museum {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<Room> getRooms() {
-        return rooms;
-    }
-
-    public void setRooms(List<Room> rooms) {
-        this.rooms = rooms;
     }
 }
