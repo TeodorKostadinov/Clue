@@ -2,6 +2,7 @@ package com.inveitix.android.clue.ui.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
@@ -18,11 +19,13 @@ public class RoomView extends View {
     private Paint textPaint;
     private Paint roomPaint;
     private float textHeight = 25;
-    private int textColor = 0x000000;
+    private int colorBlack = 0x000000;
+    private int colorGreen = 0x00ff00;
     private int maxHeight;
     private int maxWidth;
     private List<Point> shape;
     private float ratio;
+    private List<Point> doors;
 
     public RoomView(Context context) {
         super(context);
@@ -41,7 +44,7 @@ public class RoomView extends View {
 
     private void init() {
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        textPaint.setColor(textColor);
+        textPaint.setColor(colorGreen);
         if (textHeight == 0) {
             textHeight = textPaint.getTextSize();
         } else {
@@ -50,7 +53,11 @@ public class RoomView extends View {
 
         roomPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         roomPaint.setStyle(Paint.Style.FILL);
-        textPaint.setColor(textColor);
+        roomPaint.setColor(Color.BLACK);
+    }
+
+    public void setDoors(List<Point> doors) {
+        this.doors = doors;
     }
 
     public void setShape(List<Point> shape) {
@@ -72,7 +79,7 @@ public class RoomView extends View {
         int minh = getPaddingBottom() + getPaddingTop() + getSuggestedMinimumHeight();
         this.maxWidth = resolveSizeAndState(minw, widthMeasureSpec, 1);
         this.maxHeight = resolveSizeAndState(minh, heightMeasureSpec, 1);
-        if(ratio != 0) {
+        if (ratio != 0) {
             maxHeight = (int) (maxWidth / ratio);
         }
 
@@ -85,20 +92,28 @@ public class RoomView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        roomPaint.setColor(Color.BLACK);
         canvas.drawCircle(0, 0, 15, roomPaint);
         canvas.drawCircle(maxWidth, 0, 15, roomPaint);
         canvas.drawCircle(0, maxHeight, 15, roomPaint);
         canvas.drawCircle(maxWidth, maxHeight, 15, roomPaint);
         Path path = new Path();
         path.reset();
-        if(shape != null) {
-            for(Point p : shape) {
+        if (shape != null) {
+            for (Point p : shape) {
                 path.lineTo(maxWidth * p.x, maxHeight * p.y);
             }
-            if(shape.size() > 0) {
+            if (shape.size() > 0) {
                 path.lineTo(maxWidth * shape.get(0).x, maxHeight * shape.get(0).y);
             }
             canvas.drawPath(path, roomPaint);
+        }
+        if (doors != null && doors.size() > 0) {
+            roomPaint.setColor(Color.GREEN);
+            for (Point door :
+                    doors) {
+                canvas.drawCircle(maxWidth * door.x, maxWidth * door.y, 15, roomPaint);
+            }
         }
     }
 }
