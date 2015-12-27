@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.inveitix.android.clue.cmn.Point;
@@ -16,6 +17,8 @@ import java.util.List;
 public class RoomView extends View {
 
     private static final String TAG = "RoomView";
+    private static final float TOUCH_PRECISION = 30;
+    private static final float DOOR_SIZE = 30;
     private Paint textPaint;
     private Paint roomPaint;
     private float textHeight = 25;
@@ -26,6 +29,7 @@ public class RoomView extends View {
     private List<Point> shape;
     private float ratio;
     private List<Point> doors;
+    private OnDoorClickedListener doorListener;
 
     public RoomView(Context context) {
         super(context);
@@ -112,8 +116,32 @@ public class RoomView extends View {
             roomPaint.setColor(Color.GREEN);
             for (Point door :
                     doors) {
-                canvas.drawCircle(maxWidth * door.x, maxWidth * door.y, 15, roomPaint);
+                canvas.drawCircle(maxWidth * door.x, maxWidth * door.y, DOOR_SIZE, roomPaint);
             }
         }
+    }
+
+    public void setOnDoorClickedListener(OnDoorClickedListener doorListener) {
+        this.doorListener = doorListener;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (doorListener != null) {
+                for (Point door :
+                        doors) {
+                    if (Math.abs(maxWidth * door.x - event.getX()) < DOOR_SIZE + TOUCH_PRECISION &&
+                            Math.abs(maxHeight * door.y - event.getY()) < DOOR_SIZE + TOUCH_PRECISION) {
+                        doorListener.onDoorClicked(door);
+                    }
+                }
+            }
+        }
+        return super.onTouchEvent(event);
+    }
+
+    public interface OnDoorClickedListener {
+        void onDoorClicked(Point door);
     }
 }
