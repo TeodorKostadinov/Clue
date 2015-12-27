@@ -32,7 +32,17 @@ public class MapActivity extends AppCompatActivity {
         List<Point> roomPoints = new ArrayList<>();
         generateFakeRoom(roomPoints);
         roomView.setShape(roomPoints);
+        roomView.setDoors(generateDoors());
         roomView.setWidthToHeightRatio(0.89f);
+    }
+
+    private List<Point> generateDoors() {
+        List<Point> doors = new ArrayList<>();
+        doors.add(new Point(0.12, 0));
+        doors.add(new Point(0.35, 0.35));
+        doors.add(new Point(1, 0.87));
+        doors.add(new Point(0.70, 1));
+        return doors;
     }
 
     private void generateFakeRoom(List<Point> roomPoints) {
