@@ -1,4 +1,4 @@
-package com.inveitix.android.clue;
+package com.inveitix.android.clue.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,12 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
+import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.database.FireBaseLoader;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
-import com.inveitix.android.clue.ui.MapActivity;
 
 import java.util.ArrayList;
 import java.util.List;
