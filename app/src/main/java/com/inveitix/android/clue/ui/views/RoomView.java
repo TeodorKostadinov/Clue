@@ -19,17 +19,18 @@ public class RoomView extends View {
     private static final String TAG = "RoomView";
     private static final float TOUCH_PRECISION = 30;
     private static final float DOOR_SIZE = 30;
+    private static final float QR_SIZE = 25;
     private Paint textPaint;
     private Paint roomPaint;
     private float textHeight = 25;
-    private int colorBlack = 0x000000;
-    private int colorGreen = 0x00ff00;
     private int maxHeight;
     private int maxWidth;
     private List<Point> shape;
     private float ratio;
     private List<Point> doors;
+    private List<Point> qrs;
     private OnDoorClickedListener doorListener;
+    private OnQrClickedListener qrListener;
 
     public RoomView(Context context) {
         super(context);
@@ -48,7 +49,7 @@ public class RoomView extends View {
 
     private void init() {
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        textPaint.setColor(colorGreen);
+        textPaint.setColor(Color.GREEN);
         if (textHeight == 0) {
             textHeight = textPaint.getTextSize();
         } else {
@@ -62,6 +63,10 @@ public class RoomView extends View {
 
     public void setDoors(List<Point> doors) {
         this.doors = doors;
+    }
+
+    public void setQrs(List<Point> qrs) {
+        this.qrs = qrs;
     }
 
     public void setShape(List<Point> shape) {
@@ -119,10 +124,21 @@ public class RoomView extends View {
                 canvas.drawCircle(maxWidth * door.x, maxWidth * door.y, DOOR_SIZE, roomPaint);
             }
         }
+        if (qrs != null && qrs.size() > 0) {
+            roomPaint.setColor(Color.RED);
+            for (Point qr :
+                    qrs) {
+                canvas.drawCircle(maxWidth * qr.x, maxWidth * qr.y, QR_SIZE, roomPaint);
+            }
+        }
     }
 
     public void setOnDoorClickedListener(OnDoorClickedListener doorListener) {
         this.doorListener = doorListener;
+    }
+
+    public void setOnDoorQrListener(OnQrClickedListener qrListener) {
+        this.qrListener = qrListener;
     }
 
     @Override
@@ -137,11 +153,25 @@ public class RoomView extends View {
                     }
                 }
             }
+
+            if (qrListener != null) {
+                for (Point qr :
+                        qrs) {
+                    if (Math.abs(maxWidth * qr.x - event.getX()) < QR_SIZE + TOUCH_PRECISION &&
+                            Math.abs(maxHeight * qr.y - event.getY()) < QR_SIZE + TOUCH_PRECISION) {
+                        doorListener.onDoorClicked(qr);
+                    }
+                }
+            }
         }
         return super.onTouchEvent(event);
     }
 
     public interface OnDoorClickedListener {
         void onDoorClicked(Point door);
+    }
+
+    public interface OnQrClickedListener {
+        void onQrClicked(Point qr);
     }
 }
