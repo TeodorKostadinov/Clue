@@ -72,7 +72,6 @@ public class FireBaseLoader {
                 Log.e(TAG, firebaseError.toString());
             }
         });
-
     }
 
 
