@@ -44,7 +44,8 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         maps = new ArrayList<>();
         ButterKnife.bind(this);
         initViews();
-        FireBaseLoader.getInstance(this).loadingDataBase(maps, museums, adapter);
+        FireBaseLoader.getInstance(this).downloadMuseumsList(museums, adapter);
+        FireBaseLoader.getInstance(this).downloadMap(0, adapter);
 
     }
 

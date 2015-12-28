@@ -33,12 +33,7 @@ public class FireBaseLoader {
         return instance;
     }
 
-    public void loadingDataBase(final List<MuseumMap> maps, final List<Museum> museums, final RecListAdapter adapter) {
-        loadingOnlineMuseumDataBase(museums, adapter);
-        loadingOnlineMapsDataBase(maps, adapter);
-    }
-
-    private void loadingOnlineMuseumDataBase(final List<Museum> museums, final RecListAdapter adapter) {
+    public void downloadMuseumsList(final List<Museum> museums, final RecListAdapter adapter) {
 
         fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
@@ -75,26 +70,15 @@ public class FireBaseLoader {
     }
 
 
-    private void loadingOnlineMapsDataBase(final List<MuseumMap> maps, final RecListAdapter adapter) {
+    public void downloadMap(final int museumId, final RecListAdapter adapter) {
 
-        fireBaseRef.child("maps").addValueEventListener(new ValueEventListener() {
+        fireBaseRef.child("maps").orderByChild("museumId").equalTo(museumId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postMaps : dataSnapshot.getChildren()) {
-                    MuseumMap map = postMaps.getValue(MuseumMap.class);
-
-                    if (maps.size() < 1) {
-                        maps.add(map);
-                    } else {
-                        for (int i = 0; i < maps.size(); i++) {
-                            if (maps.get(i).getId().equals(map.getId())) {
-                                maps.remove(i);
-                                maps.add(map);
-                            } else {
-                                maps.add(map);
-                            }
-                        }
-                    }
+                    Log.e("MAP", String.valueOf(postMaps.getValue()));
+                        MuseumMap map = postMaps.getValue(MuseumMap.class);
+                        Log.e("MAP", "MuseumID: " + String.valueOf(map.getMuseumId()));
                 }
                 adapter.notifyDataSetChanged();
             }
