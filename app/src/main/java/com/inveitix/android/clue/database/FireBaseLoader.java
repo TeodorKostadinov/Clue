@@ -9,6 +9,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
+import com.inveitix.android.clue.cmn.MuseumMap;
 
 import java.util.List;
 
@@ -17,9 +18,8 @@ import java.util.List;
  */
 public class FireBaseLoader {
     private static final String TAG = "FireBaseLoader";
-    private Firebase fireBaseRef;
-
     private static FireBaseLoader instance;
+    private Firebase fireBaseRef;
 
     public FireBaseLoader(Context context) {
         Firebase.setAndroidContext(context);
@@ -33,7 +33,12 @@ public class FireBaseLoader {
         return instance;
     }
 
-    public void loadingOnlineDataBase(final List<Museum> museums, final RecListAdapter adapter) {
+    public void loadingDataBase(final List<MuseumMap> maps, final List<Museum> museums, final RecListAdapter adapter) {
+        loadingOnlineMuseumDataBase(museums, adapter);
+        loadingOnlineMapsDataBase(maps, adapter);
+    }
+
+    private void loadingOnlineMuseumDataBase(final List<Museum> museums, final RecListAdapter adapter) {
 
         fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
@@ -55,6 +60,39 @@ public class FireBaseLoader {
                                 museums.add(museum);
                             } else {
                                 museums.add(museum);
+                            }
+                        }
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.e(TAG, firebaseError.toString());
+            }
+        });
+
+    }
+
+
+    private void loadingOnlineMapsDataBase(final List<MuseumMap> maps, final RecListAdapter adapter) {
+
+        fireBaseRef.child("maps").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postMaps : dataSnapshot.getChildren()) {
+                    MuseumMap map = postMaps.getValue(MuseumMap.class);
+
+                    if (maps.size() < 1) {
+                        maps.add(map);
+                    } else {
+                        for (int i = 0; i < maps.size(); i++) {
+                            if (maps.get(i).getId().equals(map.getId())) {
+                                maps.remove(i);
+                                maps.add(map);
+                            } else {
+                                maps.add(map);
                             }
                         }
                     }

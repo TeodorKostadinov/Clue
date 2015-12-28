@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
+import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.database.FireBaseLoader;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
 
@@ -33,15 +34,18 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     Toolbar toolbar;
     RecListAdapter adapter;
     private List<Museum> museums;
+    private List<MuseumMap> maps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         museums = new ArrayList<>();
+        maps = new ArrayList<>();
         ButterKnife.bind(this);
         initViews();
-        FireBaseLoader.getInstance(this).loadingOnlineDataBase(museums, adapter);
+        FireBaseLoader.getInstance(this).loadingDataBase(maps, museums, adapter);
+
     }
 
     private void initViews() {

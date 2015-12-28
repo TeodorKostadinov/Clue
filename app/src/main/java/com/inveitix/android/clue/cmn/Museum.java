@@ -13,7 +13,7 @@ public class Museum {
     private String location;
     private int mapSizeKB;
 
-    public Museum(){
+    public Museum() {
 
     }
 
