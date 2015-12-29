@@ -108,7 +108,7 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
                 listener.onDownloadClicked(museumID);
             } else {
                 if (itemClickListener != null) {
-                    itemClickListener.onItemClick(v, this.getPosition());
+                    itemClickListener.onItemClick(v, museumID);
                 }
             }
         }

@@ -9,6 +9,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
+import com.inveitix.android.clue.cmn.MuseumMap;
 
 import java.util.List;
 
@@ -17,9 +18,8 @@ import java.util.List;
  */
 public class FireBaseLoader {
     private static final String TAG = "FireBaseLoader";
-    private Firebase fireBaseRef;
-
     private static FireBaseLoader instance;
+    private Firebase fireBaseRef;
 
     public FireBaseLoader(Context context) {
         Firebase.setAndroidContext(context);
@@ -33,7 +33,7 @@ public class FireBaseLoader {
         return instance;
     }
 
-    public void loadingOnlineDataBase(final List<Museum> museums, final RecListAdapter adapter) {
+    public void downloadMuseumsList(final List<Museum> museums, final RecListAdapter adapter) {
 
         fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
@@ -58,6 +58,27 @@ public class FireBaseLoader {
                             }
                         }
                     }
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.e(TAG, firebaseError.toString());
+            }
+        });
+    }
+
+
+    public void downloadMap(final int museumId, final RecListAdapter adapter) {
+
+        fireBaseRef.child("maps").orderByChild("museumId").equalTo(museumId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postMaps : dataSnapshot.getChildren()) {
+                    Log.e("MAP", String.valueOf(postMaps.getValue()));
+                        MuseumMap map = postMaps.getValue(MuseumMap.class);
+                        Log.e("MAP", "MuseumID: " + String.valueOf(map.getMuseumId()));
                 }
                 adapter.notifyDataSetChanged();
             }
