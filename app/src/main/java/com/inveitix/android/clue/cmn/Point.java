@@ -1,14 +1,20 @@
 package com.inveitix.android.clue.cmn;
 
 /**
- * Created by fos on 23.12.2015 г..
+ * Created by Tito on 28.12.2015 г..
  */
 public class Point {
-    public float x;
-    public float y;
+    public double x;
+    public double y;
 
-    public Point(double x, double y) {
-        this.x = (float) x;
-        this.y = (float) y;
+    public Point() {
+    }
+
+    public float getX() {
+        return (float) x;
+    }
+
+    public float getY() {
+        return (float) y;
     }
 }

@@ -11,6 +11,7 @@ public class MuseumMap {
     List<Room> rooms;
     private String id;
     private int museumId;
+    private String entranceRoomId;
 
     public MuseumMap() {
         rooms = new ArrayList<>();
@@ -41,4 +42,16 @@ public class MuseumMap {
     }
 
 
+    public String getEntranceRoomId() {
+        return entranceRoomId;
+    }
+
+    public Room getRoomById(String roomId) {
+        for(Room room : rooms) {
+            if(room.getId().equals(roomId)) {
+                return room;
+            }
+        }
+        return null;
+    }
 }
