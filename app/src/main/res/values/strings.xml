@@ -4,4 +4,8 @@
     <string name="txt_download">Download</string>
     <string name="txt_search">Search</string>
     <string name="txt_settings">Settings</string>
+    <string name="low_storage_error">Not enough free space</string>
+    <string name="permission_camera_rationale">Need permission for camera</string>
+    <string name="ok">OK</string>
+    <string name="no_camera_permission">No camera permission</string>
 </resources>
