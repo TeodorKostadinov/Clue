@@ -76,7 +76,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.btn_scan)
-    private void openQrScanner() {
+    public void openQrScanner() {
         Intent intent = new Intent(this, BarcodeCaptureActivity.class);
         intent.putExtra(BarcodeCaptureActivity.AutoFocus, true);
         intent.putExtra(BarcodeCaptureActivity.UseFlash, false);
@@ -88,7 +88,7 @@ public class MapActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Point userPosition = null;
         if (requestCode == RC_BARCODE_CAPTURE) {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
+            if (resultCode == RESULT_OK) {
                 if (data != null) {
                     Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
                     Log.d(TAG, "Barcode read: " + barcode.displayValue);

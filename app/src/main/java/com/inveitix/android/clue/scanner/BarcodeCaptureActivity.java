@@ -28,7 +28,6 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -106,9 +105,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(mGraphicOverlay, "Tap to capture. Pinch/Stretch to zoom",
-                Snackbar.LENGTH_LONG)
-                .show();
+        Toast.makeText(BarcodeCaptureActivity.this, "Tap to capture. Pinch/Stretch to zoom", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -137,10 +134,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
             }
         };
 
-        Snackbar.make(mGraphicOverlay, R.string.permission_camera_rationale,
-                Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.ok, listener)
-                .show();
+        Toast.makeText(BarcodeCaptureActivity.this, R.string.permission_camera_rationale, Toast.LENGTH_SHORT).show();
     }
 
     @Override
