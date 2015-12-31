@@ -55,4 +55,12 @@ public class Room {
     public void setShape(List<Point> point) {
         this.shape = point;
     }
+
+    public QR getQrById(String qrId) {
+        for (QR qr :
+                qrs) {
+            if (qr.getId().equals(qrId)) return qr;
+        }
+        return null;
+    }
 }

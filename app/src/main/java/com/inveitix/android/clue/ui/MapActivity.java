@@ -1,6 +1,7 @@
 package com.inveitix.android.clue.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,7 +17,8 @@ import com.inveitix.android.clue.cmn.Point;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.database.MapsInstance;
-import com.inveitix.android.clue.scanner.BarcodeCaptureActivity;
+import com.inveitix.android.clue.scanner.IntentIntegrator;
+import com.inveitix.android.clue.scanner.IntentResult;
 import com.inveitix.android.clue.ui.views.RoomView;
 
 import butterknife.Bind;
@@ -35,6 +37,7 @@ public class MapActivity extends AppCompatActivity {
     ViewGroup grpMapContainer;
     @Bind(R.id.room)
     RoomView roomView;
+    private Room room;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +52,7 @@ public class MapActivity extends AppCompatActivity {
         if (roomId == null) {
             roomId = map.getEntranceRoomId();
         }
-        Room room = map.getRoomById(roomId);
+        room = map.getRoomById(roomId);
         if (room != null) {
             roomView.setShape(room.getShape());
             roomView.setQrs(room.getQrs());
@@ -77,28 +80,26 @@ public class MapActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_scan)
     public void openQrScanner() {
-        Intent intent = new Intent(this, BarcodeCaptureActivity.class);
-        intent.putExtra(BarcodeCaptureActivity.AutoFocus, true);
-        intent.putExtra(BarcodeCaptureActivity.UseFlash, false);
-
-        startActivityForResult(intent, RC_BARCODE_CAPTURE);
+        try {
+            Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+            intent.putExtra("SCAN_MODE", "QR_CODE_MODE"); // "PRODUCT_MODE for bar codes
+            startActivityForResult(intent, IntentIntegrator.REQUEST_CODE);
+        } catch (Exception e) {
+            Uri marketUri = Uri.parse("market://details?id=com.google.zxing.client.android");
+            Intent marketIntent = new Intent(Intent.ACTION_VIEW, marketUri);
+            startActivity(marketIntent);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Point userPosition = null;
-        if (requestCode == RC_BARCODE_CAPTURE) {
-            if (resultCode == RESULT_OK) {
-                if (data != null) {
-                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-                    Log.d(TAG, "Barcode read: " + barcode.displayValue);
-                } else {
-                    Log.d(TAG, "No barcode captured, intent data is null");
-                }
-            } else {
-                Log.d(TAG, "No barcode captured, result not success");
-            }
+        Log.e(TAG, "ACtRez:" + requestCode);
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (scanResult != null) {
+            Log.e(TAG, "QRcode:" + scanResult.getContents());
+            String qrId = scanResult.getContents();
+            QR qr = room.getQrById(qrId);
+            roomView.updateUserPosition(new Point(qr.getX(), qr.getY()));
         }
-        roomView.updateUserPosition(userPosition);
     }
 }
