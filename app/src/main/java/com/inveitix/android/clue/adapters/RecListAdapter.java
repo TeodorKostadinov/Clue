@@ -13,6 +13,7 @@ import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -25,10 +26,15 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
     private List<Museum> museums;
     private Context context;
 
-    public RecListAdapter(Context context, List<Museum> museums, OnDownloadClickedListener listener) {
-        this.museums = museums;
+    public RecListAdapter(Context context, OnDownloadClickedListener listener) {
+        this.museums = new ArrayList<>();
         this.context = context;
         this.listener = listener;
+    }
+
+    public void addItems(List<Museum> museums) {
+        this.museums = museums;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -108,9 +114,17 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
                 listener.onDownloadClicked(museumID);
             } else {
                 if (itemClickListener != null) {
-                    itemClickListener.onItemClick(v, museumID);
+                    itemClickListener.onItemClick(getItemById(museumID));
                 }
             }
         }
+    }
+
+    private Museum getItemById(int museumId) {
+        for (Museum mus :
+                museums) {
+            if (mus.getId() == museumId) return mus;
+        }
+        return null;
     }
 }

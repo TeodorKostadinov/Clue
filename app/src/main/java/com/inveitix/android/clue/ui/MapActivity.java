@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.inveitix.android.clue.R;
+import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.Point;
+import com.inveitix.android.clue.database.MapsInstance;
 import com.inveitix.android.clue.ui.views.RoomView;
 
 import java.util.ArrayList;
@@ -20,6 +22,8 @@ import butterknife.ButterKnife;
 public class MapActivity extends AppCompatActivity {
 
     private static final String TAG = "MapActivity";
+    public static final String EXTRA_MUSEUM_ID = "museumId";
+
     @Bind(R.id.grp_map_container)
     ViewGroup grpMapContainer;
     @Bind(R.id.room)
@@ -35,6 +39,11 @@ public class MapActivity extends AppCompatActivity {
         roomView.setShape(roomPoints);
         roomView.setDoors(generateDoors());
         roomView.setWidthToHeightRatio(0.89f);
+
+        int museumId = getIntent().getIntExtra(EXTRA_MUSEUM_ID, -1);
+        MuseumMap map = MapsInstance.getInstance().getMapByMuseumId(museumId);
+        
+
         roomView.setOnDoorClickedListener(new RoomView.OnDoorClickedListener() {
             @Override
             public void onDoorClicked(Point door) {

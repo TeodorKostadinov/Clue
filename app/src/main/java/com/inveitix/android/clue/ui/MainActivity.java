@@ -18,15 +18,17 @@ import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.database.FireBaseLoader;
+import com.inveitix.android.clue.database.MapsInstance;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements RecListAdapter.OnDownloadClickedListener {
+public class MainActivity extends AppCompatActivity implements RecListAdapter.OnDownloadClickedListener, FireBaseLoader.DownloadListenre {
 
     @Bind(R.id.rec_view)
     RecyclerView recView;
@@ -44,35 +46,47 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         maps = new ArrayList<>();
         ButterKnife.bind(this);
         initViews();
-        FireBaseLoader.getInstance(this).downloadMuseumsList(museums, adapter);
-        FireBaseLoader.getInstance(this).downloadMap(0, adapter);
-
+        FireBaseLoader.getInstance(this).downloadMuseumsList(this);
     }
 
     private void initViews() {
         setSupportActionBar(toolbar);
         recView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new RecListAdapter(this, museums, this);
+        adapter = new RecListAdapter(this, this);
         recView.setAdapter(adapter);
         adapter.setOnItemClickListener(new RecyclerViewOnItemClickListener() {
+
             @Override
-            public void onItemClick(View view, int position) {
-                showInfoDialog(position, museums);
+            public void onItemClick(Museum museumClicked) {
+                showInfoDialog(museumClicked);
             }
         });
     }
 
-    public void showInfoDialog(int position, List<Museum> museums) {
+    public void showInfoDialog(final Museum museum) {
         AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-        alertDialog.setTitle(museums.get(position).getName());
-        alertDialog.setMessage(museums.get(position).getDescription());
+        alertDialog.setTitle(museum.getName());
+        alertDialog.setMessage(museum.getDescription());
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "ENTER MAP",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startMapActivity(museum.getId());
+                    }
+                });
         alertDialog.show();
+    }
+
+    private void startMapActivity(int museumId) {
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.putExtra(MapActivity.EXTRA_MUSEUM_ID, museumId);
+        startActivity(intent);
     }
 
     @Override
@@ -96,35 +110,20 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         return super.onOptionsItemSelected(item);
     }
 
-    public void onDownloadFinished(int museumID) {
-
-        adapter.updateItem(museumID, Museum.STATUS_DOWNLOADED);
-
+    @Override
+    public void onDownloadClicked(final int museumID) {
+        adapter.updateItem(museumID, Museum.STATUS_DOWNLOADING);
+        FireBaseLoader.getInstance(this).downloadMap(museumID, this);
     }
 
     @Override
-    public void onDownloadClicked(final int museumID) {
-        //TODO Remove this
-        Intent intent = new Intent(this, MapActivity.class);
-        startActivity(intent);
-
-        adapter.updateItem(museumID, Museum.STATUS_DOWNLOADING);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(5000);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            onDownloadFinished(museumID);
-                        }
-                    });
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+    public void onMuseumListDownloaded(List<Museum> museums) {
+        adapter.addItems(museums);
     }
 
+    @Override
+    public void onMuseumDownloaded(MuseumMap museum) {
+        MapsInstance.getInstance().addMap(museum);
+        adapter.updateItem(museum.getMuseumId(), Museum.STATUS_DOWNLOADED);
+    }
 }

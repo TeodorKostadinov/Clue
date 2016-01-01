@@ -11,6 +11,7 @@ import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,11 +34,13 @@ public class FireBaseLoader {
         return instance;
     }
 
-    public void downloadMuseumsList(final List<Museum> museums, final RecListAdapter adapter) {
+    public void downloadMuseumsList(final DownloadListenre listener) {
 
         fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Museum> museums = new ArrayList<Museum>();
+
                 for (DataSnapshot postMuseum : dataSnapshot.getChildren()) {
                     String name = (String) postMuseum.child("name").getValue();
                     String description = (String) postMuseum.child("description").getValue();
@@ -59,7 +62,7 @@ public class FireBaseLoader {
                         }
                     }
                 }
-                adapter.notifyDataSetChanged();
+                listener.onMuseumListDownloaded(museums);
             }
 
             @Override
@@ -70,17 +73,17 @@ public class FireBaseLoader {
     }
 
 
-    public void downloadMap(final int museumId, final RecListAdapter adapter) {
+    public void downloadMap(final int museumId, final DownloadListenre listenre) {
 
         fireBaseRef.child("maps").orderByChild("museumId").equalTo(museumId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postMaps : dataSnapshot.getChildren()) {
                     Log.e("MAP", String.valueOf(postMaps.getValue()));
-                        MuseumMap map = postMaps.getValue(MuseumMap.class);
-                        Log.e("MAP", "MuseumID: " + String.valueOf(map.getMuseumId()));
+                    MuseumMap map = postMaps.getValue(MuseumMap.class);
+                    Log.e("MAP", "MuseumID: " + String.valueOf(map.getMuseumId()));
+                    listenre.onMuseumDownloaded(map);
                 }
-                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -89,5 +92,11 @@ public class FireBaseLoader {
             }
         });
 
+    }
+
+    public interface DownloadListenre {
+        void onMuseumListDownloaded(List<Museum> museums);
+
+        void onMuseumDownloaded(MuseumMap museum);
     }
 }
