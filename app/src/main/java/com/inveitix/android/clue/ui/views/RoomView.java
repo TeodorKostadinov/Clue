@@ -22,6 +22,7 @@ public class RoomView extends View {
     private static final float TOUCH_PRECISION = 30;
     private static final float DOOR_SIZE = 30;
     private static final float QR_SIZE = 25;
+    private static final float USER_SIZE = 20;
     private Paint textPaint;
     private Paint roomPaint;
     private float textHeight = 25;
@@ -30,6 +31,7 @@ public class RoomView extends View {
     private List<Point> shape;
     private float ratio;
     private List<Door> doors;
+    private Point userPosition;
     private List<QR> qrs;
     private OnDoorClickedListener doorListener;
     private OnQrClickedListener qrListener;
@@ -73,6 +75,12 @@ public class RoomView extends View {
 
     public void setShape(List<Point> shape) {
         this.shape = shape;
+        invalidate();
+        requestLayout();
+    }
+
+    public void updateUserPosition(Point userPosition) {
+        this.userPosition = userPosition;
         invalidate();
         requestLayout();
     }
@@ -123,15 +131,19 @@ public class RoomView extends View {
             roomPaint.setColor(Color.GREEN);
             for (Door door :
                     doors) {
-                canvas.drawCircle(maxWidth * door.getX(), maxWidth * door.getY(), DOOR_SIZE, roomPaint);
+                canvas.drawCircle(maxWidth * door.getX(), maxHeight * door.getY(), DOOR_SIZE, roomPaint);
             }
         }
         if (qrs != null && qrs.size() > 0) {
             roomPaint.setColor(Color.RED);
             for (QR qr :
                     qrs) {
-                canvas.drawCircle(maxWidth * qr.getX(), maxWidth * qr.getY(), QR_SIZE, roomPaint);
+                canvas.drawCircle(maxWidth * qr.getX(), maxHeight * qr.getY(), QR_SIZE, roomPaint);
             }
+        }
+        if(userPosition != null) {
+            roomPaint.setColor(Color.BLUE);
+            canvas.drawCircle(maxWidth * userPosition.getX(), maxHeight * userPosition.getY(), USER_SIZE, roomPaint);
         }
     }
 
