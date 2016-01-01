@@ -38,16 +38,16 @@ public class QR {
         this.roomId = roomId;
     }
 
-    public double getX() {
-        return x;
+    public float getX() {
+        return (float) x;
     }
 
     public void setX(double x) {
         this.x = x;
     }
 
-    public double getY() {
-        return y;
+    public float getY() {
+        return (float) y;
     }
 
     public void setY(double y) {

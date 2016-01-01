@@ -11,7 +11,7 @@ public class Room {
     private String id;
     private String mapId;
     private List<QR> qrs;
-    private List<Shape> shape;
+    private List<Point> shape;
 
     public Room() {
     }
@@ -48,11 +48,11 @@ public class Room {
         this.qrs = qrs;
     }
 
-    public List<Shape> getShape() {
+    public List<Point> getShape() {
         return shape;
     }
 
-    public void setShape(List<Shape> shape) {
-        this.shape = shape;
+    public void setShape(List<Point> point) {
+        this.shape = point;
     }
 }

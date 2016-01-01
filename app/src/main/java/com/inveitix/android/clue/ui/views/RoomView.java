@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.Point;
+import com.inveitix.android.clue.cmn.QR;
 
 import java.util.List;
 
@@ -27,8 +29,8 @@ public class RoomView extends View {
     private int maxWidth;
     private List<Point> shape;
     private float ratio;
-    private List<Point> doors;
-    private List<Point> qrs;
+    private List<Door> doors;
+    private List<QR> qrs;
     private OnDoorClickedListener doorListener;
     private OnQrClickedListener qrListener;
 
@@ -61,11 +63,11 @@ public class RoomView extends View {
         roomPaint.setColor(Color.BLACK);
     }
 
-    public void setDoors(List<Point> doors) {
+    public void setDoors(List<Door> doors) {
         this.doors = doors;
     }
 
-    public void setQrs(List<Point> qrs) {
+    public void setQrs(List<QR> qrs) {
         this.qrs = qrs;
     }
 
@@ -110,25 +112,25 @@ public class RoomView extends View {
         path.reset();
         if (shape != null) {
             for (Point p : shape) {
-                path.lineTo(maxWidth * p.x, maxHeight * p.y);
+                path.lineTo(maxWidth * p.getX(), maxHeight * p.getY());
             }
             if (shape.size() > 0) {
-                path.lineTo(maxWidth * shape.get(0).x, maxHeight * shape.get(0).y);
+                path.lineTo(maxWidth * shape.get(0).getX(), maxHeight * shape.get(0).getY());
             }
             canvas.drawPath(path, roomPaint);
         }
         if (doors != null && doors.size() > 0) {
             roomPaint.setColor(Color.GREEN);
-            for (Point door :
+            for (Door door :
                     doors) {
-                canvas.drawCircle(maxWidth * door.x, maxWidth * door.y, DOOR_SIZE, roomPaint);
+                canvas.drawCircle(maxWidth * door.getX(), maxWidth * door.getY(), DOOR_SIZE, roomPaint);
             }
         }
         if (qrs != null && qrs.size() > 0) {
             roomPaint.setColor(Color.RED);
-            for (Point qr :
+            for (QR qr :
                     qrs) {
-                canvas.drawCircle(maxWidth * qr.x, maxWidth * qr.y, QR_SIZE, roomPaint);
+                canvas.drawCircle(maxWidth * qr.getX(), maxWidth * qr.getY(), QR_SIZE, roomPaint);
             }
         }
     }
@@ -137,29 +139,29 @@ public class RoomView extends View {
         this.doorListener = doorListener;
     }
 
-    public void setOnDoorQrListener(OnQrClickedListener qrListener) {
+    public void setOnQrClickedListener(OnQrClickedListener qrListener) {
         this.qrListener = qrListener;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (doorListener != null) {
-                for (Point door :
+            if (doorListener != null && doors != null) {
+                for (Door door :
                         doors) {
-                    if (Math.abs(maxWidth * door.x - event.getX()) < DOOR_SIZE + TOUCH_PRECISION &&
-                            Math.abs(maxHeight * door.y - event.getY()) < DOOR_SIZE + TOUCH_PRECISION) {
+                    if (Math.abs(maxWidth * door.getX() - event.getX()) < DOOR_SIZE + TOUCH_PRECISION &&
+                            Math.abs(maxHeight * door.getY() - event.getY()) < DOOR_SIZE + TOUCH_PRECISION) {
                         doorListener.onDoorClicked(door);
                     }
                 }
             }
 
-            if (qrListener != null) {
-                for (Point qr :
+            if (qrListener != null && qrs != null) {
+                for (QR qr :
                         qrs) {
-                    if (Math.abs(maxWidth * qr.x - event.getX()) < QR_SIZE + TOUCH_PRECISION &&
-                            Math.abs(maxHeight * qr.y - event.getY()) < QR_SIZE + TOUCH_PRECISION) {
-                        doorListener.onDoorClicked(qr);
+                    if (Math.abs(maxWidth * qr.getX() - event.getX()) < QR_SIZE + TOUCH_PRECISION &&
+                            Math.abs(maxHeight * qr.getY() - event.getY()) < QR_SIZE + TOUCH_PRECISION) {
+                        qrListener.onQrClicked(qr);
                     }
                 }
             }
@@ -168,10 +170,10 @@ public class RoomView extends View {
     }
 
     public interface OnDoorClickedListener {
-        void onDoorClicked(Point door);
+        void onDoorClicked(Door door);
     }
 
     public interface OnQrClickedListener {
-        void onQrClicked(Point qr);
+        void onQrClicked(QR qr);
     }
 }
