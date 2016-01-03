@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.inveitix.android.clue.R;
@@ -23,12 +22,11 @@ import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements RecListAdapter.OnDownloadClickedListener, FireBaseLoader.DownloadListenre {
+public class MainActivity extends AppCompatActivity implements RecListAdapter.OnDownloadClickedListener, FireBaseLoader.DownloadListener {
 
     @Bind(R.id.rec_view)
     RecyclerView recView;

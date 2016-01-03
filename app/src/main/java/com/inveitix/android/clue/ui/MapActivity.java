@@ -99,7 +99,9 @@ public class MapActivity extends AppCompatActivity {
             Log.e(TAG, "QRcode:" + scanResult.getContents());
             String qrId = scanResult.getContents();
             QR qr = room.getQrById(qrId);
-            roomView.updateUserPosition(new Point(qr.getX(), qr.getY()));
+            if (qr != null) {
+                roomView.updateUserPosition(new Point(qr.getX(), qr.getY()));
+            }
         }
     }
 }
