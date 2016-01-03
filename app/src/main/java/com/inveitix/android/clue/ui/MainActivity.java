@@ -2,12 +2,14 @@ package com.inveitix.android.clue.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +19,8 @@ import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
+import com.inveitix.android.clue.database.DBHelper;
+import com.inveitix.android.clue.database.DBUtils;
 import com.inveitix.android.clue.database.FireBaseLoader;
 import com.inveitix.android.clue.database.MapsInstance;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
@@ -47,6 +51,16 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         ButterKnife.bind(this);
         initViews();
         FireBaseLoader.getInstance(this).downloadMuseumsList(this);
+        DBUtils.writeRecord(this, "rec1");
+
+        Cursor cursor = DBUtils.readRecord(this);
+
+        if(cursor.moveToFirst()){
+            do {
+                Log.e("db", "VAL:" + cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_VAL)));
+            } while (cursor.moveToNext());
+        }
+
     }
 
     private void initViews() {
