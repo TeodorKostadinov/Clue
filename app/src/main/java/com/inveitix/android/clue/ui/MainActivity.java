@@ -34,9 +34,9 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     RecListAdapter adapter;
+    ProgressDialog dialog;
     private List<Museum> museums;
     private List<MuseumMap> maps;
-    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         Intent intent = new Intent(this, MapActivity.class);
         intent.putExtra(MapActivity.EXTRA_MUSEUM_ID, museumId);
         startActivity(intent);
+        overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
     @Override

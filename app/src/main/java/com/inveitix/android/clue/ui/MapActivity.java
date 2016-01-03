@@ -27,10 +27,10 @@ import butterknife.OnClick;
 
 public class MapActivity extends AppCompatActivity {
 
-    private static final String TAG = "MapActivity";
     public static final String EXTRA_MUSEUM_ID = "museumId";
-    private static final String EXTRA_ROOM_ID = "roomId";
     public static final int NO_EXTRA = -1;
+    private static final String TAG = "MapActivity";
+    private static final String EXTRA_ROOM_ID = "roomId";
     private static final int RC_BARCODE_CAPTURE = 156;
 
     @Bind(R.id.grp_map_container)
@@ -76,6 +76,12 @@ public class MapActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
 
     @OnClick(R.id.btn_scan)
