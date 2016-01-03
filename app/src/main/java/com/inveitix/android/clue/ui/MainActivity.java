@@ -1,5 +1,6 @@
 package com.inveitix.android.clue.ui;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     RecListAdapter adapter;
     private List<Museum> museums;
     private List<MuseumMap> maps;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,17 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         ButterKnife.bind(this);
         initViews();
         FireBaseLoader.getInstance(this).downloadMuseumsList(this);
+        loadingListProgress();
+    }
+
+    private void loadingListProgress() {
+        dialog = new ProgressDialog(MainActivity.this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage("Loading. Please wait...");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
     }
 
     private void initViews() {
@@ -119,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     @Override
     public void onMuseumListDownloaded(List<Museum> museums) {
         adapter.addItems(museums);
+        dialog.cancel();
     }
 
     @Override
