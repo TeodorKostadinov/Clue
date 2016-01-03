@@ -71,13 +71,15 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
                         dialog.dismiss();
                     }
                 });
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "ENTER MAP",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startMapActivity(museum.getId());
-                    }
-                });
+        if (museum.getMapStatus() == Museum.STATUS_DOWNLOADED) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "ENTER MAP",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startMapActivity(museum.getId());
+                        }
+                    });
+        }
         alertDialog.show();
     }
 
