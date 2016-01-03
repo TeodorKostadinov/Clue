@@ -7,7 +7,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 
@@ -34,7 +33,7 @@ public class FireBaseLoader {
         return instance;
     }
 
-    public void downloadMuseumsList(final DownloadListenre listener) {
+    public void downloadMuseumsList(final DownloadListener listener) {
 
         fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
@@ -73,7 +72,7 @@ public class FireBaseLoader {
     }
 
 
-    public void downloadMap(final int museumId, final DownloadListenre listenre) {
+    public void downloadMap(final int museumId, final DownloadListener listener) {
 
         fireBaseRef.child("maps").orderByChild("museumId").equalTo(museumId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -82,7 +81,7 @@ public class FireBaseLoader {
                     Log.e("MAP", String.valueOf(postMaps.getValue()));
                     MuseumMap map = postMaps.getValue(MuseumMap.class);
                     Log.e("MAP", "MuseumID: " + String.valueOf(map.getMuseumId()));
-                    listenre.onMuseumDownloaded(map);
+                    listener.onMuseumDownloaded(map);
                 }
             }
 
@@ -94,7 +93,7 @@ public class FireBaseLoader {
 
     }
 
-    public interface DownloadListenre {
+    public interface DownloadListener {
         void onMuseumListDownloaded(List<Museum> museums);
 
         void onMuseumDownloaded(MuseumMap museum);
