@@ -57,7 +57,7 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
             holder.btnDownload.setVisibility(View.VISIBLE);
             holder.progressBar.setVisibility(View.GONE);
         } else {
-            holder.btnDownload.setVisibility(View.INVISIBLE);
+            holder.btnDownload.setVisibility(View.GONE);
             holder.progressBar.setVisibility(View.VISIBLE);
         }
     }
