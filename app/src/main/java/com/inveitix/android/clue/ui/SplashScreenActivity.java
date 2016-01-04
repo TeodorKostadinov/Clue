@@ -1,13 +1,13 @@
 package com.inveitix.android.clue.ui;
 
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.transition.Fade;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.inveitix.android.clue.R;
 
@@ -16,36 +16,44 @@ import butterknife.ButterKnife;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    private final int SPLASH_DISPLAY_LENGTH = 3000;
-
     @Bind(R.id.img_splash)
     ImageView imgSplash;
-    private Fade mFade;
+    @Bind(R.id.grp_splash)
+    RelativeLayout grpSplash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
         ButterKnife.bind(this);
-        Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
-        final Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
-        imgSplash.startAnimation(fadeIn);
+        animateSplash();
+    }
 
-        new Handler().postDelayed(new Runnable() {
+    private void animateSplash(){
+        Animation zoomIn = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
+        Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        grpSplash.startAnimation(fadeIn);
+        imgSplash.startAnimation(zoomIn);
+
+        zoomIn.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void run() {
-                imgSplash.startAnimation(fadeOut);
+            public void onAnimationStart(Animation animation) {
+
             }
-        }, 2000);
 
-        new Handler().postDelayed(new Runnable() {
             @Override
-            public void run() {
+            public void onAnimationEnd(Animation animation) {
                 Intent mainIntent = new Intent(SplashScreenActivity.this, MainActivity.class);
                 SplashScreenActivity.this.startActivity(mainIntent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 SplashScreenActivity.this.finish();
             }
-        }, SPLASH_DISPLAY_LENGTH);
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
 
     }
 }
