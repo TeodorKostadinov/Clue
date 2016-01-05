@@ -1,8 +1,10 @@
 package com.inveitix.android.clue.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -72,7 +74,16 @@ public class MapActivity extends AppCompatActivity {
             roomView.setOnQrClickedListener(new RoomView.OnQrClickedListener() {
                 @Override
                 public void onQrClicked(QR qr) {
-                    Toast.makeText(MapActivity.this, "Qr CLicked", Toast.LENGTH_SHORT).show();
+                    AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+                    alertDialog.setTitle("Info");
+                    alertDialog.setMessage(qr.getInfo());
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
                 }
             });
         }
