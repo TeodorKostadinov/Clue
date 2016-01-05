@@ -44,23 +44,10 @@ public class FireBaseLoader {
 
                     Museum museum = postMuseum.getValue(Museum.class);
 
-                    if (museums.size() < 1) {
-                        museums.add(museum);
-                        Log.e("ADD", "ÄDDed 1");
-                    } else {
-                        for (int i = 0; i < museums.size(); i++) {
-                            if (museums.get(i).getId() == museum.getId()) {
-                                museums.remove(i);
-                                museums.add(museum);
-
-                                Log.e("ADD", "ÄDDed 2");
-                            } else {
-                                museums.add(museum);
-                                Log.e("ADD", "ÄDDed 3");
-                            }
-                        }
-                    }
+                    museums.add(museum);
                 }
+
+                duplicateCheck(museums);
                 listener.onMuseumListDownloaded(museums);
             }
 
@@ -69,6 +56,16 @@ public class FireBaseLoader {
                 Log.e(TAG, firebaseError.toString());
             }
         });
+    }
+
+    private void duplicateCheck(List<Museum> museums) {
+        if (museums.size() > 1) {
+            for (int i = 1; i <= museums.size() - 1; i++) {
+                if (museums.get(i).getId() == museums.get(i - 1).getId()){
+                    museums.remove(i);
+                }
+            }
+        }
     }
 
 

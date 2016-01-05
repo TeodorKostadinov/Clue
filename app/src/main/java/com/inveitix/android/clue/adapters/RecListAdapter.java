@@ -83,6 +83,14 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         notifyDataSetChanged();
     }
 
+    private Museum getItemById(int museumId) {
+        for (Museum mus :
+                museums) {
+            if (mus.getId() == museumId) return mus;
+        }
+        return null;
+    }
+
     public interface OnDownloadClickedListener {
         void onDownloadClicked(int museumID);
     }
@@ -114,13 +122,5 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
                 }
             }
         }
-    }
-
-    private Museum getItemById(int museumId) {
-        for (Museum mus :
-                museums) {
-            if (mus.getId() == museumId) return mus;
-        }
-        return null;
     }
 }
