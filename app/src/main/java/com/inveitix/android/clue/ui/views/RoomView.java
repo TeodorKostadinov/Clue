@@ -113,7 +113,7 @@ public class RoomView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
+        Bitmap bitmap;
         roomPaint.setColor(Color.BLACK);
         canvas.drawCircle(0, 0, 15, roomPaint);
         canvas.drawCircle(maxWidth, 0, 15, roomPaint);
@@ -132,13 +132,15 @@ public class RoomView extends View {
         }
         if (doors != null && doors.size() > 0) {
             roomPaint.setColor(Color.GREEN);
+            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
             for (Door door :
                     doors) {
-                canvas.drawCircle(maxWidth * door.getX(), maxHeight * door.getY(), DOOR_SIZE, roomPaint);
+                canvas.drawBitmap(bitmap, maxWidth * door.getX(), maxHeight * door.getY(), roomPaint);
             }
         }
         if (qrs != null && qrs.size() > 0) {
             roomPaint.setColor(Color.BLUE);
+            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
             for (QR qr :
                     qrs) {
                 canvas.drawBitmap(bitmap, maxWidth * qr.getX(), maxHeight * qr.getY(), roomPaint);
