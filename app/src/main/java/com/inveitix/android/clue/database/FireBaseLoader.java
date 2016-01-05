@@ -50,13 +50,17 @@ public class FireBaseLoader {
 
                     if (museums.size() < 1) {
                         museums.add(museum);
+                        Log.e("ADD", "ÄDDed 1");
                     } else {
                         for (int i = 0; i < museums.size(); i++) {
                             if (museums.get(i).getId() == museum.getId()) {
                                 museums.remove(i);
                                 museums.add(museum);
+
+                                Log.e("ADD", "ÄDDed 2");
                             } else {
                                 museums.add(museum);
+                                Log.e("ADD", "ÄDDed 3");
                             }
                         }
                     }
