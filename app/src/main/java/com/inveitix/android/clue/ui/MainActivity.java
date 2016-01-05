@@ -21,7 +21,6 @@ import com.inveitix.android.clue.database.FireBaseLoader;
 import com.inveitix.android.clue.database.MapsInstance;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -35,15 +34,11 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     Toolbar toolbar;
     RecListAdapter adapter;
     ProgressDialog dialog;
-    private List<Museum> museums;
-    private List<MuseumMap> maps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        museums = new ArrayList<>();
-        maps = new ArrayList<>();
         ButterKnife.bind(this);
         initViews();
         FireBaseLoader.getInstance(this).downloadMuseumsList(this);
@@ -63,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     private void initViews() {
         setSupportActionBar(toolbar);
         recView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new RecListAdapter(this, this);
+        adapter = new RecListAdapter(this);
         recView.setAdapter(adapter);
         adapter.setOnItemClickListener(new RecyclerViewOnItemClickListener() {
 
