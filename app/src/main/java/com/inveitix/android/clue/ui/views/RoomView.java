@@ -1,6 +1,8 @@
 package com.inveitix.android.clue.ui.views;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.Point;
 import com.inveitix.android.clue.cmn.QR;
@@ -21,7 +24,7 @@ public class RoomView extends View {
     private static final String TAG = "RoomView";
     private static final float TOUCH_PRECISION = 30;
     private static final float DOOR_SIZE = 30;
-    private static final float QR_SIZE = 25;
+    private static final float QR_SIZE = 20;
     private static final float USER_SIZE = 20;
     private Paint textPaint;
     private Paint roomPaint;
@@ -110,7 +113,7 @@ public class RoomView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
         roomPaint.setColor(Color.BLACK);
         canvas.drawCircle(0, 0, 15, roomPaint);
         canvas.drawCircle(maxWidth, 0, 15, roomPaint);
@@ -135,10 +138,10 @@ public class RoomView extends View {
             }
         }
         if (qrs != null && qrs.size() > 0) {
-            roomPaint.setColor(Color.RED);
+            roomPaint.setColor(Color.BLUE);
             for (QR qr :
                     qrs) {
-                canvas.drawCircle(maxWidth * qr.getX(), maxHeight * qr.getY(), QR_SIZE, roomPaint);
+                canvas.drawBitmap(bitmap, maxWidth * qr.getX(), maxHeight * qr.getY(), roomPaint);
             }
         }
         if(userPosition != null) {
