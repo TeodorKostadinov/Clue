@@ -148,7 +148,9 @@ public class RoomView extends View {
         }
         if(userPosition != null) {
             roomPaint.setColor(Color.BLUE);
-            canvas.drawCircle(maxWidth * userPosition.getX(), maxHeight * userPosition.getY(), USER_SIZE, roomPaint);
+            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_room_white_36dp);
+            canvas.drawBitmap(bitmap, maxWidth * userPosition.getX() - 30, maxHeight * userPosition.getY() - 20, roomPaint);
+            //canvas.drawCircle(maxWidth * userPosition.getX(), maxHeight * userPosition.getY(), USER_SIZE, roomPaint);
         }
     }
 
