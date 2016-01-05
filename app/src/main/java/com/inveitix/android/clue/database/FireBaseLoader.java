@@ -38,15 +38,11 @@ public class FireBaseLoader {
         fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Museum> museums = new ArrayList<Museum>();
+                List<Museum> museums = new ArrayList<>();
 
                 for (DataSnapshot postMuseum : dataSnapshot.getChildren()) {
-                    String name = (String) postMuseum.child("name").getValue();
-                    String description = (String) postMuseum.child("description").getValue();
-                    int id = Integer.parseInt(postMuseum.child("id").getValue().toString());
-                    String location = (String) postMuseum.child("location").getValue();
-                    int mapSizeKB = Integer.parseInt(postMuseum.child("mapSizeKB").getValue().toString());
-                    Museum museum = new Museum(name, description, id, location, mapSizeKB);
+
+                    Museum museum = postMuseum.getValue(Museum.class);
 
                     if (museums.size() < 1) {
                         museums.add(museum);

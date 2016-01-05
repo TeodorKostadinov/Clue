@@ -6,26 +6,17 @@ public class Museum {
     public static final int STATUS_DOWNLOADED = 2;
     public static final int STATUS_NOT_DOWNLOADED = 0;
 
-    private String name;
     private String description;
     private int id;
-    private int mapStatus;
     private String location;
     private int mapSizeKB;
+    private String name;
+    private int mapStatus;
 
     public Museum() {
-
-    }
-
-    public Museum(String name, String description, int id, String location, int mapSizeKB) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.location = location;
-        this.mapSizeKB = mapSizeKB;
         setMapStatus(STATUS_NOT_DOWNLOADED);
-
     }
+
 
     public String getLocation() {
         return location;
