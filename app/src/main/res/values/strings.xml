@@ -8,4 +8,5 @@
     <string name="permission_camera_rationale">Need permission for camera</string>
     <string name="ok">OK</string>
     <string name="no_camera_permission">No camera permission</string>
+    <string name="txt_move">Move</string>
 </resources>

@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -106,6 +107,18 @@ public class MapActivity extends AppCompatActivity {
             Intent marketIntent = new Intent(Intent.ACTION_VIEW, marketUri);
             startActivity(marketIntent);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        roomView.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        roomView.resume();
     }
 
     @Override
