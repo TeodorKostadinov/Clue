@@ -43,11 +43,11 @@ public class FireBaseLoader {
                 for (DataSnapshot postMuseum : dataSnapshot.getChildren()) {
 
                     Museum museum = postMuseum.getValue(Museum.class);
-
-                    museums.add(museum);
+                    if (!duplicateCheck(museums, museum)){
+                        museums.add(museum);
+                    }
                 }
 
-                duplicateCheck(museums);
                 listener.onMuseumListDownloaded(museums);
             }
 
@@ -58,16 +58,16 @@ public class FireBaseLoader {
         });
     }
 
-    private void duplicateCheck(List<Museum> museums) {
+    private boolean duplicateCheck(List<Museum> museums, Museum museum) {
         if (museums.size() > 1) {
-            for (int i = 1; i <= museums.size() - 1; i++) {
-                if (museums.get(i).getId() == museums.get(i - 1).getId()){
-                    museums.remove(i);
+            for (int i = 0; i < museums.size(); i++) {
+                if (museums.get(i).getId() == museum.getId()){
+                    return true;
                 }
             }
         }
+        return false;
     }
-
 
     public void downloadMap(final int museumId, final DownloadListener listener) {
 
