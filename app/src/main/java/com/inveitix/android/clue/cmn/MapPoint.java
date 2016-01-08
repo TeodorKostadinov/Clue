@@ -3,13 +3,13 @@ package com.inveitix.android.clue.cmn;
 /**
  * Created by Tito on 28.12.2015 г..
  */
-public class Point {
+public class MapPoint {
     public double x;
     public double y;
 
-    public Point() {
+    public MapPoint() {
     }
-    public Point(double x, double y) {
+    public MapPoint(double x, double y) {
         this.x = x;
         this.y = y;
     }

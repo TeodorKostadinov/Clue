@@ -8,14 +8,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.vision.barcode.Barcode;
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MuseumMap;
-import com.inveitix.android.clue.cmn.Point;
+import com.inveitix.android.clue.cmn.MapPoint;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.database.MapsInstance;
@@ -109,6 +106,18 @@ public class MapActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        roomView.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        roomView.resume(this);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.e(TAG, "ACtRez:" + requestCode);
         IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -117,7 +126,7 @@ public class MapActivity extends AppCompatActivity {
             String qrId = scanResult.getContents();
             QR qr = room.getQrById(qrId);
             if (qr != null) {
-                roomView.updateUserPosition(new Point(qr.getX(), qr.getY()));
+                roomView.updateUserPosition(new MapPoint(qr.getX(), qr.getY()));
             }
         }
     }
