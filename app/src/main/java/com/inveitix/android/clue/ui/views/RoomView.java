@@ -30,6 +30,14 @@ public class RoomView extends SurfaceView implements Runnable {
     private static final float TOUCH_PRECISION = 30;
     private static final float DOOR_SIZE = 30;
     private static final float QR_SIZE = 20;
+    public static final int RECT_LEFT_POINT = 0;
+    public static final int RECT_TOP_POINT = 0;
+    public static final int DISTANCE_X_FROM_QR = 30;
+    public static final int DISTANCE_Y_FROM_QR = 20;
+    public static final int CIRCLE_RADIUS = 15;
+    public static final int CIRCLE_X = 0;
+    public static final int CIRCLE_Y = 0;
+    public static final float USER_SPEED = 3f;
     Canvas canvas;
     Bitmap personPoint;
     float personX;
@@ -104,12 +112,12 @@ public class RoomView extends SurfaceView implements Runnable {
         this.userPosition = userPosition;
 
         if (isFirstTime) {
-            personX = maxWidth * userPosition.getX() - 30;
-            personY = maxHeight * userPosition.getY() - 20;
+            personX = maxWidth * userPosition.getX() - DISTANCE_X_FROM_QR;
+            personY = maxHeight * userPosition.getY() - DISTANCE_Y_FROM_QR;
             isFirstTime = false;
         } else {
-            newPersonX = maxWidth * userPosition.getX() - 30;
-            newPersonY = maxHeight * userPosition.getY() - 20;
+            newPersonX = maxWidth * userPosition.getX() - DISTANCE_X_FROM_QR;
+            newPersonY = maxHeight * userPosition.getY() - DISTANCE_Y_FROM_QR;
         }
 
         invalidate();
@@ -146,14 +154,14 @@ public class RoomView extends SurfaceView implements Runnable {
         Bitmap bitmap;
 
         roomPaint.setColor(Color.WHITE);
-        Rect rec = new Rect(0, 0, width, height);
+        Rect rec = new Rect(RECT_LEFT_POINT, RECT_TOP_POINT, width, height);
         canvas.drawRect(rec, roomPaint);
 
         roomPaint.setColor(Color.BLACK);
-        canvas.drawCircle(0, 0, 15, roomPaint);
-        canvas.drawCircle(maxWidth, 0, 15, roomPaint);
-        canvas.drawCircle(0, maxHeight, 15, roomPaint);
-        canvas.drawCircle(maxWidth, maxHeight, 15, roomPaint);
+        canvas.drawCircle(CIRCLE_X, CIRCLE_Y, CIRCLE_RADIUS, roomPaint);
+        canvas.drawCircle(maxWidth, CIRCLE_Y, CIRCLE_RADIUS, roomPaint);
+        canvas.drawCircle(CIRCLE_X, maxHeight, CIRCLE_RADIUS, roomPaint);
+        canvas.drawCircle(maxWidth, maxHeight, CIRCLE_RADIUS, roomPaint);
         Path path = new Path();
         path.reset();
 
@@ -184,7 +192,7 @@ public class RoomView extends SurfaceView implements Runnable {
         }
         if (userPosition != null) {
 
-            motionPerson(1.5f);
+            motionPerson(USER_SPEED);
             canvas.drawBitmap(personPoint, personX, personY, null);
         }
         surface.unlockCanvasAndPost(canvas);
@@ -221,8 +229,8 @@ public class RoomView extends SurfaceView implements Runnable {
             maxHeight = (int) (maxWidth / ratio);
         }
 
-        Log.e(TAG, "onMeasure width:" + maxWidth);
-        Log.e(TAG, "onMeasure height:" + maxHeight);
+        Log.i(TAG, "onMeasure width:" + maxWidth);
+        Log.i(TAG, "onMeasure height:" + maxHeight);
         setMeasuredDimension(maxWidth, maxHeight);
     }
 
