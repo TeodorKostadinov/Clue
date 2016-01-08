@@ -28,7 +28,7 @@ public class RoomView extends SurfaceView implements Runnable {
 
     private static final String TAG = "RoomView";
     private static final float TOUCH_PRECISION = 30;
-    private static final float DOOR_SIZE = 20;
+    private static final float DOOR_SIZE = 30;
     private static final float QR_SIZE = 20;
     public static final int RECT_LEFT_POINT = 0;
     public static final int RECT_TOP_POINT = 0;
@@ -179,7 +179,7 @@ public class RoomView extends SurfaceView implements Runnable {
             bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
             for (Door door :
                     doors) {
-                canvas.drawBitmap(bitmap, maxWidth * door.getX(), maxHeight * door.getY(), roomPaint);
+                canvas.drawBitmap(bitmap, maxWidth * door.getX() - DOOR_SIZE, maxHeight * door.getY() - DOOR_SIZE, roomPaint);
             }
         }
         if (qrs != null && qrs.size() > 0) {
