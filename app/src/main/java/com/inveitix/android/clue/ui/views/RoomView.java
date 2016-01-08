@@ -23,7 +23,7 @@ public class RoomView extends View {
 
     private static final String TAG = "RoomView";
     private static final float TOUCH_PRECISION = 30;
-    private static final float DOOR_SIZE = 30;
+    private static final float DOOR_SIZE = 20;
     private static final float QR_SIZE = 20;
     private static final float USER_SIZE = 20;
     private Paint textPaint;

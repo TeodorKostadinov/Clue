@@ -43,24 +43,11 @@ public class FireBaseLoader {
                 for (DataSnapshot postMuseum : dataSnapshot.getChildren()) {
 
                     Museum museum = postMuseum.getValue(Museum.class);
-
-                    if (museums.size() < 1) {
+                    if (!duplicateCheck(museums, museum)){
                         museums.add(museum);
-                        Log.e("ADD", "ÄDDed 1");
-                    } else {
-                        for (int i = 0; i < museums.size(); i++) {
-                            if (museums.get(i).getId() == museum.getId()) {
-                                museums.remove(i);
-                                museums.add(museum);
-
-                                Log.e("ADD", "ÄDDed 2");
-                            } else {
-                                museums.add(museum);
-                                Log.e("ADD", "ÄDDed 3");
-                            }
-                        }
                     }
                 }
+
                 listener.onMuseumListDownloaded(museums);
             }
 
@@ -71,6 +58,16 @@ public class FireBaseLoader {
         });
     }
 
+    private boolean duplicateCheck(List<Museum> museums, Museum museum) {
+        if (museums.size() > 1) {
+            for (int i = 0; i < museums.size(); i++) {
+                if (museums.get(i).getId() == museum.getId()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public void downloadMap(final int museumId, final DownloadListener listener) {
 
