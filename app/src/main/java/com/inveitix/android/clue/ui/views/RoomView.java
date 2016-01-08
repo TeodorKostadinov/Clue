@@ -26,10 +26,6 @@ import java.util.List;
 
 public class RoomView extends SurfaceView implements Runnable {
 
-    private static final String TAG = "RoomView";
-    private static final float TOUCH_PRECISION = 30;
-    private static final float DOOR_SIZE = 20;
-    private static final float QR_SIZE = 20;
     public static final int RECT_LEFT_POINT = 0;
     public static final int RECT_TOP_POINT = 0;
     public static final int DISTANCE_X_FROM_QR = 30;
@@ -38,15 +34,19 @@ public class RoomView extends SurfaceView implements Runnable {
     public static final int CIRCLE_X = 0;
     public static final int CIRCLE_Y = 0;
     public static final float USER_SPEED = 3f;
-    Canvas canvas;
-    Bitmap personPoint;
+    private static final String TAG = "RoomView";
+    private static final float TOUCH_PRECISION = 20;
+    private static final float DOOR_SIZE = 30;
+    private static final float QR_SIZE = 30;
     float personX;
     float personY;
-    SurfaceHolder surface;
     boolean isFirstTime;
     float newPersonX;
     float newPersonY;
-    WindowManager wm;
+    private Canvas canvas;
+    private Bitmap personPoint;
+    private SurfaceHolder surface;
+    private WindowManager wm;
     private Paint roomPaint;
     private float textHeight = 25;
     private int maxHeight;
@@ -179,7 +179,7 @@ public class RoomView extends SurfaceView implements Runnable {
             bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
             for (Door door :
                     doors) {
-                canvas.drawBitmap(bitmap, maxWidth * door.getX(), maxHeight * door.getY(), roomPaint);
+                canvas.drawBitmap(bitmap, maxWidth * door.getX() - DOOR_SIZE, maxHeight * door.getY() - DOOR_SIZE, roomPaint);
             }
         }
         if (qrs != null && qrs.size() > 0) {
@@ -187,7 +187,7 @@ public class RoomView extends SurfaceView implements Runnable {
             bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
             for (QR qr :
                     qrs) {
-                canvas.drawBitmap(bitmap, maxWidth * qr.getX(), maxHeight * qr.getY(), roomPaint);
+                canvas.drawBitmap(bitmap, maxWidth * qr.getX() - QR_SIZE, maxHeight * qr.getY() - QR_SIZE, roomPaint);
             }
         }
         if (userPosition != null) {
