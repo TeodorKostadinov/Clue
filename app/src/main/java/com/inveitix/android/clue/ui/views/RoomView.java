@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -18,7 +19,7 @@ import android.view.WindowManager;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
-import com.inveitix.android.clue.cmn.Point;
+import com.inveitix.android.clue.cmn.MapPoint;
 import com.inveitix.android.clue.cmn.QR;
 
 import java.util.List;
@@ -43,10 +44,10 @@ public class RoomView extends SurfaceView implements Runnable {
     private float textHeight = 25;
     private int maxHeight;
     private int maxWidth;
-    private List<Point> shape;
+    private List<MapPoint> shape;
     private float ratio;
     private List<Door> doors;
-    private Point userPosition;
+    private MapPoint userPosition;
     private List<QR> qrs;
     private OnDoorClickedListener doorListener;
     private OnQrClickedListener qrListener;
@@ -94,15 +95,15 @@ public class RoomView extends SurfaceView implements Runnable {
         this.qrs = qrs;
     }
 
-    public void setShape(List<Point> shape) {
+    public void setShape(List<MapPoint> shape) {
         this.shape = shape;
         invalidate();
         requestLayout();
     }
 
-    public void updateUserPosition(Point userPosition) {
+    public void updateUserPosition(MapPoint userPosition) {
         this.userPosition = userPosition;
-        
+
         if (isFirstTime) {
             personX = maxWidth * userPosition.getX() - 30;
             personY = maxHeight * userPosition.getY() - 20;
@@ -126,8 +127,11 @@ public class RoomView extends SurfaceView implements Runnable {
     @Override
     public void run() {
         Display display = wm.getDefaultDisplay();
-        int width = display.getWidth();
-        int height = display.getHeight();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+
         while (canDraw) {
 
             if (!surface.getSurface().isValid()) {
@@ -155,7 +159,7 @@ public class RoomView extends SurfaceView implements Runnable {
         path.reset();
 
         if (shape != null) {
-            for (Point p : shape) {
+            for (MapPoint p : shape) {
                 path.lineTo(maxWidth * p.getX(), maxHeight * p.getY());
             }
             if (shape.size() > 0) {
