@@ -7,16 +7,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PixelFormat;
-import android.graphics.drawable.Drawable;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
+import android.view.WindowManager;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
@@ -37,7 +35,10 @@ public class RoomView extends SurfaceView implements Runnable {
     float personX;
     float personY;
     SurfaceHolder surface;
-    private Paint textPaint;
+    boolean isFirstTime;
+    float newPersonX;
+    float newPersonY;
+    WindowManager wm;
     private Paint roomPaint;
     private float textHeight = 25;
     private int maxHeight;
@@ -51,9 +52,6 @@ public class RoomView extends SurfaceView implements Runnable {
     private OnQrClickedListener qrListener;
     private boolean canDraw;
     private Thread thread;
-    boolean isFirstTime;
-    float newPersonX;
-    float newPersonY;
 
     public RoomView(Context context) {
         super(context);
@@ -75,7 +73,7 @@ public class RoomView extends SurfaceView implements Runnable {
         canDraw = false;
         thread = null;
         surface = getHolder();
-        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.GREEN);
         if (textHeight == 0) {
             textHeight = textPaint.getTextSize();
@@ -87,8 +85,6 @@ public class RoomView extends SurfaceView implements Runnable {
         roomPaint.setStyle(Paint.Style.FILL);
         roomPaint.setColor(Color.BLACK);
     }
-
-
 
     public void setDoors(List<Door> doors) {
         this.doors = doors;
@@ -106,14 +102,16 @@ public class RoomView extends SurfaceView implements Runnable {
 
     public void updateUserPosition(Point userPosition) {
         this.userPosition = userPosition;
+        
         if (isFirstTime) {
-                personX = maxWidth * userPosition.getX() - 30;
-                personY = maxHeight * userPosition.getY() - 20;
+            personX = maxWidth * userPosition.getX() - 30;
+            personY = maxHeight * userPosition.getY() - 20;
             isFirstTime = false;
         } else {
             newPersonX = maxWidth * userPosition.getX() - 30;
             newPersonY = maxHeight * userPosition.getY() - 20;
         }
+
         invalidate();
         requestLayout();
     }
@@ -125,60 +123,69 @@ public class RoomView extends SurfaceView implements Runnable {
         requestLayout();
     }
 
-
     @Override
     public void run() {
+        Display display = wm.getDefaultDisplay();
+        int width = display.getWidth();
+        int height = display.getHeight();
         while (canDraw) {
 
             if (!surface.getSurface().isValid()) {
                 continue;
             }
-            canvas = surface.lockCanvas();
-            Bitmap bitmap;
-            roomPaint.setColor(Color.BLACK);
-            canvas.drawCircle(0, 0, 15, roomPaint);
-            canvas.drawCircle(maxWidth, 0, 15, roomPaint);
-            canvas.drawCircle(0, maxHeight, 15, roomPaint);
-            canvas.drawCircle(maxWidth, maxHeight, 15, roomPaint);
-            Path path = new Path();
-            path.reset();
-            if (shape != null) {
-                for (Point p : shape) {
-                    path.lineTo(maxWidth * p.getX(), maxHeight * p.getY());
-                }
-                if (shape.size() > 0) {
-                    path.lineTo(maxWidth * shape.get(0).getX(), maxHeight * shape.get(0).getY());
-                }
-                canvas.drawPath(path, roomPaint);
-            }
-            if (doors != null && doors.size() > 0) {
-                roomPaint.setColor(Color.GREEN);
-                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
-                for (Door door :
-                        doors) {
-                    canvas.drawBitmap(bitmap, maxWidth * door.getX(), maxHeight * door.getY(), roomPaint);
-                }
-            }
-            if (qrs != null && qrs.size() > 0) {
-                roomPaint.setColor(Color.BLUE);
-                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
-                for (QR qr :
-                        qrs) {
-                    canvas.drawBitmap(bitmap, maxWidth * qr.getX(), maxHeight * qr.getY(), roomPaint);
-                }
-            }
-            if (userPosition != null) {
-                roomPaint.setColor(Color.BLUE);
-
-                motionPerson(1.5f);
-                canvas.drawBitmap(personPoint, personX, personY, null);
-
-            }
-            surface.unlockCanvasAndPost(canvas);
+            drawMap(width, height);
 
         }
     }
 
+    private void drawMap(int width, int height) {
+        canvas = surface.lockCanvas();
+        Bitmap bitmap;
+
+        roomPaint.setColor(Color.WHITE);
+        Rect rec = new Rect(0, 0, width, height);
+        canvas.drawRect(rec, roomPaint);
+
+        roomPaint.setColor(Color.BLACK);
+        canvas.drawCircle(0, 0, 15, roomPaint);
+        canvas.drawCircle(maxWidth, 0, 15, roomPaint);
+        canvas.drawCircle(0, maxHeight, 15, roomPaint);
+        canvas.drawCircle(maxWidth, maxHeight, 15, roomPaint);
+        Path path = new Path();
+        path.reset();
+
+        if (shape != null) {
+            for (Point p : shape) {
+                path.lineTo(maxWidth * p.getX(), maxHeight * p.getY());
+            }
+            if (shape.size() > 0) {
+                path.lineTo(maxWidth * shape.get(0).getX(), maxHeight * shape.get(0).getY());
+            }
+            canvas.drawPath(path, roomPaint);
+        }
+        if (doors != null && doors.size() > 0) {
+
+            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
+            for (Door door :
+                    doors) {
+                canvas.drawBitmap(bitmap, maxWidth * door.getX(), maxHeight * door.getY(), roomPaint);
+            }
+        }
+        if (qrs != null && qrs.size() > 0) {
+
+            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
+            for (QR qr :
+                    qrs) {
+                canvas.drawBitmap(bitmap, maxWidth * qr.getX(), maxHeight * qr.getY(), roomPaint);
+            }
+        }
+        if (userPosition != null) {
+
+            motionPerson(1.5f);
+            canvas.drawBitmap(personPoint, personX, personY, null);
+        }
+        surface.unlockCanvasAndPost(canvas);
+    }
 
     public void pause() {
         canDraw = false;
@@ -191,12 +198,11 @@ public class RoomView extends SurfaceView implements Runnable {
                 e.printStackTrace();
             }
         }
-
         thread = null;
-
     }
 
-    public void resume() {
+    public void resume(Context context) {
+        wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         canDraw = true;
         thread = new Thread(this);
         thread.start();
@@ -215,13 +221,6 @@ public class RoomView extends SurfaceView implements Runnable {
         Log.e(TAG, "onMeasure width:" + maxWidth);
         Log.e(TAG, "onMeasure height:" + maxHeight);
         setMeasuredDimension(maxWidth, maxHeight);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-
     }
 
     public void setOnDoorClickedListener(OnDoorClickedListener doorListener) {
@@ -260,16 +259,6 @@ public class RoomView extends SurfaceView implements Runnable {
 
     private void motionPerson(float speed) {
 
-//        if (personX < newPersonX && personY < newPersonY) {
-//            personX += speed;
-//            personY += speed;
-//        }
-//
-//        if (personX > newPersonX && personY > newPersonY) {
-//            personX -= speed;
-//            personY -= speed;
-//        }
-//
         if (personY < newPersonY) {
             personY += speed;
         }

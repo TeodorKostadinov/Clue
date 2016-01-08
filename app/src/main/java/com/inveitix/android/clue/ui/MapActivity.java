@@ -118,7 +118,7 @@ public class MapActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        roomView.resume();
+        roomView.resume(this);
     }
 
     @Override
