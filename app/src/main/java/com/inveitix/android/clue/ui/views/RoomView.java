@@ -25,7 +25,7 @@ import com.inveitix.android.clue.cmn.QR;
 import java.util.List;
 
 public class RoomView extends SurfaceView implements Runnable {
-
+    
     public static final int RECT_LEFT_POINT = 0;
     public static final int RECT_TOP_POINT = 0;
     public static final int DISTANCE_X_FROM_QR = 30;
