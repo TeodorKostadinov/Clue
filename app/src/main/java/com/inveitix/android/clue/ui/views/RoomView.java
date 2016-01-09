@@ -64,6 +64,8 @@ public class RoomView extends SurfaceView implements Runnable {
     private Thread thread;
     private Bitmap bmpDoor;
     private Bitmap bmpQr;
+    private Bitmap bmpFloorPattern;
+    private BitmapShader patternBMPshader;
 
     public RoomView(Context context) {
         super(context);
@@ -84,6 +86,9 @@ public class RoomView extends SurfaceView implements Runnable {
         personPoint = BitmapFactory.decodeResource(getResources(), R.drawable.ic_room_white_36dp);
         bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
         bmpQr = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
+        bmpFloorPattern = BitmapFactory.decodeResource(getResources(), R.drawable.floor_pattern6);
+        patternBMPshader = new BitmapShader(bmpFloorPattern,
+                Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         canDraw = false;
         thread = null;
         surface = getHolder();
@@ -158,7 +163,6 @@ public class RoomView extends SurfaceView implements Runnable {
 
     private void drawMap(int width, int height) {
         canvas = surface.lockCanvas();
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.floor_pattern2);
 
         roomPaint.setColor(Color.WHITE);
         Rect rec = new Rect(RECT_LEFT_POINT, RECT_TOP_POINT, width, height);
@@ -171,15 +175,15 @@ public class RoomView extends SurfaceView implements Runnable {
         canvas.drawCircle(maxWidth, maxHeight, CIRCLE_RADIUS, roomPaint);
         Path path = new Path();
         path.reset();
-        BitmapShader patternBMPshader = new BitmapShader(bitmap,
-                Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+
         drawFloor(path, patternBMPshader);
         drawDoors();
         if (qrs != null && qrs.size() > 0) {
 
             for (QR qr :
                     qrs) {
-                canvas.drawBitmap(bmpQr, maxWidth * qr.getX() - QR_SIZE, maxHeight * qr.getY() - QR_SIZE, null);
+                canvas.drawBitmap(bmpQr, maxWidth * qr.getX() - QR_SIZE,
+                        maxHeight * qr.getY() - QR_SIZE, null);
             }
         }
         if (userPosition != null) {
@@ -194,7 +198,8 @@ public class RoomView extends SurfaceView implements Runnable {
         if (doors != null && doors.size() > 0) {
             for (Door door :
                     doors) {
-                canvas.drawBitmap(bmpDoor, maxWidth * door.getX() - DOOR_SIZE, maxHeight * door.getY() - DOOR_SIZE, null);
+                canvas.drawBitmap(bmpDoor, maxWidth * door.getX() - DOOR_SIZE,
+                        maxHeight * door.getY() - DOOR_SIZE, null);
             }
         }
     }
