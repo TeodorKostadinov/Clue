@@ -3,12 +3,14 @@ package com.inveitix.android.clue.ui.views;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -25,7 +27,7 @@ import com.inveitix.android.clue.cmn.QR;
 import java.util.List;
 
 public class RoomView extends SurfaceView implements Runnable {
-    
+
     public static final int RECT_LEFT_POINT = 0;
     public static final int RECT_TOP_POINT = 0;
     public static final int DISTANCE_X_FROM_QR = 30;
@@ -60,6 +62,8 @@ public class RoomView extends SurfaceView implements Runnable {
     private OnQrClickedListener qrListener;
     private boolean canDraw;
     private Thread thread;
+    private Bitmap bmpDoor;
+    private Bitmap bmpQr;
 
     public RoomView(Context context) {
         super(context);
@@ -78,9 +82,12 @@ public class RoomView extends SurfaceView implements Runnable {
 
     private void init() {
         personPoint = BitmapFactory.decodeResource(getResources(), R.drawable.ic_room_white_36dp);
+        bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
+        bmpQr = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
         canDraw = false;
         thread = null;
         surface = getHolder();
+        isFirstTime = true;
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.GREEN);
         if (textHeight == 0) {
@@ -151,7 +158,7 @@ public class RoomView extends SurfaceView implements Runnable {
 
     private void drawMap(int width, int height) {
         canvas = surface.lockCanvas();
-        Bitmap bitmap;
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.floor_pattern2);
 
         roomPaint.setColor(Color.WHITE);
         Rect rec = new Rect(RECT_LEFT_POINT, RECT_TOP_POINT, width, height);
@@ -164,30 +171,15 @@ public class RoomView extends SurfaceView implements Runnable {
         canvas.drawCircle(maxWidth, maxHeight, CIRCLE_RADIUS, roomPaint);
         Path path = new Path();
         path.reset();
-
-        if (shape != null) {
-            for (MapPoint p : shape) {
-                path.lineTo(maxWidth * p.getX(), maxHeight * p.getY());
-            }
-            if (shape.size() > 0) {
-                path.lineTo(maxWidth * shape.get(0).getX(), maxHeight * shape.get(0).getY());
-            }
-            canvas.drawPath(path, roomPaint);
-        }
-        if (doors != null && doors.size() > 0) {
-
-            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
-            for (Door door :
-                    doors) {
-                canvas.drawBitmap(bitmap, maxWidth * door.getX() - DOOR_SIZE, maxHeight * door.getY() - DOOR_SIZE, roomPaint);
-            }
-        }
+        BitmapShader patternBMPshader = new BitmapShader(bitmap,
+                Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+        drawFloor(path, patternBMPshader);
+        drawDoors();
         if (qrs != null && qrs.size() > 0) {
 
-            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
             for (QR qr :
                     qrs) {
-                canvas.drawBitmap(bitmap, maxWidth * qr.getX() - QR_SIZE, maxHeight * qr.getY() - QR_SIZE, roomPaint);
+                canvas.drawBitmap(bmpQr, maxWidth * qr.getX() - QR_SIZE, maxHeight * qr.getY() - QR_SIZE, null);
             }
         }
         if (userPosition != null) {
@@ -196,6 +188,32 @@ public class RoomView extends SurfaceView implements Runnable {
             canvas.drawBitmap(personPoint, personX, personY, null);
         }
         surface.unlockCanvasAndPost(canvas);
+    }
+
+    private void drawDoors() {
+        if (doors != null && doors.size() > 0) {
+            for (Door door :
+                    doors) {
+                canvas.drawBitmap(bmpDoor, maxWidth * door.getX() - DOOR_SIZE, maxHeight * door.getY() - DOOR_SIZE, null);
+            }
+        }
+    }
+
+    private void drawFloor(Path path, BitmapShader patternBMPshader) {
+        if (shape != null) {
+            for (MapPoint p : shape) {
+                path.lineTo(maxWidth * p.getX(), maxHeight * p.getY());
+            }
+            if (shape.size() > 0) {
+                path.lineTo(maxWidth * shape.get(0).getX(), maxHeight * shape.get(0).getY());
+            }
+
+            roomPaint.setShader(patternBMPshader);
+            path.close();
+            canvas.drawPath(path, roomPaint);
+            roomPaint.setShader(null);
+
+        }
     }
 
     public void pause() {
