@@ -35,7 +35,7 @@
             android:layout_margin="8dp"
             android:background="@drawable/button"
             android:text="@string/txt_download"
-            android:textColor="@color/cardview_light_background" />
+            android:textColor="@color/cardview_light_background"/>
 
         <ProgressBar
             android:id="@+id/progress_bar"
