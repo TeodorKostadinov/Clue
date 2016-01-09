@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -124,9 +125,14 @@ public class MapActivity extends AppCompatActivity {
         if (scanResult != null) {
             Log.e(TAG, "QRcode:" + scanResult.getContents());
             String qrId = scanResult.getContents();
-            QR qr = room.getQrById(qrId);
+            final QR qr = room.getQrById(qrId);
             if (qr != null) {
-                roomView.updateUserPosition(new MapPoint(qr.getX(), qr.getY()));
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        roomView.updateUserPosition(new MapPoint(qr.getX(), qr.getY()));
+                    }
+                }, 1000);
             }
         }
     }
