@@ -103,6 +103,8 @@ public class MapActivity extends AppCompatActivity {
             if ((prevRoomId != null && door.getConnectedTo().equals(prevRoomId))) {
                 return door;
             }
+        }
+        for (Door door : room.getDoors()) {
             if (door.getConnectedTo().equals(Room.EXIT)) {
                 return door;
             }
