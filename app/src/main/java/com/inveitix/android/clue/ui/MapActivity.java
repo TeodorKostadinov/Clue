@@ -1,5 +1,6 @@
 package com.inveitix.android.clue.ui;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -31,10 +32,8 @@ public class MapActivity extends AppCompatActivity {
     public static final int NO_EXTRA = -1;
     private static final String TAG = "MapActivity";
     private static final String EXTRA_ROOM_ID = "roomId";
-    private static final int RC_BARCODE_CAPTURE = 156;
+    private static final String EXTRA_PREVIOUS_ROOM_ID = "previousRoomId";
 
-    @Bind(R.id.grp_map_container)
-    ViewGroup grpMapContainer;
     @Bind(R.id.room)
     RoomView roomView;
     private Room room;
@@ -65,6 +64,8 @@ public class MapActivity extends AppCompatActivity {
                     Intent intent = new Intent(MapActivity.this, MapActivity.class);
                     intent.putExtra(EXTRA_MUSEUM_ID, museumId);
                     intent.putExtra(EXTRA_ROOM_ID, door.getConnectedTo());
+                    intent.putExtra(EXTRA_PREVIOUS_ROOM_ID, room.getId());
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                 }
             });
@@ -84,7 +85,28 @@ public class MapActivity extends AppCompatActivity {
                     alertDialog.show();
                 }
             });
+
+            setInitialUserPosition();
         }
+    }
+
+    private void setInitialUserPosition() {
+        Door door = getEntranceDoor();
+        if (door != null) {
+            roomView.updateUserPosition(new MapPoint(door.getX(), door.getY()));
+        }
+    }
+
+    private Door getEntranceDoor() {
+        String prevRoomId = getIntent().getStringExtra(EXTRA_PREVIOUS_ROOM_ID);
+        for (Door door : room.getDoors()) {
+            if ((prevRoomId != null && door.getConnectedTo().equals(prevRoomId))
+                    || door.getConnectedTo().equals(Room.EXIT)) {
+                return door;
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -127,12 +149,8 @@ public class MapActivity extends AppCompatActivity {
             String qrId = scanResult.getContents();
             final QR qr = room.getQrById(qrId);
             if (qr != null) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        roomView.updateUserPosition(new MapPoint(qr.getX(), qr.getY()));
-                    }
-                }, 1000);
+                roomView.updateUserPosition(new MapPoint(qr.getX(), qr.getY()));
+
             }
         }
     }
