@@ -91,9 +91,9 @@ public class RoomView extends SurfaceView implements Runnable {
         patternBMPshader = new BitmapShader(bmpFloorPattern,
                 Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         canDraw = false;
+        isFirstTime = true;
         thread = null;
         surface = getHolder();
-        isFirstTime = true;
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.GREEN);
         if (textHeight == 0) {
@@ -128,8 +128,10 @@ public class RoomView extends SurfaceView implements Runnable {
                 RoomView.this.userPosition = userPosition;
 
                 if (isFirstTime) {
-                    personX = maxWidth * userPosition.getX() - DISTANCE_X_FROM_QR;
-                    personY = maxHeight * userPosition.getY() - DISTANCE_Y_FROM_QR;
+                    newPersonX = maxWidth * userPosition.getX() - DISTANCE_X_FROM_QR;
+                    newPersonY = maxHeight * userPosition.getY() - DISTANCE_Y_FROM_QR;
+                    personX = newPersonX;
+                    personY = newPersonY;
                     isFirstTime = false;
                 } else {
                     newPersonX = maxWidth * userPosition.getX() - DISTANCE_X_FROM_QR;
@@ -140,7 +142,6 @@ public class RoomView extends SurfaceView implements Runnable {
                 requestLayout();
             }
         }, 1000);
-
     }
 
     public void setWidthToHeightRatio(float ratio) {
