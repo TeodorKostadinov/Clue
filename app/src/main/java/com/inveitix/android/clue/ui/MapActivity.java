@@ -100,8 +100,10 @@ public class MapActivity extends AppCompatActivity {
     private Door getEntranceDoor() {
         String prevRoomId = getIntent().getStringExtra(EXTRA_PREVIOUS_ROOM_ID);
         for (Door door : room.getDoors()) {
-            if ((prevRoomId != null && door.getConnectedTo().equals(prevRoomId))
-                    || door.getConnectedTo().equals(Room.EXIT)) {
+            if ((prevRoomId != null && door.getConnectedTo().equals(prevRoomId))) {
+                return door;
+            }
+            if (door.getConnectedTo().equals(Room.EXIT)) {
                 return door;
             }
         }
