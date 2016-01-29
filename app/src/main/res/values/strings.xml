@@ -13,4 +13,5 @@
     <string name="txt_create_room">Create first room</string>
     <string name="txt_museum_info">Enter museum info</string>
     <string name="txt_museum_name">Enter museum name</string>
+    <string name="txt_get_museum_location">get location</string>
 </resources>
