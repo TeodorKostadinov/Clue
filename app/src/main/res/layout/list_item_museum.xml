@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:foreground="?android:attr/selectableItemBackground"
+    android:layout_margin="2dp"
     card_view:cardCornerRadius="2dp"
     card_view:cardElevation="2dp"
     card_view:cardUseCompatPadding="true">
@@ -33,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="8dp"
-            android:background="@drawable/button"
+            android:background="@drawable/button_selector"
             android:text="@string/txt_download"
             android:textColor="@color/cardview_light_background"/>
 
