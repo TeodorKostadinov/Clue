@@ -15,8 +15,11 @@
         style="@style/PurpleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:text="@string/txt_move" />
+        android:text="@string/txt_move"
+        android:layout_margin="2dp"
+        android:textColor="@color/white"
+        android:background="@drawable/button_selector"/>
+
 
 
 </LinearLayout>

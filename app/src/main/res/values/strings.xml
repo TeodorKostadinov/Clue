@@ -9,4 +9,8 @@
     <string name="ok">OK</string>
     <string name="no_camera_permission">No camera permission</string>
     <string name="txt_move">Move</string>
+    <string name="txt_location">Enter museum coordinates (0.00, 0.00)</string>
+    <string name="txt_create_room">Create first room</string>
+    <string name="txt_museum_info">Enter museum info</string>
+    <string name="txt_museum_name">Enter museum name</string>
 </resources>

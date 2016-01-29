@@ -121,7 +121,8 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     }
     @OnClick (R.id.btn_add_museum)
     public void addMuseum(){
-        Toast.makeText(MainActivity.this, "Museum added", Toast.LENGTH_SHORT).show();
+       Intent createMapIntent = new Intent(MainActivity.this, CreateMapActivity.class);
+        startActivity(createMapIntent);
     }
 
     @Override
