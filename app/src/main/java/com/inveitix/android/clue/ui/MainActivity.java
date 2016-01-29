@@ -25,6 +25,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity implements RecListAdapter.OnDownloadClickedListener, FireBaseLoader.DownloadListener {
 
@@ -117,6 +118,10 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
                 super.onOptionsItemSelected(item);
         }
         return super.onOptionsItemSelected(item);
+    }
+    @OnClick (R.id.btn_add_museum)
+    public void addMuseum(){
+        Toast.makeText(MainActivity.this, "Museum added", Toast.LENGTH_SHORT).show();
     }
 
     @Override
