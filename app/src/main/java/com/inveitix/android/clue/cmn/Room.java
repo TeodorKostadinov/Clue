@@ -7,6 +7,7 @@ import java.util.List;
  */
 public class Room {
 
+    public static final String EXIT = "exit";
     private List<Door> doors;
     private String id;
     private String mapId;
