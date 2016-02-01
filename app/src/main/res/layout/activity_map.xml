@@ -13,7 +13,7 @@
     <Button
         android:id="@+id/btn_scan"
         style="@style/PurpleButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/txt_move"
         android:layout_margin="2dp"
