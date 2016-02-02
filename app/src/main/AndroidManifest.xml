@@ -32,7 +32,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.CreateMapActivity"></activity>
+        <activity android:name=".ui.CreateMapActivity" />
+        <activity android:name=".ui.CreateRoomActivity"></activity>
     </application>
 
 </manifest>
