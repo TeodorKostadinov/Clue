@@ -4,10 +4,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 
 /**
  * Created by Tito on 3.2.2016 г..
@@ -15,7 +18,11 @@ import android.view.SurfaceView;
 public class DrawingView extends SurfaceView {
 
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    Canvas canvas;
+    int width;
+    int height;
     private SurfaceHolder surfaceHolder;
+    private WindowManager wm;
 
 
     public DrawingView(Context context) {
@@ -34,21 +41,46 @@ public class DrawingView extends SurfaceView {
     }
 
     private void init() {
-        surfaceHolder = getHolder();
+        surfaceHolder = this.getHolder();
+        surfaceHolder.addCallback(new SurfaceHolder.Callback() {
+            public void surfaceDestroyed(SurfaceHolder holder) {
+            }
+
+            public void surfaceCreated(SurfaceHolder holder) {
+                canvas = holder.lockCanvas();
+                canvas.drawColor(Color.WHITE);
+                holder.unlockCanvasAndPost(canvas);
+            }
+
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            }
+        });
+        wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         paint.setColor(Color.BLACK);
         paint.setStyle(Paint.Style.FILL);
+        getScreenSize();
+    }
+
+
+
+    private void getScreenSize() {
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        width = size.x;
+        height = size.y;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (surfaceHolder.getSurface().isValid()) {
-                Canvas canvas = surfaceHolder.lockCanvas();
+                canvas = surfaceHolder.lockCanvas();
                 canvas.drawColor(Color.WHITE);
-                canvas.drawCircle(event.getX(), event.getY(), 20, paint);
+                canvas.drawCircle(event.getX(), event.getY(), 10, paint);
                 surfaceHolder.unlockCanvasAndPost(canvas);
             }
         }
-        return true;
+        return false;
     }
 }
