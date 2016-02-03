@@ -12,18 +12,19 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
-/**
- * Created by Tito on 3.2.2016 г..
- */
+import java.util.ArrayList;
+import java.util.List;
+
 public class DrawingView extends SurfaceView {
 
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    Canvas canvas;
-    int width;
-    int height;
+    private Canvas canvas;
+    private int width;
+    private int height;
     private SurfaceHolder surfaceHolder;
     private WindowManager wm;
-
+    private List<Float> pointsWidth;
+    private List<Float> pointsHeight;
 
     public DrawingView(Context context) {
         super(context);
@@ -59,8 +60,9 @@ public class DrawingView extends SurfaceView {
         paint.setColor(Color.BLACK);
         paint.setStyle(Paint.Style.FILL);
         getScreenSize();
+        pointsWidth = new ArrayList<>();
+        pointsHeight = new ArrayList<>();
     }
-
 
 
     private void getScreenSize() {
@@ -79,6 +81,8 @@ public class DrawingView extends SurfaceView {
                 canvas.drawColor(Color.WHITE);
                 canvas.drawCircle(event.getX(), event.getY(), 10, paint);
                 surfaceHolder.unlockCanvasAndPost(canvas);
+                pointsWidth.add(event.getX());
+                pointsHeight.add(event.getY());
             }
         }
         return false;

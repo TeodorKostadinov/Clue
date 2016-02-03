@@ -32,19 +32,10 @@ public class CreateMapActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.btn_create_room)
-    public void openRoomDialog() {
-        AlertDialog alertDialog = new AlertDialog.Builder(CreateMapActivity.this).create();
-        alertDialog.setTitle("Create first room");
-        alertDialog.setMessage("Touch the screen and mark the corners of the room. When you finish press done button.");
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(CreateMapActivity.this, CreateRoomActivity.class);
-                        startActivity(intent);
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
+    public void openRoom() {
+        Intent intent = new Intent(CreateMapActivity.this, CreateRoomActivity.class);
+        startActivity(intent);
+
     }
 
 

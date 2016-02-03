@@ -65,7 +65,6 @@ public class RoomView extends SurfaceView implements Runnable {
     private Thread thread;
     private Bitmap bmpDoor;
     private Bitmap bmpQr;
-    private Bitmap bmpFloorPattern;
     private BitmapShader patternBMPshader;
 
     public RoomView(Context context) {
@@ -87,7 +86,7 @@ public class RoomView extends SurfaceView implements Runnable {
         personPoint = BitmapFactory.decodeResource(getResources(), R.drawable.ic_room_white_36dp);
         bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
         bmpQr = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
-        bmpFloorPattern = BitmapFactory.decodeResource(getResources(), R.drawable.floor_pattern6);
+        Bitmap bmpFloorPattern = BitmapFactory.decodeResource(getResources(), R.drawable.floor_pattern6);
         patternBMPshader = new BitmapShader(bmpFloorPattern,
                 Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         canDraw = false;
