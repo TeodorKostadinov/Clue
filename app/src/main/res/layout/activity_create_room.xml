@@ -7,16 +7,16 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"/>
+        android:background="@color/white" />
 
 
     <ImageButton
         android:id="@+id/btn_confirm"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_margin="12dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_done_white_24dp"/>
+        android:layout_margin="12dp"
+        android:background="@drawable/circle"
+        android:src="@drawable/ic_done_white_24dp" />
 </RelativeLayout>
