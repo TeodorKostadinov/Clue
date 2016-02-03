@@ -12,6 +12,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
+import com.inveitix.android.clue.cmn.MapPoint;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +25,7 @@ public class DrawingView extends SurfaceView {
     private int height;
     private SurfaceHolder surfaceHolder;
     private WindowManager wm;
-    private List<Float> pointsWidth;
-    private List<Float> pointsHeight;
+    private List<MapPoint> points;
 
     public DrawingView(Context context) {
         super(context);
@@ -60,8 +61,7 @@ public class DrawingView extends SurfaceView {
         paint.setColor(Color.BLACK);
         paint.setStyle(Paint.Style.FILL);
         getScreenSize();
-        pointsWidth = new ArrayList<>();
-        pointsHeight = new ArrayList<>();
+        points = new ArrayList<>();
     }
 
 
@@ -76,13 +76,14 @@ public class DrawingView extends SurfaceView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            points.add(new MapPoint(event.getX(), event.getY()));
             if (surfaceHolder.getSurface().isValid()) {
                 canvas = surfaceHolder.lockCanvas();
                 canvas.drawColor(Color.WHITE);
-                canvas.drawCircle(event.getX(), event.getY(), 10, paint);
+                for (MapPoint point : points) {
+                    canvas.drawCircle(point.getX(), point.getY(), 10, paint);
+                }
                 surfaceHolder.unlockCanvasAndPost(canvas);
-                pointsWidth.add(event.getX());
-                pointsHeight.add(event.getY());
             }
         }
         return false;
