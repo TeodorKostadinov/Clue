@@ -13,7 +13,7 @@
     <string name="txt_create_room">Create first room</string>
     <string name="txt_museum_info">Enter museum info</string>
     <string name="txt_museum_name">Enter museum name</string>
-    <string name="txt_get_museum_location">get location</string>
+    <string name="txt_get_museum_location">Get your building location</string>
     <string name="txt_ok">OK</string>
     <string name="txt_create_instructions">Touch the screen and mark the corners of the room. When you finish press done button.</string>
     <string name="txt_info">Info</string>
