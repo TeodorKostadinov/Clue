@@ -8,15 +8,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
 import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.WindowManager;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.MapPoint;
@@ -32,7 +29,6 @@ public class DrawingView extends SurfaceView {
     private int maxHeight;
     private int maxWidth;
     private SurfaceHolder surfaceHolder;
-    private WindowManager wm;
     private List<MapPoint> points;
     private float ratio;
 
@@ -53,23 +49,24 @@ public class DrawingView extends SurfaceView {
 
     private void init() {
         surfaceHolder = this.getHolder();
+        prepareCanvas();
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.FILL);
+        points = new ArrayList<>();
+    }
+
+    private void prepareCanvas() {
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
             public void surfaceDestroyed(SurfaceHolder holder) {
             }
-
             public void surfaceCreated(SurfaceHolder holder) {
                 canvas = holder.lockCanvas();
                 canvas.drawColor(Color.WHITE);
                 holder.unlockCanvasAndPost(canvas);
             }
-
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             }
         });
-        wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL);
-        points = new ArrayList<>();
     }
 
     @Override
@@ -81,7 +78,6 @@ public class DrawingView extends SurfaceView {
         if (ratio != 0) {
             maxHeight = (int) (maxWidth / ratio);
         }
-
         Log.i(TAG, "onMeasure width:" + maxWidth);
         Log.i(TAG, "onMeasure height:" + maxHeight);
         setMeasuredDimension(maxWidth, maxHeight);
@@ -103,53 +99,46 @@ public class DrawingView extends SurfaceView {
         return false;
     }
 
-
     public void drawFloor() {
         Bitmap bmpFloorPattern = BitmapFactory.decodeResource(getResources(), R.drawable.floor_pattern6);
         BitmapShader patternBMPshader = new BitmapShader(bmpFloorPattern,
                 Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
-
         canvas = surfaceHolder.lockCanvas();
         Path path = new Path();
         path.reset();
 
         if (points != null) {
             path.moveTo(points.get(0).getX(), points.get(0).getY());
-            MapPoint temp = null;
-            for (int i = 0; i < points.size(); i++) {
-                float x = points.get(i).getX();
-                float y = points.get(i).getY();
-                if (temp != null) {
-                    float deltaX = Math.abs(x - temp.getX());
-                    float deltaY = Math.abs(y - temp.getY());
-
-                    if (Math.max(deltaX, deltaY) == deltaX) {
-                        x = temp.getX();
-                    } else {
-
-                        y = temp.getY();
-                    }
-                }
-
-                path.lineTo(x, y);
-                temp = points.get(i);
-
-
-            }
-
+            alignPoints(path);
             canvas.drawColor(Color.WHITE);
-                for (int i = 0; i < points.size(); i++) {
-                    path.lineTo(points.get(i).getX(), points.get(i).getY());
+            for (int i = 0; i < points.size(); i++) {
+                path.lineTo(points.get(i).getX(), points.get(i).getY());
+            }
+        }
+        paint.setShader(patternBMPshader);
+        path.close();
+        canvas.drawPath(path, paint);
+        paint.setShader(null);
+        surfaceHolder.unlockCanvasAndPost(canvas);
+    }
+
+    private void alignPoints(Path path) {
+        MapPoint previousPoint = null;
+        for (int i = 0; i < points.size(); i++) {
+            float x = points.get(i).getX();
+            float y = points.get(i).getY();
+            if (previousPoint != null) {
+                float deltaX = Math.abs(x - previousPoint.getX());
+                float deltaY = Math.abs(y - previousPoint.getY());
+                if (Math.max(deltaX, deltaY) == deltaX) {
+                    x = previousPoint.getX();
+                } else {
+                    y = previousPoint.getY();
                 }
             }
-
-        paint.setShader(patternBMPshader);
-            path.close();
-        canvas.drawPath(path, paint);
-            paint.setShader(null);
-
-
-        surfaceHolder.unlockCanvasAndPost(canvas);
+            path.lineTo(x, y);
+            previousPoint = points.get(i);
+        }
     }
 
     public void setWidthToHeightRatio(float ratio) {

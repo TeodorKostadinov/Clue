@@ -1,20 +1,12 @@
 package com.inveitix.android.clue.ui;
 
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapShader;
-import android.graphics.Shader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Button;
 
 import com.inveitix.android.clue.R;
-import com.inveitix.android.clue.cmn.MapPoint;
 import com.inveitix.android.clue.ui.views.DrawingView;
-
-import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -35,11 +27,11 @@ public class CreateRoomActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.btn_done)
-    public void draw(){
+    public void draw() {
         drawingView.drawFloor();
     }
 
-    public void openDialog(){
+    public void openDialog() {
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle(getString(R.string.txt_create_room));
         alertDialog.setMessage(getString(R.string.txt_create_instructions));
@@ -51,6 +43,4 @@ public class CreateRoomActivity extends AppCompatActivity {
                 });
         alertDialog.show();
     }
-
-
 }
