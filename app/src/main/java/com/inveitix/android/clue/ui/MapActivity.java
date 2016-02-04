@@ -74,9 +74,9 @@ public class MapActivity extends AppCompatActivity {
                 @Override
                 public void onQrClicked(QR qr) {
                     AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
-                    alertDialog.setTitle("Info");
+                    alertDialog.setTitle(getString(R.string.txt_info));
                     alertDialog.setMessage(qr.getInfo());
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.txt_ok),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();

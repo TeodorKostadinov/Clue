@@ -19,9 +19,9 @@ public class CreateRoomActivity extends AppCompatActivity {
 
     public void openDialog(){
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Create first room");
-        alertDialog.setMessage("Touch the screen and mark the corners of the room. When you finish press done button.");
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+        alertDialog.setTitle(getString(R.string.txt_create_room));
+        alertDialog.setMessage(getString(R.string.txt_create_instructions));
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.txt_ok),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
