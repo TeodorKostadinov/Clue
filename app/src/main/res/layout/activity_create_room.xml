@@ -19,4 +19,35 @@
         android:layout_margin="12dp"
         android:background="@drawable/circle"
         android:src="@drawable/ic_done_white_24dp" />
+
+    <ToggleButton
+        android:id="@+id/btn_place_door"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btn_done"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="8dp"
+        android:background="@drawable/button_selector"
+        android:padding="8dp"
+        android:textColor="@color/white"
+        android:textOff="DOOR OFF"
+        android:textOn="@string/txt_add_door"
+        android:visibility="invisible" />
+
+    <ToggleButton
+        android:id="@+id/btn_place_qr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/btn_place_door"
+        android:layout_toEndOf="@+id/btn_place_door"
+        android:layout_toRightOf="@+id/btn_place_door"
+        android:background="@drawable/button_selector"
+        android:padding="8dp"
+        android:textColor="@color/white"
+        android:textOff="QR OFF"
+        android:textOn="@string/txt_add_qr"
+        android:visibility="invisible" />
+
+
 </RelativeLayout>

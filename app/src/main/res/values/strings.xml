@@ -18,4 +18,6 @@
     <string name="txt_create_instructions">Touch the screen and mark the corners of the room. When you finish press done button.</string>
     <string name="txt_info">Info</string>
     <string name="txt_building_location">Get your building location</string>
+    <string name="txt_add_door">Door ON</string>
+    <string name="txt_add_qr">QR ON</string>
 </resources>

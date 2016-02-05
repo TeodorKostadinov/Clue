@@ -16,6 +16,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.inveitix.android.clue.R;
+import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MapPoint;
 
 import java.util.ArrayList;
@@ -24,13 +25,19 @@ import java.util.List;
 public class DrawingView extends SurfaceView {
 
     private static final String TAG = "DrawingView";
-    private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private static final float DOOR_SIZE = 30;
+
+    private Paint paint;
     private Canvas canvas;
     private int maxHeight;
     private int maxWidth;
     private SurfaceHolder surfaceHolder;
-    private List<MapPoint> points;
+    private List<MapPoint> shape;
+    private List<Door> doors;
     private float ratio;
+    private boolean isFloorFinished;
+    private boolean isDoorSelected;
+    Path path;
 
     public DrawingView(Context context) {
         super(context);
@@ -47,23 +54,36 @@ public class DrawingView extends SurfaceView {
         init();
     }
 
+    public void setIsDoorSelected(boolean isDoorSelected) {
+        this.isDoorSelected = isDoorSelected;
+    }
+
+    public void setIsFloorFinished(boolean isFloorFinished) {
+        this.isFloorFinished = isFloorFinished;
+    }
+
     private void init() {
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        isFloorFinished = false;
         surfaceHolder = this.getHolder();
         prepareCanvas();
         paint.setColor(Color.BLACK);
         paint.setStyle(Paint.Style.FILL);
-        points = new ArrayList<>();
+        shape = new ArrayList<>();
+        doors = new ArrayList<>();
     }
 
     private void prepareCanvas() {
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
             public void surfaceDestroyed(SurfaceHolder holder) {
             }
+
             public void surfaceCreated(SurfaceHolder holder) {
                 canvas = holder.lockCanvas();
                 canvas.drawColor(Color.WHITE);
                 holder.unlockCanvasAndPost(canvas);
             }
+
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             }
         });
@@ -83,16 +103,28 @@ public class DrawingView extends SurfaceView {
         setMeasuredDimension(maxWidth, maxHeight);
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN && !isFloorFinished) {
             if (surfaceHolder.getSurface().isValid()) {
-                points.add(new MapPoint(event.getX(), event.getY()));
+                shape.add(new MapPoint(event.getX(), event.getY()));
                 canvas = surfaceHolder.lockCanvas();
                 canvas.drawColor(Color.WHITE);
-                for (MapPoint point : points) {
+                for (MapPoint point : shape) {
                     canvas.drawCircle(point.getX(), point.getY(), 10, paint);
                 }
+                surfaceHolder.unlockCanvasAndPost(canvas);
+            }
+        } else if (event.getAction() == MotionEvent.ACTION_DOWN && isDoorSelected) {
+            if (surfaceHolder.getSurface().isValid()) {
+                Door door = new Door();
+                door.setConnectedTo("door1"); //this is for test
+                door.setX(event.getX());
+                door.setY(event.getY());
+                doors.add(door);
+                canvas = surfaceHolder.lockCanvas();
+                drawDoors(canvas);
                 surfaceHolder.unlockCanvasAndPost(canvas);
             }
         }
@@ -104,15 +136,15 @@ public class DrawingView extends SurfaceView {
         BitmapShader patternBMPshader = new BitmapShader(bmpFloorPattern,
                 Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         canvas = surfaceHolder.lockCanvas();
-        Path path = new Path();
+        path = new Path();
         path.reset();
 
-        if (points != null) {
-            path.moveTo(points.get(0).getX(), points.get(0).getY());
+        if (shape != null) {
+            path.moveTo(shape.get(0).getX(), shape.get(0).getY());
             alignPoints(path);
             canvas.drawColor(Color.WHITE);
-            for (int i = 0; i < points.size(); i++) {
-                path.lineTo(points.get(i).getX(), points.get(i).getY());
+            for (int i = 0; i < shape.size(); i++) {
+                path.lineTo(shape.get(i).getX(), shape.get(i).getY());
             }
         }
         paint.setShader(patternBMPshader);
@@ -122,11 +154,21 @@ public class DrawingView extends SurfaceView {
         surfaceHolder.unlockCanvasAndPost(canvas);
     }
 
+    public void drawDoors(Canvas canvas) {
+        Bitmap bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
+        paint.setFilterBitmap(true);
+        if (doors != null && doors.size() > 0) {
+            for (Door door : doors) {
+                canvas.drawBitmap(bmpDoor, door.getX() - DOOR_SIZE, door.getY() - DOOR_SIZE, null);
+            }
+        }
+    }
+
     private void alignPoints(Path path) {
         MapPoint previousPoint = null;
-        for (int i = 0; i < points.size(); i++) {
-            float x = points.get(i).getX();
-            float y = points.get(i).getY();
+        for (int i = 0; i < shape.size(); i++) {
+            float x = shape.get(i).getX();
+            float y = shape.get(i).getY();
             if (previousPoint != null) {
                 float deltaX = Math.abs(x - previousPoint.getX());
                 float deltaY = Math.abs(y - previousPoint.getY());
@@ -137,7 +179,7 @@ public class DrawingView extends SurfaceView {
                 }
             }
             path.lineTo(x, y);
-            previousPoint = points.get(i);
+            previousPoint = shape.get(i);
         }
     }
 
