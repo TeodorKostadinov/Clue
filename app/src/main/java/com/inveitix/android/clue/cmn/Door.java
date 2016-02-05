@@ -6,8 +6,8 @@ package com.inveitix.android.clue.cmn;
 public class Door {
 
     private String connectedTo;
-    private double x;
-    private double y;
+    private float x;
+    private float y;
 
     public Door() {
     }
@@ -24,7 +24,7 @@ public class Door {
         return (float) x;
     }
 
-    public void setX(double x) {
+    public void setX(float x) {
         this.x = x;
     }
 
@@ -32,7 +32,7 @@ public class Door {
         return (float) y;
     }
 
-    public void setY(double y) {
+    public void setY(float y) {
         this.y = y;
     }
 }
