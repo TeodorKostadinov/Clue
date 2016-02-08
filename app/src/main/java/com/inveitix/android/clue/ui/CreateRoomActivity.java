@@ -5,15 +5,19 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.inveitix.android.clue.R;
+import com.inveitix.android.clue.cmn.Door;
+import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.ui.views.DrawingView;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 
@@ -24,6 +28,7 @@ public class CreateRoomActivity extends AppCompatActivity {
     ToggleButton btnPlaceQr;
     @Bind(R.id.btn_place_door)
     ToggleButton btnPlaceDoor;
+    private List<Room> rooms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,30 +37,31 @@ public class CreateRoomActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         openDialog();
         drawingView.setWidthToHeightRatio(0.89f);
-        init();
-    }
-
-    private void init() {
-        btnPlaceDoor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        drawingView.setDrawDoorListener(new DrawingView.DrawDoorListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    btnPlaceQr.setChecked(false);
-                    drawingView.setIsDoorSelected(true);
-                }
-            }
-        });
-
-        btnPlaceQr.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    btnPlaceDoor.setChecked(false);
-                    drawingView.setIsDoorSelected(false);
-                }
+            public void onDoorDrawn(Door door) {
+                Toast.makeText(CreateRoomActivity.this, "spinner", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
+    @OnCheckedChanged (R.id.btn_place_door)
+    void onDoorChecked(boolean checked) {
+        if (checked) {
+            btnPlaceQr.setChecked(false);
+            drawingView.setIsDoorSelected(true);
+        }
+    }
+
+    @OnCheckedChanged (R.id.btn_place_qr)
+    void onQrChecked(boolean checked) {
+        if (checked) {
+            btnPlaceDoor.setChecked(false);
+            drawingView.setIsDoorSelected(false);
+        }
+    }
+
 
     @OnClick(R.id.btn_done)
     public void draw() {
