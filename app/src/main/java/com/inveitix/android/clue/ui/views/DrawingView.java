@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -37,7 +38,7 @@ public class DrawingView extends SurfaceView {
     private float ratio;
     private boolean isFloorFinished;
     private boolean isDoorSelected;
-    Path path;
+    private Path path;
 
     public DrawingView(Context context) {
         super(context);
@@ -76,6 +77,7 @@ public class DrawingView extends SurfaceView {
     private void prepareCanvas() {
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
             public void surfaceDestroyed(SurfaceHolder holder) {
+
             }
 
             public void surfaceCreated(SurfaceHolder holder) {
@@ -85,6 +87,7 @@ public class DrawingView extends SurfaceView {
             }
 
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
             }
         });
     }
@@ -123,9 +126,7 @@ public class DrawingView extends SurfaceView {
                 door.setX(event.getX());
                 door.setY(event.getY());
                 doors.add(door);
-                canvas = surfaceHolder.lockCanvas();
-                drawDoors(canvas);
-                surfaceHolder.unlockCanvasAndPost(canvas);
+                drawFloor();
             }
         }
         return false;
@@ -151,17 +152,26 @@ public class DrawingView extends SurfaceView {
         path.close();
         canvas.drawPath(path, paint);
         paint.setShader(null);
+        if(doors.size() > 0) {
+            drawDoors();
+        }
         surfaceHolder.unlockCanvasAndPost(canvas);
-    }
+        }
 
-    public void drawDoors(Canvas canvas) {
+    public void drawDoors() {
         Bitmap bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
         paint.setFilterBitmap(true);
-        if (doors != null && doors.size() > 0) {
-            for (Door door : doors) {
-                canvas.drawBitmap(bmpDoor, door.getX() - DOOR_SIZE, door.getY() - DOOR_SIZE, null);
+
+            synchronized (surfaceHolder) {
+                if (doors != null && doors.size() > 0) {
+                    for (Door door : doors) {
+                        canvas.drawBitmap(bmpDoor, door.getX() - DOOR_SIZE, door.getY() - DOOR_SIZE, paint);
+                    }
+                }
             }
-        }
+
+
+
     }
 
     private void alignPoints(Path path) {
