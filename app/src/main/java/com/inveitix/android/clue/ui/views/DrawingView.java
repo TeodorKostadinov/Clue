@@ -39,7 +39,6 @@ public class DrawingView extends SurfaceView {
     private float ratio;
     private boolean isFloorFinished;
     private boolean isDoorSelected;
-    private Path path;
     private DrawDoorListener drawDoorListener;
 
     public DrawingView(Context context) {
@@ -144,7 +143,7 @@ public class DrawingView extends SurfaceView {
         BitmapShader patternBMPshader = new BitmapShader(bmpFloorPattern,
                 Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         canvas = surfaceHolder.lockCanvas();
-        path = new Path();
+        Path path = new Path();
         path.reset();
 
         if (shape != null) {

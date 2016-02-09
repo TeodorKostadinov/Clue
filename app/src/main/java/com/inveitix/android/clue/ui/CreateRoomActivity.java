@@ -1,10 +1,16 @@
 package com.inveitix.android.clue.ui;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -13,6 +19,8 @@ import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.ui.views.DrawingView;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -28,7 +36,9 @@ public class CreateRoomActivity extends AppCompatActivity {
     ToggleButton btnPlaceQr;
     @Bind(R.id.btn_place_door)
     ToggleButton btnPlaceDoor;
-    private List<Room> rooms;
+    @Bind(R.id.spn_rooms_list)
+    Spinner spnRoomsList;
+    private List<String> rooms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +47,47 @@ public class CreateRoomActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         openDialog();
         drawingView.setWidthToHeightRatio(0.89f);
+        rooms = new ArrayList<>();
+        Room room = new Room();
+        room.setId("room1");
+        rooms.add(room.getId());
         drawingView.setDrawDoorListener(new DrawingView.DrawDoorListener() {
             @Override
             public void onDoorDrawn(Door door) {
-                Toast.makeText(CreateRoomActivity.this, "spinner", Toast.LENGTH_SHORT).show();
+                openRoomsDialog();
             }
         });
     }
+
+    private void openRoomsDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Select room which is connected this door");
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view =  inflater.inflate(R.layout.spinner, null);
+        dialog.setView(view);
+        dialog.setPositiveButton(String.valueOf(R.string.txt_ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        dialog.show();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, rooms);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnRoomsList.setAdapter(adapter);
+        spnRoomsList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(CreateRoomActivity.this, rooms.get(position), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+     }
 
 
     @OnCheckedChanged (R.id.btn_place_door)
