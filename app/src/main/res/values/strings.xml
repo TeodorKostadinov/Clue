@@ -14,13 +14,16 @@
     <string name="txt_museum_info">Enter museum info</string>
     <string name="txt_museum_name">Enter museum name</string>
     <string name="txt_get_museum_location">Get location</string>
-    <string name="txt_ok">OK</string>
     <string name="txt_create_instructions">Touch the screen and mark the corners of the room. When you finish press done button.</string>
     <string name="txt_info">Info</string>
     <string name="txt_building_location">Get your building location</string>
-    <string name="txt_add_door">Door ON</string>
+    <string name="txt_add_door">DOOR ON</string>
     <string name="txt_add_qr">QR ON</string>
+<<<<<<< HEAD
     <string name="err_txt_museum_name">Please enter museum name with more than 3 characters</string>
     <string name="err_txt_info">Please enter museum description with more than 10 characters</string>
     <string name="err_txt_location">Please get your building location</string>
+=======
+    <string name="txt_select_room">Do you want to associate already created room with this door</string>
+>>>>>>> a07d0a08796a1d000bcc085afede2b0c99ef1ffe
 </resources>
