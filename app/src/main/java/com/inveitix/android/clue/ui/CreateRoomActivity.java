@@ -1,6 +1,6 @@
 package com.inveitix.android.clue.ui;
 
-import android.content.Context;
+
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -36,8 +35,7 @@ public class CreateRoomActivity extends AppCompatActivity {
     ToggleButton btnPlaceQr;
     @Bind(R.id.btn_place_door)
     ToggleButton btnPlaceDoor;
-    @Bind(R.id.spn_rooms_list)
-    Spinner spnRoomsList;
+
     private List<String> rooms;
 
     @Override
@@ -48,9 +46,7 @@ public class CreateRoomActivity extends AppCompatActivity {
         openDialog();
         drawingView.setWidthToHeightRatio(0.89f);
         rooms = new ArrayList<>();
-        Room room = new Room();
-        room.setId("room1");
-        rooms.add(room.getId());
+        testRooms();
         drawingView.setDrawDoorListener(new DrawingView.DrawDoorListener() {
             @Override
             public void onDoorDrawn(Door door) {
@@ -59,27 +55,40 @@ public class CreateRoomActivity extends AppCompatActivity {
         });
     }
 
+    private void testRooms() {
+        Room room = new Room();
+        room.setId("room1");
+        Room room2 = new Room();
+        room2.setId("room2");
+        rooms.add(room.getId());
+        rooms.add(room2.getId());
+        rooms.add(room2.getId() + "2");
+        rooms.add(room2.getId() + "1");
+    }
+
     private void openRoomsDialog() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Select room which is connected this door");
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view =  inflater.inflate(R.layout.spinner, null);
-        dialog.setView(view);
-        dialog.setPositiveButton(String.valueOf(R.string.txt_ok), new DialogInterface.OnClickListener() {
+        LayoutInflater li = LayoutInflater.from(this);
+        View promptsView = li.inflate(R.layout.spinner, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setView(promptsView);
+        alertDialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
             }
         });
-
-        dialog.show();
+        alertDialogBuilder.setTitle(getString(R.string.txt_select_room));
+        final AlertDialog alertDialog = alertDialogBuilder.create();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, rooms);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnRoomsList.setAdapter(adapter);
-        spnRoomsList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        final Spinner mSpinner= (Spinner) promptsView
+                .findViewById(R.id.spn_rooms_list);
+        mSpinner.setAdapter(adapter);
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(CreateRoomActivity.this, rooms.get(position), Toast.LENGTH_SHORT).show();
+                Toast.makeText(parent.getContext(), "Clicked : " +
+                        parent.getItemAtPosition(position).toString(), Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -87,6 +96,8 @@ public class CreateRoomActivity extends AppCompatActivity {
 
             }
         });
+        alertDialog.show();
+        alertDialog.setCanceledOnTouchOutside(false);
      }
 
 
