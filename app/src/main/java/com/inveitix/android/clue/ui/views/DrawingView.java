@@ -33,11 +33,13 @@ public class DrawingView extends SurfaceView {
     private int maxWidth;
     private SurfaceHolder surfaceHolder;
     private List<MapPoint> shape;
+
+
     private List<Door> doors;
     private float ratio;
     private boolean isFloorFinished;
     private boolean isDoorSelected;
-    Path path;
+    private DrawDoorListener drawDoorListener;
 
     public DrawingView(Context context) {
         super(context);
@@ -62,6 +64,10 @@ public class DrawingView extends SurfaceView {
         this.isFloorFinished = isFloorFinished;
     }
 
+    public void setDrawDoorListener(DrawDoorListener drawDoorListener) {
+        this.drawDoorListener = drawDoorListener;
+    }
+
     private void init() {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         isFloorFinished = false;
@@ -76,6 +82,7 @@ public class DrawingView extends SurfaceView {
     private void prepareCanvas() {
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
             public void surfaceDestroyed(SurfaceHolder holder) {
+
             }
 
             public void surfaceCreated(SurfaceHolder holder) {
@@ -85,6 +92,7 @@ public class DrawingView extends SurfaceView {
             }
 
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
             }
         });
     }
@@ -123,9 +131,8 @@ public class DrawingView extends SurfaceView {
                 door.setX(event.getX());
                 door.setY(event.getY());
                 doors.add(door);
-                canvas = surfaceHolder.lockCanvas();
-                drawDoors(canvas);
-                surfaceHolder.unlockCanvasAndPost(canvas);
+                drawFloor();
+                drawDoorListener.onDoorDrawn(door);
             }
         }
         return false;
@@ -136,7 +143,7 @@ public class DrawingView extends SurfaceView {
         BitmapShader patternBMPshader = new BitmapShader(bmpFloorPattern,
                 Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         canvas = surfaceHolder.lockCanvas();
-        path = new Path();
+        Path path = new Path();
         path.reset();
 
         if (shape != null) {
@@ -151,17 +158,25 @@ public class DrawingView extends SurfaceView {
         path.close();
         canvas.drawPath(path, paint);
         paint.setShader(null);
+        if (doors.size() > 0) {
+            drawDoors();
+        }
         surfaceHolder.unlockCanvasAndPost(canvas);
     }
 
-    public void drawDoors(Canvas canvas) {
+    public void drawDoors() {
         Bitmap bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
         paint.setFilterBitmap(true);
-        if (doors != null && doors.size() > 0) {
-            for (Door door : doors) {
-                canvas.drawBitmap(bmpDoor, door.getX() - DOOR_SIZE, door.getY() - DOOR_SIZE, null);
+
+        synchronized (surfaceHolder) {
+            if (doors != null && doors.size() > 0) {
+                for (Door door : doors) {
+                    canvas.drawBitmap(bmpDoor, door.getX() - DOOR_SIZE, door.getY() - DOOR_SIZE, paint);
+                }
             }
         }
+
+
     }
 
     private void alignPoints(Path path) {
@@ -189,4 +204,9 @@ public class DrawingView extends SurfaceView {
         invalidate();
         requestLayout();
     }
+
+    public interface DrawDoorListener {
+        void onDoorDrawn(Door door);
+    }
 }
+
