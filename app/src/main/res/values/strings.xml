@@ -20,4 +20,7 @@
     <string name="txt_building_location">Get your building location</string>
     <string name="txt_add_door">Door ON</string>
     <string name="txt_add_qr">QR ON</string>
+    <string name="err_txt_museum_name">Please enter museum name with more than 3 characters</string>
+    <string name="err_txt_info">Please enter museum description with more than 10 characters</string>
+    <string name="err_txt_location">Please get your building location</string>
 </resources>
