@@ -33,8 +33,8 @@ public class CreateMapActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_create_room)
     public void openRoom() {
-        String museumName = edtMuseumName.getText().toString();
-        String museumInfo = edtDescription.getText().toString();
+        String museumName = edtMuseumName.getText().toString().trim();
+        String museumInfo = edtDescription.getText().toString().trim();
         if (museumName.equalsIgnoreCase("") || museumName.length() < 3) {
             edtMuseumName.setError(getString(R.string.err_txt_museum_name));
         } else if (museumInfo.equalsIgnoreCase("") || museumInfo.length() < 10){
