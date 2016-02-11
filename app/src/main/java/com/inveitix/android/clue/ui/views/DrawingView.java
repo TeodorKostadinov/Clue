@@ -97,19 +97,19 @@ public class DrawingView extends SurfaceView {
         });
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int minw = getPaddingLeft() + getPaddingRight() + getSuggestedMinimumWidth();
-        int minh = getPaddingBottom() + getPaddingTop() + getSuggestedMinimumHeight();
-        this.maxWidth = resolveSizeAndState(minw, widthMeasureSpec, 1);
-        this.maxHeight = resolveSizeAndState(minh, heightMeasureSpec, 1);
-        if (ratio != 0) {
-            maxHeight = (int) (maxWidth / ratio);
-        }
-        Log.i(TAG, "onMeasure width:" + maxWidth);
-        Log.i(TAG, "onMeasure height:" + maxHeight);
-        setMeasuredDimension(maxWidth, maxHeight);
-    }
+//    @Override
+//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//        int minw = getPaddingLeft() + getPaddingRight() + getSuggestedMinimumWidth();
+//        int minh = getPaddingBottom() + getPaddingTop() + getSuggestedMinimumHeight();
+//        this.maxWidth = resolveSizeAndState(minw, widthMeasureSpec, 1);
+//        this.maxHeight = resolveSizeAndState(minh, heightMeasureSpec, 1);
+//        if (ratio != 0) {
+//            maxHeight = (int) (maxWidth / ratio);
+//        }
+//        Log.i(TAG, "onMeasure width:" + maxWidth);
+//        Log.i(TAG, "onMeasure height:" + maxHeight);
+//        setMeasuredDimension(maxWidth, maxHeight);
+//    }
 
 
     @Override
@@ -198,12 +198,12 @@ public class DrawingView extends SurfaceView {
         }
     }
 
-    public void setWidthToHeightRatio(float ratio) {
-        this.ratio = ratio;
-        maxHeight = (int) (maxWidth / ratio);
-        invalidate();
-        requestLayout();
-    }
+//    public void setWidthToHeightRatio(float ratio) {
+//        this.ratio = ratio;
+//        maxHeight = (int) (maxWidth / ratio);
+//        invalidate();
+//        requestLayout();
+//    }
 
     public interface DrawDoorListener {
         void onDoorDrawn(Door door);
