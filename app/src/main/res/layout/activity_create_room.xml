@@ -17,8 +17,8 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="140dp"
         android:layout_marginRight="12dp"
+        android:background="@drawable/circle_qr"
         android:src="@drawable/ic_info_white_24dp"
-        android:background="@drawable/circle"
         android:visibility="invisible" />
 
     <ImageButton
@@ -29,8 +29,8 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="80dp"
         android:layout_marginRight="12dp"
-        android:src="@drawable/door32"
         android:background="@drawable/circle_door"
+        android:src="@drawable/door32"
         android:visibility="invisible" />
 
 

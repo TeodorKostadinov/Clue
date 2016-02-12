@@ -10,7 +10,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -26,6 +25,7 @@ public class DrawingView extends SurfaceView {
 
     private static final String TAG = "DrawingView";
     private static final float DOOR_SIZE = 30;
+    private static final float POINT_RADIUS = 10;
 
     private Paint paint;
     private Canvas canvas;
@@ -33,7 +33,6 @@ public class DrawingView extends SurfaceView {
     private int maxWidth;
     private SurfaceHolder surfaceHolder;
     private List<MapPoint> shape;
-
 
     private List<Door> doors;
     private float ratio;
@@ -82,7 +81,6 @@ public class DrawingView extends SurfaceView {
     private void prepareCanvas() {
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
             public void surfaceDestroyed(SurfaceHolder holder) {
-
             }
 
             public void surfaceCreated(SurfaceHolder holder) {
@@ -92,7 +90,6 @@ public class DrawingView extends SurfaceView {
             }
 
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
             }
         });
     }
@@ -111,7 +108,6 @@ public class DrawingView extends SurfaceView {
 //        setMeasuredDimension(maxWidth, maxHeight);
 //    }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN && !isFloorFinished) {
@@ -120,7 +116,7 @@ public class DrawingView extends SurfaceView {
                 canvas = surfaceHolder.lockCanvas();
                 canvas.drawColor(Color.WHITE);
                 for (MapPoint point : shape) {
-                    canvas.drawCircle(point.getX(), point.getY(), 10, paint);
+                    canvas.drawCircle(point.getX(), point.getY(), POINT_RADIUS, paint);
                 }
                 surfaceHolder.unlockCanvasAndPost(canvas);
             }
@@ -175,8 +171,6 @@ public class DrawingView extends SurfaceView {
                 }
             }
         }
-
-
     }
 
     private void alignPoints(Path path) {
