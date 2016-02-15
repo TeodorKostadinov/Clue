@@ -53,7 +53,6 @@ public class CreateRoomActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_room);
         ButterKnife.bind(this);
         openDialog();
-        //drawingView.setWidthToHeightRatio(0.89f);
         init();
     }
 

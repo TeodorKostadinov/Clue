@@ -29,13 +29,10 @@ public class DrawingView extends SurfaceView {
 
     private Paint paint;
     private Canvas canvas;
-    private int maxHeight;
-    private int maxWidth;
     private SurfaceHolder surfaceHolder;
     private List<MapPoint> shape;
 
     private List<Door> doors;
-    private float ratio;
     private boolean isFloorFinished;
     private boolean isDoorSelected;
     private DrawDoorListener drawDoorListener;
@@ -93,20 +90,6 @@ public class DrawingView extends SurfaceView {
             }
         });
     }
-
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        int minw = getPaddingLeft() + getPaddingRight() + getSuggestedMinimumWidth();
-//        int minh = getPaddingBottom() + getPaddingTop() + getSuggestedMinimumHeight();
-//        this.maxWidth = resolveSizeAndState(minw, widthMeasureSpec, 1);
-//        this.maxHeight = resolveSizeAndState(minh, heightMeasureSpec, 1);
-//        if (ratio != 0) {
-//            maxHeight = (int) (maxWidth / ratio);
-//        }
-//        Log.i(TAG, "onMeasure width:" + maxWidth);
-//        Log.i(TAG, "onMeasure height:" + maxHeight);
-//        setMeasuredDimension(maxWidth, maxHeight);
-//    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -191,13 +174,6 @@ public class DrawingView extends SurfaceView {
             previousPoint = shape.get(i);
         }
     }
-
-//    public void setWidthToHeightRatio(float ratio) {
-//        this.ratio = ratio;
-//        maxHeight = (int) (maxWidth / ratio);
-//        invalidate();
-//        requestLayout();
-//    }
 
     public interface DrawDoorListener {
         void onDoorDrawn(Door door);
