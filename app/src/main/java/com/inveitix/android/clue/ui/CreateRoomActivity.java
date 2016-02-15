@@ -5,10 +5,15 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -31,11 +36,15 @@ import butterknife.OnClick;
 public class CreateRoomActivity extends AppCompatActivity {
     @Bind(R.id.drawing_view)
     DrawingView drawingView;
-    @Bind(R.id.btn_place_qr)
-    ToggleButton btnPlaceQr;
-    @Bind(R.id.btn_place_door)
-    ToggleButton btnPlaceDoor;
+    @Bind(R.id.fab_done)
+    ImageButton fabDone;
+    @Bind(R.id.fab_door)
+    ImageButton fabDoor;
+    @Bind(R.id.fab_qr)
+    ImageButton fabQr;
 
+    private Animation fab_open, fab_close;
+    private Boolean isFabOpen;
     private List<String> rooms;
 
     @Override
@@ -44,7 +53,10 @@ public class CreateRoomActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_room);
         ButterKnife.bind(this);
         openDialog();
-        drawingView.setWidthToHeightRatio(0.89f);
+        init();
+    }
+
+    private void init() {
         rooms = new ArrayList<>();
         testRooms();
         drawingView.setDrawDoorListener(new DrawingView.DrawDoorListener() {
@@ -53,6 +65,9 @@ public class CreateRoomActivity extends AppCompatActivity {
                 openRoomsDialog();
             }
         });
+        isFabOpen = false;
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
     }
 
     private void testRooms() {
@@ -64,6 +79,27 @@ public class CreateRoomActivity extends AppCompatActivity {
         rooms.add(room2.getId());
         rooms.add(room2.getId() + "2");
         rooms.add(room2.getId() + "1");
+    }
+
+    public void animateFAB() {
+
+        if (isFabOpen) {
+
+            fabDoor.startAnimation(fab_close);
+            fabQr.startAnimation(fab_close);
+            fabDoor.setClickable(false);
+            fabQr.setClickable(false);
+            isFabOpen = false;
+
+        } else {
+
+            fabDoor.startAnimation(fab_open);
+            fabQr.startAnimation(fab_open);
+            fabDoor.setClickable(true);
+            fabQr.setClickable(true);
+            isFabOpen = true;
+
+        }
     }
 
     private void openRoomsDialog() {
@@ -81,7 +117,7 @@ public class CreateRoomActivity extends AppCompatActivity {
         final AlertDialog alertDialog = alertDialogBuilder.create();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, rooms);
         adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        final Spinner mSpinner= (Spinner) promptsView
+        final Spinner mSpinner = (Spinner) promptsView
                 .findViewById(R.id.spn_rooms_list);
         mSpinner.setAdapter(adapter);
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -98,32 +134,25 @@ public class CreateRoomActivity extends AppCompatActivity {
         });
         alertDialog.show();
         alertDialog.setCanceledOnTouchOutside(false);
-     }
+    }
 
 
-    @OnCheckedChanged (R.id.btn_place_door)
-    void onDoorChecked(boolean checked) {
-        if (checked) {
-            btnPlaceQr.setChecked(false);
+    @OnClick(R.id.fab_door)
+    void onDoorClicked() {
             drawingView.setIsDoorSelected(true);
-        }
     }
 
-    @OnCheckedChanged (R.id.btn_place_qr)
-    void onQrChecked(boolean checked) {
-        if (checked) {
-            btnPlaceDoor.setChecked(false);
+    @OnClick(R.id.fab_qr)
+    void onQrClicked() {
             drawingView.setIsDoorSelected(false);
-        }
     }
 
 
-    @OnClick(R.id.btn_done)
+    @OnClick(R.id.fab_done)
     public void draw() {
         drawingView.drawFloor();
-        btnPlaceQr.setVisibility(View.VISIBLE);
-        btnPlaceDoor.setVisibility(View.VISIBLE);
         drawingView.setIsFloorFinished(true);
+        animateFAB();
     }
 
 

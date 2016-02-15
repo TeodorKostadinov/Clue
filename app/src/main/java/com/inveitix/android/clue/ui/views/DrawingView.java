@@ -10,7 +10,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -26,17 +25,14 @@ public class DrawingView extends SurfaceView {
 
     private static final String TAG = "DrawingView";
     private static final float DOOR_SIZE = 30;
+    private static final float POINT_RADIUS = 10;
 
     private Paint paint;
     private Canvas canvas;
-    private int maxHeight;
-    private int maxWidth;
     private SurfaceHolder surfaceHolder;
     private List<MapPoint> shape;
 
-
     private List<Door> doors;
-    private float ratio;
     private boolean isFloorFinished;
     private boolean isDoorSelected;
     private DrawDoorListener drawDoorListener;
@@ -82,7 +78,6 @@ public class DrawingView extends SurfaceView {
     private void prepareCanvas() {
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
             public void surfaceDestroyed(SurfaceHolder holder) {
-
             }
 
             public void surfaceCreated(SurfaceHolder holder) {
@@ -92,25 +87,9 @@ public class DrawingView extends SurfaceView {
             }
 
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
             }
         });
     }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int minw = getPaddingLeft() + getPaddingRight() + getSuggestedMinimumWidth();
-        int minh = getPaddingBottom() + getPaddingTop() + getSuggestedMinimumHeight();
-        this.maxWidth = resolveSizeAndState(minw, widthMeasureSpec, 1);
-        this.maxHeight = resolveSizeAndState(minh, heightMeasureSpec, 1);
-        if (ratio != 0) {
-            maxHeight = (int) (maxWidth / ratio);
-        }
-        Log.i(TAG, "onMeasure width:" + maxWidth);
-        Log.i(TAG, "onMeasure height:" + maxHeight);
-        setMeasuredDimension(maxWidth, maxHeight);
-    }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -120,7 +99,7 @@ public class DrawingView extends SurfaceView {
                 canvas = surfaceHolder.lockCanvas();
                 canvas.drawColor(Color.WHITE);
                 for (MapPoint point : shape) {
-                    canvas.drawCircle(point.getX(), point.getY(), 10, paint);
+                    canvas.drawCircle(point.getX(), point.getY(), POINT_RADIUS, paint);
                 }
                 surfaceHolder.unlockCanvasAndPost(canvas);
             }
@@ -175,8 +154,6 @@ public class DrawingView extends SurfaceView {
                 }
             }
         }
-
-
     }
 
     private void alignPoints(Path path) {
@@ -196,13 +173,6 @@ public class DrawingView extends SurfaceView {
             path.lineTo(x, y);
             previousPoint = shape.get(i);
         }
-    }
-
-    public void setWidthToHeightRatio(float ratio) {
-        this.ratio = ratio;
-        maxHeight = (int) (maxWidth / ratio);
-        invalidate();
-        requestLayout();
     }
 
     public interface DrawDoorListener {
