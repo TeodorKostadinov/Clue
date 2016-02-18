@@ -46,17 +46,29 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initViews();
+
         FireBaseLoader.getInstance(this).downloadMuseumsList(this);
-
-        DBUtils.writeRecord(this, "rec1");
-
+        loadingListProgress();
         Cursor cursor = DBUtils.readRecord(this);
 
         if(cursor.moveToFirst()){
             do {
-                Log.e("db", "VAL:" + cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_VAL)));
+                Log.e("db", "ID:" + cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
+                Log.e("db", "Loc:" + cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_LOCATION)));
+                Log.e("db", "Des:" + cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DESCRIPTION)));
+                Log.e("db", "Name:" + cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
+                Log.e("db", "Size:" + cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_MAP_SIZE)));
             } while (cursor.moveToNext());
         }
+    }
+
+    private void loadingListProgress() {
+        dialog = new ProgressDialog(MainActivity.this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage("Loading. Please wait...");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
 
     }
 
@@ -145,5 +157,8 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     public void onMuseumDownloaded(MuseumMap museum) {
         MapsInstance.getInstance().addMap(museum);
         adapter.updateItem(museum.getMuseumId(), Museum.STATUS_DOWNLOADED);
+
+
+
     }
 }

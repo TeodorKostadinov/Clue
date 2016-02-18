@@ -1,6 +1,7 @@
 package com.inveitix.android.clue.database;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
@@ -20,8 +21,10 @@ public class FireBaseLoader {
     private static final String TAG = "FireBaseLoader";
     private static FireBaseLoader instance;
     private Firebase fireBaseRef;
+    Context context;
 
     public FireBaseLoader(Context context) {
+        this.context = context;
         Firebase.setAndroidContext(context);
         fireBaseRef = new Firebase(FireBaseConstants.FIREBASE_URL);
     }
@@ -43,6 +46,7 @@ public class FireBaseLoader {
                 for (DataSnapshot postMuseum : dataSnapshot.getChildren()) {
 
                     Museum museum = postMuseum.getValue(Museum.class);
+
                     if (!duplicateCheck(museums, museum)){
                         museums.add(museum);
                     }

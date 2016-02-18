@@ -3,15 +3,14 @@ package com.inveitix.android.clue.database;
 import android.content.Context;
 import android.database.Cursor;
 
-/**
- * Created by Tito on 3.1.2016 г..
- */
+import com.inveitix.android.clue.cmn.Museum;
+
 public class DBUtils {
     private static DBHelper db;
 
-    public static void writeRecord(Context c, String record) {
+    public static void writeRecord(Context c, Museum museum) {
         initDB(c);
-        db.insert(record);
+        db.insertMuseum(museum);
     }
 
     public static Cursor readRecord(Context context){
@@ -20,8 +19,11 @@ public class DBUtils {
     }
 
     private static void initDB(Context context) {
+
         if (db == null) {
             db = new DBHelper(context);
         }
     }
+
+
 }
