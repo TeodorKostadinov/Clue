@@ -46,7 +46,7 @@ import android.util.Log;
  * for the result in your app.</p>
  *
  * <p>It does require that the Barcode Scanner (or work-alike) application is installed. The
- * {@link #initiateScan()} method will prompt the user to download the application, if needed.</p>
+ * {@link #initiateScan()} method will prompt the user to floor_pattern2 the application, if needed.</p>
  *
  * <p>There are a few steps to using this integration. First, your {@link Activity} must implement
  * the method {@link Activity#onActivityResult(int, int, Intent)} and include a line of code like this:</p>
@@ -72,11 +72,11 @@ import android.util.Log;
  * }</pre>
  *
  * <p>Note that {@link #initiateScan()} returns an {@link AlertDialog} which is non-null if the
- * user was prompted to download the application. This lets the calling app potentially manage the dialog.
+ * user was prompted to floor_pattern2 the application. This lets the calling app potentially manage the dialog.
  * In particular, ideally, the app dismisses the dialog if it's still active in its {@link Activity#onPause()}
  * method.</p>
  * 
- * <p>You can use {@link #setTitle(String)} to customize the title of this download prompt dialog (or, use
+ * <p>You can use {@link #setTitle(String)} to customize the title of this floor_pattern2 prompt dialog (or, use
  * {@link #setTitleByID(int)} to set the title by string resource ID.) Likewise, the prompt message, and
  * yes/no button labels can be changed.</p>
  *
@@ -92,7 +92,7 @@ import android.util.Log;
  *
  * <p>To share text, encoded as a QR Code on-screen, similarly, see {@link #shareText(CharSequence)}.</p>
  *
- * <p>Some code, particularly download integration, was contributed from the Anobiit application.</p>
+ * <p>Some code, particularly floor_pattern2 integration, was contributed from the Anobiit application.</p>
  *
  * <h2>Enabling experimental barcode formats</h2>
  *
@@ -251,7 +251,7 @@ public class IntentIntegrator {
   /**
    * Initiates a scan for all known barcode types with the default camera.
    *
-   * @return the {@link AlertDialog} that was shown to the user prompting them to download the app
+   * @return the {@link AlertDialog} that was shown to the user prompting them to floor_pattern2 the app
    *   if a prompt was needed, or null otherwise.
    */
   public final AlertDialog initiateScan() {
@@ -262,7 +262,7 @@ public class IntentIntegrator {
    * Initiates a scan for all known barcode types with the specified camera.
    *
    * @param cameraId camera ID of the camera to use. A negative value means "no preference".
-   * @return the {@link AlertDialog} that was shown to the user prompting them to download the app
+   * @return the {@link AlertDialog} that was shown to the user prompting them to floor_pattern2 the app
    *   if a prompt was needed, or null otherwise.
    */
   public final AlertDialog initiateScan(int cameraId) {
@@ -275,7 +275,7 @@ public class IntentIntegrator {
    * like {@link #PRODUCT_CODE_TYPES} for example.
    *
    * @param desiredBarcodeFormats names of {@code BarcodeFormat}s to scan for
-   * @return the {@link AlertDialog} that was shown to the user prompting them to download the app
+   * @return the {@link AlertDialog} that was shown to the user prompting them to floor_pattern2 the app
    *   if a prompt was needed, or null otherwise.
    */
   public final AlertDialog initiateScan(Collection<String> desiredBarcodeFormats) {
@@ -289,7 +289,7 @@ public class IntentIntegrator {
    *
    * @param desiredBarcodeFormats names of {@code BarcodeFormat}s to scan for
    * @param cameraId camera ID of the camera to use. A negative value means "no preference".
-   * @return the {@link AlertDialog} that was shown to the user prompting them to download the app
+   * @return the {@link AlertDialog} that was shown to the user prompting them to floor_pattern2 the app
    *   if a prompt was needed, or null otherwise
    */
   public final AlertDialog initiateScan(Collection<String> desiredBarcodeFormats, int cameraId) {
@@ -375,7 +375,7 @@ public class IntentIntegrator {
       public void onClick(DialogInterface dialogInterface, int i) {
         String packageName;
         if (targetApplications.contains(BS_PACKAGE)) {
-          // Prefer to suggest download of BS if it's anywhere in the list
+          // Prefer to suggest floor_pattern2 of BS if it's anywhere in the list
           packageName = BS_PACKAGE;
         } else {
           // Otherwise, first option:
@@ -437,7 +437,7 @@ public class IntentIntegrator {
    * Defaults to type "TEXT_TYPE".
    *
    * @param text the text string to encode as a barcode
-   * @return the {@link AlertDialog} that was shown to the user prompting them to download the app
+   * @return the {@link AlertDialog} that was shown to the user prompting them to floor_pattern2 the app
    *   if a prompt was needed, or null otherwise
    * @see #shareText(CharSequence, CharSequence)
    */
@@ -451,7 +451,7 @@ public class IntentIntegrator {
    *
    * @param text the text string to encode as a barcode
    * @param type type of data to encode. See {@code com.google.zxing.client.android.Contents.Type} constants.
-   * @return the {@link AlertDialog} that was shown to the user prompting them to download the app
+   * @return the {@link AlertDialog} that was shown to the user prompting them to floor_pattern2 the app
    *   if a prompt was needed, or null otherwise
    */
   public final AlertDialog shareText(CharSequence text, CharSequence type) {

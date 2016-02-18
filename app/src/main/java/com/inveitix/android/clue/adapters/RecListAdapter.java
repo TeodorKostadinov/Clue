@@ -1,6 +1,5 @@
 package com.inveitix.android.clue.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,11 +23,9 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
     private final OnDownloadClickedListener listener;
     private RecyclerViewOnItemClickListener itemClickListener;
     private List<Museum> museums;
-    private Context context;
 
-    public RecListAdapter(Context context, OnDownloadClickedListener listener) {
+    public RecListAdapter(OnDownloadClickedListener listener) {
         this.museums = new ArrayList<>();
-        this.context = context;
         this.listener = listener;
     }
 
@@ -40,8 +37,7 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_museum, parent, false);
-        ViewHolder vh = new ViewHolder(view);
-        return vh;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -57,7 +53,7 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
             holder.btnDownload.setVisibility(View.VISIBLE);
             holder.progressBar.setVisibility(View.GONE);
         } else {
-            holder.btnDownload.setVisibility(View.INVISIBLE);
+            holder.btnDownload.setVisibility(View.GONE);
             holder.progressBar.setVisibility(View.VISIBLE);
         }
     }
@@ -85,6 +81,14 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
             }
         }
         notifyDataSetChanged();
+    }
+
+    private Museum getItemById(int museumId) {
+        for (Museum mus :
+                museums) {
+            if (mus.getId() == museumId) return mus;
+        }
+        return null;
     }
 
     public interface OnDownloadClickedListener {
@@ -118,13 +122,5 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
                 }
             }
         }
-    }
-
-    private Museum getItemById(int museumId) {
-        for (Museum mus :
-                museums) {
-            if (mus.getId() == museumId) return mus;
-        }
-        return null;
     }
 }

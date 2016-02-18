@@ -7,7 +7,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 
@@ -34,34 +33,21 @@ public class FireBaseLoader {
         return instance;
     }
 
-    public void downloadMuseumsList(final DownloadListenre listener) {
+    public void downloadMuseumsList(final DownloadListener listener) {
 
         fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Museum> museums = new ArrayList<Museum>();
+                List<Museum> museums = new ArrayList<>();
 
                 for (DataSnapshot postMuseum : dataSnapshot.getChildren()) {
-                    String name = (String) postMuseum.child("name").getValue();
-                    String description = (String) postMuseum.child("description").getValue();
-                    int id = Integer.parseInt(postMuseum.child("id").getValue().toString());
-                    String location = (String) postMuseum.child("location").getValue();
-                    int mapSizeKB = Integer.parseInt(postMuseum.child("mapSizeKB").getValue().toString());
-                    Museum museum = new Museum(name, description, id, location, mapSizeKB);
 
-                    if (museums.size() < 1) {
+                    Museum museum = postMuseum.getValue(Museum.class);
+                    if (!duplicateCheck(museums, museum)){
                         museums.add(museum);
-                    } else {
-                        for (int i = 0; i < museums.size(); i++) {
-                            if (museums.get(i).getId() == museum.getId()) {
-                                museums.remove(i);
-                                museums.add(museum);
-                            } else {
-                                museums.add(museum);
-                            }
-                        }
                     }
                 }
+
                 listener.onMuseumListDownloaded(museums);
             }
 
@@ -72,8 +58,18 @@ public class FireBaseLoader {
         });
     }
 
+    private boolean duplicateCheck(List<Museum> museums, Museum museum) {
+        if (museums.size() > 1) {
+            for (int i = 0; i < museums.size(); i++) {
+                if (museums.get(i).getId() == museum.getId()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-    public void downloadMap(final int museumId, final DownloadListenre listenre) {
+    public void downloadMap(final int museumId, final DownloadListener listener) {
 
         fireBaseRef.child("maps").orderByChild("museumId").equalTo(museumId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -82,7 +78,7 @@ public class FireBaseLoader {
                     Log.e("MAP", String.valueOf(postMaps.getValue()));
                     MuseumMap map = postMaps.getValue(MuseumMap.class);
                     Log.e("MAP", "MuseumID: " + String.valueOf(map.getMuseumId()));
-                    listenre.onMuseumDownloaded(map);
+                    listener.onMuseumDownloaded(map);
                 }
             }
 
@@ -94,7 +90,7 @@ public class FireBaseLoader {
 
     }
 
-    public interface DownloadListenre {
+    public interface DownloadListener {
         void onMuseumListDownloaded(List<Museum> museums);
 
         void onMuseumDownloaded(MuseumMap museum);

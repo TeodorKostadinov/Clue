@@ -1,5 +1,6 @@
 package com.inveitix.android.clue.ui;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.inveitix.android.clue.R;
@@ -25,32 +25,29 @@ import com.inveitix.android.clue.database.FireBaseLoader;
 import com.inveitix.android.clue.database.MapsInstance;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements RecListAdapter.OnDownloadClickedListener, FireBaseLoader.DownloadListenre {
+public class MainActivity extends AppCompatActivity implements RecListAdapter.OnDownloadClickedListener, FireBaseLoader.DownloadListener {
 
     @Bind(R.id.rec_view)
     RecyclerView recView;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     RecListAdapter adapter;
-    private List<Museum> museums;
-    private List<MuseumMap> maps;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        museums = new ArrayList<>();
-        maps = new ArrayList<>();
         ButterKnife.bind(this);
         initViews();
         FireBaseLoader.getInstance(this).downloadMuseumsList(this);
+
         DBUtils.writeRecord(this, "rec1");
 
         Cursor cursor = DBUtils.readRecord(this);
@@ -66,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     private void initViews() {
         setSupportActionBar(toolbar);
         recView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new RecListAdapter(this, this);
+        adapter = new RecListAdapter(this);
         recView.setAdapter(adapter);
         adapter.setOnItemClickListener(new RecyclerViewOnItemClickListener() {
 
@@ -87,13 +84,15 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
                         dialog.dismiss();
                     }
                 });
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "ENTER MAP",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startMapActivity(museum.getId());
-                    }
-                });
+        if (museum.getMapStatus() == Museum.STATUS_DOWNLOADED) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "ENTER MAP",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startMapActivity(museum.getId());
+                        }
+                    });
+        }
         alertDialog.show();
     }
 
@@ -101,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         Intent intent = new Intent(this, MapActivity.class);
         intent.putExtra(MapActivity.EXTRA_MUSEUM_ID, museumId);
         startActivity(intent);
+        overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
     @Override
@@ -123,6 +123,11 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         }
         return super.onOptionsItemSelected(item);
     }
+    @OnClick (R.id.btn_add_museum)
+    public void addMuseum(){
+       Intent createMapIntent = new Intent(MainActivity.this, CreateMapActivity.class);
+        startActivity(createMapIntent);
+    }
 
     @Override
     public void onDownloadClicked(final int museumID) {
@@ -133,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     @Override
     public void onMuseumListDownloaded(List<Museum> museums) {
         adapter.addItems(museums);
+        dialog.cancel();
     }
 
     @Override

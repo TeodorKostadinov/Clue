@@ -7,11 +7,12 @@ import java.util.List;
  */
 public class Room {
 
+    public static final String EXIT = "exit";
     private List<Door> doors;
     private String id;
     private String mapId;
     private List<QR> qrs;
-    private List<Point> shape;
+    private List<MapPoint> shape;
 
     public Room() {
     }
@@ -48,11 +49,11 @@ public class Room {
         this.qrs = qrs;
     }
 
-    public List<Point> getShape() {
+    public List<MapPoint> getShape() {
         return shape;
     }
 
-    public void setShape(List<Point> point) {
+    public void setShape(List<MapPoint> point) {
         this.shape = point;
     }
 
