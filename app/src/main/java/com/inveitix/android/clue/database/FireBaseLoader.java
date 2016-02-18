@@ -1,7 +1,6 @@
 package com.inveitix.android.clue.database;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
@@ -14,9 +13,6 @@ import com.inveitix.android.clue.cmn.MuseumMap;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Tito on 23.12.2015 г..
- */
 public class FireBaseLoader {
     private static final String TAG = "FireBaseLoader";
     private static FireBaseLoader instance;
@@ -49,6 +45,7 @@ public class FireBaseLoader {
 
                     if (!duplicateCheck(museums, museum)){
                         museums.add(museum);
+                        DBUtils.writeRecord(context, museum);
                     }
                 }
 
