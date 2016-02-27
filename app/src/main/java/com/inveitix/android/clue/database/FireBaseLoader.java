@@ -7,8 +7,12 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.inveitix.android.clue.cmn.Door;
+import com.inveitix.android.clue.cmn.MapPoint;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
+import com.inveitix.android.clue.cmn.QR;
+import com.inveitix.android.clue.cmn.Room;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +20,8 @@ import java.util.List;
 public class FireBaseLoader {
     private static final String TAG = "FireBaseLoader";
     private static FireBaseLoader instance;
-    private Firebase fireBaseRef;
     Context context;
+    private Firebase fireBaseRef;
 
     public FireBaseLoader(Context context) {
         this.context = context;
@@ -43,9 +47,9 @@ public class FireBaseLoader {
 
                     Museum museum = postMuseum.getValue(Museum.class);
 
-                    if (!duplicateCheck(museums, museum)){
+                    if (!duplicateCheck(museums, museum)) {
                         museums.add(museum);
-                        DBUtils.writeRecord(context, museum);
+                        DBUtils.writeMuseumRecord(context, museum);
                     }
                 }
 
@@ -62,7 +66,7 @@ public class FireBaseLoader {
     private boolean duplicateCheck(List<Museum> museums, Museum museum) {
         if (museums.size() > 1) {
             for (int i = 0; i < museums.size(); i++) {
-                if (museums.get(i).getId() == museum.getId()){
+                if (museums.get(i).getId() == museum.getId()) {
                     return true;
                 }
             }
@@ -78,6 +82,21 @@ public class FireBaseLoader {
                 for (DataSnapshot postMaps : dataSnapshot.getChildren()) {
                     Log.e("MAP", String.valueOf(postMaps.getValue()));
                     MuseumMap map = postMaps.getValue(MuseumMap.class);
+                    DBUtils.writeMapRecord(context, map);
+                    for (Room room : map.getRooms()) {
+                        DBUtils.writeRoomRecord(context, room);
+                        for (QR qr : room.getQrs()) {
+                            DBUtils.writeQrRecord(context, qr);
+                        }
+
+                        for (Door door : room.getDoors()) {
+                            DBUtils.writeDoorRecord(context, door);
+                        }
+
+                        for (MapPoint shape : room.getShape()) {
+                            DBUtils.writeShapeRecord(context, shape);
+                        }
+                    }
                     Log.e("MAP", "MuseumID: " + String.valueOf(map.getMuseumId()));
                     listener.onMuseumDownloaded(map);
                 }
