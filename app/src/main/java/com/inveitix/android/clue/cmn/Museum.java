@@ -10,13 +10,12 @@ public class Museum {
     private int id;
     private String location;
     private int mapSizeKB;
-    private String name;
     private int mapStatus;
+    private String name;
 
     public Museum() {
-        setMapStatus(STATUS_NOT_DOWNLOADED);
+        this.mapStatus = STATUS_NOT_DOWNLOADED;
     }
-
 
     public String getLocation() {
         return location;

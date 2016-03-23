@@ -50,8 +50,10 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         //this.deleteDatabase("db");
         FireBaseLoader.getInstance(this).downloadMuseumsList(this);
         loadingListProgress();
+        test();
+    }
 
-
+    private void test() {
         Cursor cursor = DBUtils.readMuseumRecord(this);
         if(cursor.moveToFirst()){
             do {
@@ -60,65 +62,6 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
                 Log.e("db", "Des:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_DESCRIPTION)));
                 Log.e("db", "Name:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_NAME)));
                 Log.e("db", "Size:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_SIZE)));
-                Log.e("db", " ");
-            } while (cursor.moveToNext());
-        }
-
-        cursor = DBUtils.readMapRecord(this);
-
-        if(cursor.moveToFirst()){
-            do {
-                Log.e("db", "ID:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)));
-                Log.e("db", "Room:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ROOM_ID)));
-                Log.e("db", "Entr Room:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ENTRANCE_ROOM_ID)));
-                Log.e("db", "MusID:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MUSEUM_ID)));
-                Log.e("db", " ");
-            } while (cursor.moveToNext());
-        }
-
-        cursor = DBUtils.readRoomRecord(this);
-
-        if(cursor.moveToFirst()){
-            do {
-                Log.e("db", "ID:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)));
-                Log.e("db", "Doors:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_DOORS)));
-                Log.e("db", "Shape:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_SHAPE)));
-                Log.e("db", "MapID:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)));
-                Log.e("db", "QRS:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_QRS)));
-                Log.e("db", " ");
-            } while (cursor.moveToNext());
-        }
-
-        cursor = DBUtils.readQrRecord(this);
-
-        if(cursor.moveToFirst()){
-            do {
-                Log.e("db", "ID:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)));
-                Log.e("db", "INFO:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_INFO)));
-                Log.e("db", "X:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_X)));
-                Log.e("db", "Y:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_Y)));
-                Log.e("db", "ROOM ID:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ROOM_ID)));
-                Log.e("db", " ");
-            } while (cursor.moveToNext());
-        }
-
-        cursor = DBUtils.readDoorRecord(this);
-
-        if(cursor.moveToFirst()){
-            do {
-                Log.e("db", "Connected To:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_CONNECTED_TO)));
-                Log.e("db", "X:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_X)));
-                Log.e("db", "Y:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_Y)));
-                Log.e("db", " ");
-            } while (cursor.moveToNext());
-        }
-
-        cursor = DBUtils.readShapeRecord(this);
-
-        if(cursor.moveToFirst()){
-            do {
-                Log.e("db", "X:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_X)));
-                Log.e("db", "Y:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_Y)));
                 Log.e("db", " ");
             } while (cursor.moveToNext());
         }
@@ -137,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     private void initViews() {
         setSupportActionBar(toolbar);
         recView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new RecListAdapter(this);
+        adapter = new RecListAdapter(this, this);
         recView.setAdapter(adapter);
         adapter.setOnItemClickListener(new RecyclerViewOnItemClickListener() {
 

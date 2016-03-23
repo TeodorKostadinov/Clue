@@ -1,6 +1,7 @@
 package com.inveitix.android.clue.database;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
@@ -15,7 +16,9 @@ import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FireBaseLoader {
     private static final String TAG = "FireBaseLoader";
@@ -52,7 +55,6 @@ public class FireBaseLoader {
                         DBUtils.writeMuseumRecord(context, museum);
                     }
                 }
-
                 listener.onMuseumListDownloaded(museums);
             }
 
@@ -80,25 +82,36 @@ public class FireBaseLoader {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postMaps : dataSnapshot.getChildren()) {
-                    Log.e("MAP", String.valueOf(postMaps.getValue()));
+
                     MuseumMap map = postMaps.getValue(MuseumMap.class);
-                    DBUtils.writeMapRecord(context, map);
-                    for (Room room : map.getRooms()) {
-                        DBUtils.writeRoomRecord(context, room);
-                        for (QR qr : room.getQrs()) {
-                            DBUtils.writeQrRecord(context, qr);
-                        }
 
-                        for (Door door : room.getDoors()) {
-                            DBUtils.writeDoorRecord(context, door);
-                        }
-
-                        for (MapPoint shape : room.getShape()) {
-                            DBUtils.writeShapeRecord(context, shape);
-                        }
+                    Cursor cursor = DBUtils.readMapRecord(context);
+                    boolean isDuplicated = false;
+                    if(cursor.moveToFirst()){
+                        do {
+                            if (cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)).equals(map.getId())){
+                                isDuplicated = true;
+                            }
+                        } while (cursor.moveToNext());
                     }
-                    Log.e("MAP", "MuseumID: " + String.valueOf(map.getMuseumId()));
-                    listener.onMuseumDownloaded(map);
+                    if (!isDuplicated) {
+                        DBUtils.writeMapRecord(context, map);
+                        for (Room room : map.getRooms()) {
+                            DBUtils.writeRoomRecord(context, room);
+                            for (QR qr : room.getQrs()) {
+                                DBUtils.writeQrRecord(context, qr);
+                            }
+
+                            for (Door door : room.getDoors()) {
+                                DBUtils.writeDoorRecord(context, door);
+                            }
+
+                            for (MapPoint shape : room.getShape()) {
+                                DBUtils.writeShapeRecord(context, shape);
+                            }
+                        }
+                        listener.onMuseumDownloaded(map);
+                    }
                 }
             }
 

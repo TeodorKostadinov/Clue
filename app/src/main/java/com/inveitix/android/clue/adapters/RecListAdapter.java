@@ -1,5 +1,6 @@
 package com.inveitix.android.clue.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Museum;
+import com.inveitix.android.clue.database.DBUtils;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
 
 import java.util.ArrayList;
@@ -23,10 +25,12 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
     private final OnDownloadClickedListener listener;
     private RecyclerViewOnItemClickListener itemClickListener;
     private List<Museum> museums;
+    private Context context;
 
-    public RecListAdapter(OnDownloadClickedListener listener) {
+    public RecListAdapter(OnDownloadClickedListener listener, Context context) {
         this.museums = new ArrayList<>();
         this.listener = listener;
+        this.context = context;
     }
 
     public void addItems(List<Museum> museums) {
@@ -76,6 +80,7 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
                     break;
                 } else if (museumStatus == Museum.STATUS_DOWNLOADED) {
                     museums.get(i).setMapStatus(Museum.STATUS_DOWNLOADED);
+                    DBUtils.updateMapStatus(context, museumID, Museum.STATUS_DOWNLOADED);
                     break;
                 }
             }

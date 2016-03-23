@@ -18,6 +18,11 @@ public class DBUtils {
         db.insertQr(qr);
     }
 
+    public static void updateMapStatus(Context c, int museumId, int mapStatus){
+        initDB(c);
+        db.museumStatusUpdate(museumId, mapStatus);
+    }
+
     public static void writeMuseumRecord(Context c, Museum museum) {
         initDB(c);
         db.insertMuseum(museum);
