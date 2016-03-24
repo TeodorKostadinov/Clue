@@ -68,6 +68,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(DBConstants.KEY_X, door.getX());
         cv.put(DBConstants.KEY_Y, door.getY());
         cv.put(DBConstants.KEY_MAP_ID, door.getMapId());
+        cv.put(DBConstants.KEY_ID, door.getId());
         database.insert(DBConstants.DB_TABLE_DOORS, null, cv);
     }
 
@@ -75,6 +76,8 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(DBConstants.KEY_X, point.getX());
         cv.put(DBConstants.KEY_Y, point.getY());
+        cv.put(DBConstants.KEY_MAP_ID, point.getMapId());
+        cv.put(DBConstants.KEY_ID, point.getId());
         database.insert(DBConstants.DB_TABLE_SHAPE, null, cv);
     }
 
@@ -107,6 +110,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return "CREATE TABLE IF NOT EXISTS " + DBConstants.DB_TABLE_DOORS + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + DBConstants.KEY_CONNECTED_TO + " TEXT, "
                 + DBConstants.KEY_MAP_ID + " TEXT, "
+                + DBConstants.KEY_ID + " TEXT, "
                 + DBConstants.KEY_X + " REAL, "
                 + DBConstants.KEY_Y + " REAL);";
     }
@@ -114,6 +118,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private String createShapeTable() {
         return "CREATE TABLE IF NOT EXISTS " + DBConstants.DB_TABLE_SHAPE + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + DBConstants.KEY_X + " REAL, "
+                + DBConstants.KEY_MAP_ID + " TEXT, "
+                + DBConstants.KEY_ID + " TEXT, "
                 + DBConstants.KEY_Y + " REAL);";
     }
 
@@ -172,18 +178,31 @@ public class DBHelper extends SQLiteOpenHelper {
         database.update(DBConstants.DB_TABLE_MUSEUMS, values, DBConstants.KEY_ID + "=" + museumId, null);
     }
 
+    public boolean isEmpty(String tableName) {
+        String count = "SELECT count(*) FROM " + tableName;
+        Cursor mcursor = database.rawQuery(count, null);
+        mcursor.moveToFirst();
+        int icount = mcursor.getInt(0);
+        if(icount>0){
+            return false;
+        }
+        return true;
+    }
+
     public void close() {
         database.close();
     }
 
     public Cursor getShapeValues() {
         return this.database.query(DBConstants.DB_TABLE_SHAPE, new String[]{
-                DBConstants.KEY_X, DBConstants.KEY_Y}, null, null, null, null, null);
+                DBConstants.KEY_X, DBConstants.KEY_Y, DBConstants.KEY_MAP_ID, DBConstants.KEY_ID},
+                null, null, null, null, null);
     }
 
     public Cursor getDoorValues() {
         return this.database.query(DBConstants.DB_TABLE_DOORS, new String[]{DBConstants.KEY_CONNECTED_TO,
-                DBConstants.KEY_MAP_ID,DBConstants.KEY_X, DBConstants.KEY_Y}, null, null, null, null, null);
+                DBConstants.KEY_MAP_ID, DBConstants.KEY_ID, DBConstants.KEY_X, DBConstants.KEY_Y},
+                null, null, null, null, null);
     }
 
     public Cursor getQrValues() {

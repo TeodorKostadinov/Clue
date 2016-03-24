@@ -20,7 +20,9 @@ import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.database.DBConstants;
+import com.inveitix.android.clue.database.DBLoader;
 import com.inveitix.android.clue.database.DBUtils;
+import com.inveitix.android.clue.interfaces.DownloadListener;
 import com.inveitix.android.clue.database.FireBaseLoader;
 import com.inveitix.android.clue.database.MapsInstance;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
@@ -32,7 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity implements RecListAdapter.OnDownloadClickedListener,
-        FireBaseLoader.DownloadListener {
+        DownloadListener {
 
     @Bind(R.id.rec_view)
     RecyclerView recView;
@@ -48,23 +50,9 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         ButterKnife.bind(this);
         initViews();
         //this.deleteDatabase("db");
-        FireBaseLoader.getInstance(this).downloadMuseumsList(this);
         loadingListProgress();
-        test();
-    }
-
-    private void test() {
-        Cursor cursor = DBUtils.readMuseumRecord(this);
-        if(cursor.moveToFirst()){
-            do {
-                Log.e("db", "ID:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)));
-                Log.e("db", "Loc:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_LOCATION)));
-                Log.e("db", "Des:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_DESCRIPTION)));
-                Log.e("db", "Name:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_NAME)));
-                Log.e("db", "Size:" + cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_SIZE)));
-                Log.e("db", " ");
-            } while (cursor.moveToNext());
-        }
+        DBLoader.getInstance(this).loadContent(this);
+        FireBaseLoader.getInstance(this);
     }
 
     private void loadingListProgress() {

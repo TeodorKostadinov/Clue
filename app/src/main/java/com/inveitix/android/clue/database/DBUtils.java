@@ -85,5 +85,9 @@ public class DBUtils {
         }
     }
 
+    public static boolean isEmpty(Context context, String tableName) {
+        initDB(context);
+        return db.isEmpty(tableName);
+    }
 
 }

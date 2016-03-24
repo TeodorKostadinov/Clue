@@ -14,11 +14,10 @@ import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
+import com.inveitix.android.clue.interfaces.DownloadListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FireBaseLoader {
     private static final String TAG = "FireBaseLoader";
@@ -39,7 +38,7 @@ public class FireBaseLoader {
         return instance;
     }
 
-    public void downloadMuseumsList(final DownloadListener listener) {
+    public void downloadMuseumsList() {
 
         fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
@@ -55,7 +54,6 @@ public class FireBaseLoader {
                         DBUtils.writeMuseumRecord(context, museum);
                     }
                 }
-                listener.onMuseumListDownloaded(museums);
             }
 
             @Override
@@ -84,8 +82,8 @@ public class FireBaseLoader {
                 for (DataSnapshot postMaps : dataSnapshot.getChildren()) {
 
                     MuseumMap map = postMaps.getValue(MuseumMap.class);
-
                     Cursor cursor = DBUtils.readMapRecord(context);
+
                     boolean isDuplicated = false;
                     if(cursor.moveToFirst()){
                         do {
@@ -110,7 +108,6 @@ public class FireBaseLoader {
                                 DBUtils.writeShapeRecord(context, shape);
                             }
                         }
-                        listener.onMuseumDownloaded(map);
                     }
                 }
             }
@@ -121,11 +118,5 @@ public class FireBaseLoader {
             }
         });
 
-    }
-
-    public interface DownloadListener {
-        void onMuseumListDownloaded(List<Museum> museums);
-
-        void onMuseumDownloaded(MuseumMap museum);
     }
 }

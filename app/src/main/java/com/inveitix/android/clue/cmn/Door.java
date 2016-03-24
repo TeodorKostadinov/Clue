@@ -6,6 +6,7 @@ package com.inveitix.android.clue.cmn;
 public class Door {
 
     private String connectedTo;
+    private String id;
     private String mapId;
     private float x;
     private float y;
@@ -43,5 +44,13 @@ public class Door {
 
     public void setMapId(String mapId) {
         this.mapId = mapId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
