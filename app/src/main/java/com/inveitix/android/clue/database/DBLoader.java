@@ -23,7 +23,7 @@ public class DBLoader {
     List<Museum> museums;
     Context context;
 
-    public  DBLoader(Context context) {
+    public DBLoader(Context context) {
         museums = new ArrayList<>();
         this.context = context;
         FireBaseLoader.getInstance(context).downloadMuseumsList();
@@ -36,7 +36,7 @@ public class DBLoader {
         return instance;
     }
 
-    public void loadContent(final DownloadListener listener){
+    public void loadContent(final DownloadListener listener) {
         loadMuseumsList(listener);
         loadDownloadedMap(listener);
     }
@@ -44,12 +44,13 @@ public class DBLoader {
     public void loadDownloadedMap(final DownloadListener listener) {
         List<MuseumMap> maps = new ArrayList<>();
         Cursor cursor = DBUtils.readMapRecord(context);
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
                 MuseumMap map = new MuseumMap();
                 map.setMuseumId(cursor.getInt(cursor.getColumnIndex(DBConstants.KEY_MUSEUM_ID)));
                 map.setId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)));
                 map.setRooms(loadRooms(map.getId()));
+                map.setEntranceRoomId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ENTRANCE_ROOM_ID)));
 
                 if (!duplicateCheck(maps, map)) {
                     maps.add(map);
@@ -58,35 +59,27 @@ public class DBLoader {
 
             } while (cursor.moveToNext());
         }
-
-        for (MuseumMap map : maps) {
-            Log.e("MAP", String.valueOf(map.getRooms().get(0).getShape().get(0).getX()));
-            Log.e("MAP", String.valueOf(map.getRooms().get(0).getShape().get(1).getX()));
-            Log.e("MAP", String.valueOf(map.getRooms().get(0).getShape().get(2).getX()));
-            Log.e("MAP", String.valueOf(map.getRooms().get(0).getShape().get(3).getX()));
-
-        }
-
     }
 
-    public List<QR> loadQrs(String mapId) {
+    public List<QR> loadQrs(String mapId, String roomId) {
         Cursor cursor = DBUtils.readQrRecord(context);
         List<QR> qrs = new ArrayList<>();
 
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
                 QR qr = new QR();
-                if( mapId.equals(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)))){
+                if (mapId.equals(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)))
+                        && roomId.equals(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ROOM_ID)))) {
                     qr.setId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)));
                     qr.setMapId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)));
                     qr.setInfo(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_INFO)));
                     qr.setRoomId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ROOM_ID)));
                     qr.setX(cursor.getDouble(cursor.getColumnIndex(DBConstants.KEY_X)));
                     qr.setY(cursor.getDouble(cursor.getColumnIndex(DBConstants.KEY_Y)));
-                }
 
-                if (!duplicateCheck(qrs, qr)) {
-                    qrs.add(qr);
+                    if (!duplicateCheck(qrs, qr)) {
+                        qrs.add(qr);
+                    }
                 }
 
             } while (cursor.moveToNext());
@@ -94,46 +87,51 @@ public class DBLoader {
         return qrs;
     }
 
-    public List<Door> loadDoors(String mapId) {
+    public List<Door> loadDoors(String mapId, String roomId) {
         Cursor cursor = DBUtils.readDoorRecord(context);
         List<Door> doors = new ArrayList<>();
 
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
                 Door door = new Door();
-                if( mapId.equals(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)))){
+                if (mapId.equals(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)))
+                        && roomId.equals(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ROOM_ID)))) {
                     door.setConnectedTo(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_CONNECTED_TO)));
                     door.setMapId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)));
                     door.setX(cursor.getFloat(cursor.getColumnIndex(DBConstants.KEY_X)));
                     door.setY(cursor.getFloat(cursor.getColumnIndex(DBConstants.KEY_Y)));
                     door.setId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)));
+
+                    if (!duplicateCheck(doors, door)) {
+                        doors.add(door);
+                    }
+
                 }
 
-                if (!duplicateCheck(doors, door)) {
-                    doors.add(door);
-                }
 
             } while (cursor.moveToNext());
         }
         return doors;
     }
 
-    public List<MapPoint> loadShape(String mapId) {
+    public List<MapPoint> loadShape(String mapId, String roomId) {
         Cursor cursor = DBUtils.readShapeRecord(context);
         List<MapPoint> shape = new ArrayList<>();
 
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
                 MapPoint point = new MapPoint();
-                if( mapId.equals(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)))){
+                if (mapId.equals(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)))
+                        && roomId.equals(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ROOM_ID)))) {
                     point.setMapId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)));
                     point.setX(cursor.getFloat(cursor.getColumnIndex(DBConstants.KEY_X)));
                     point.setY(cursor.getFloat(cursor.getColumnIndex(DBConstants.KEY_Y)));
                     point.setId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)));
-                }
+                    point.setRoomId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ROOM_ID)));
 
-                if (!duplicateCheck(shape, point)) {
-                    shape.add(point);
+                    if (!duplicateCheck(shape, point)) {
+                        shape.add(point);
+                    }
                 }
 
 
@@ -146,15 +144,15 @@ public class DBLoader {
         Cursor cursor = DBUtils.readRoomRecord(context);
 
         List<Room> rooms = new ArrayList<>();
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
-                if( mapId.equals(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)))){
+                if (mapId.equals(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)))) {
                     Room room = new Room();
                     room.setId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)));
                     room.setMapId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_MAP_ID)));
-                    room.setQrs(loadQrs(mapId));
-                    room.setDoors(loadDoors(mapId));
-                    room.setShape(loadShape(mapId));
+                    room.setQrs(loadQrs(mapId, room.getId()));
+                    room.setDoors(loadDoors(mapId, room.getId()));
+                    room.setShape(loadShape(mapId, room.getId()));
 
                     if (!duplicateCheck(rooms, room)) {
                         rooms.add(room);
@@ -168,7 +166,7 @@ public class DBLoader {
     public void loadMuseumsList(final DownloadListener listener) {
         Cursor cursor = DBUtils.readMuseumRecord(context);
 
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
                 Museum museum = new Museum();
                 museum.setDescription(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_DESCRIPTION)));

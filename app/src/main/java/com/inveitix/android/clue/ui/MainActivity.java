@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         dialog.setIndeterminate(true);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
-
     }
 
     private void initViews() {

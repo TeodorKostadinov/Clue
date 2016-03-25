@@ -9,18 +9,18 @@ import java.util.List;
  * Created by fos on 30.12.2015 г..
  */
 public class MapsInstance {
-    private List<MuseumMap> maps;
     private static MapsInstance instance;
+    private List<MuseumMap> maps;
+
+    private MapsInstance() {
+        maps = new ArrayList<>();
+    }
 
     public static MapsInstance getInstance() {
         if (instance == null) {
             instance = new MapsInstance();
         }
         return instance;
-    }
-
-    private MapsInstance() {
-        maps = new ArrayList<>();
     }
 
     public void addMap(MuseumMap map) {

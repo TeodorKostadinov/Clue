@@ -41,14 +41,17 @@ public class MuseumMap {
         this.rooms = rooms;
     }
 
-
     public String getEntranceRoomId() {
         return entranceRoomId;
     }
 
+    public void setEntranceRoomId(String entranceRoomId) {
+        this.entranceRoomId = entranceRoomId;
+    }
+
     public Room getRoomById(String roomId) {
-        for(Room room : rooms) {
-            if(room.getId().equals(roomId)) {
+        for (Room room : rooms) {
+            if (room.getId().equals(roomId)) {
                 return room;
             }
         }

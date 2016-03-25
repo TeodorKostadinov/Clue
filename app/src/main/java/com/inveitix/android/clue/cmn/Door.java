@@ -8,10 +8,19 @@ public class Door {
     private String connectedTo;
     private String id;
     private String mapId;
+    private String roomId;
     private float x;
     private float y;
 
     public Door() {
+    }
+
+    public String getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
     }
 
     public String getConnectedTo() {

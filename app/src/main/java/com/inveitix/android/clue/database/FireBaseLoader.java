@@ -85,9 +85,9 @@ public class FireBaseLoader {
                     Cursor cursor = DBUtils.readMapRecord(context);
 
                     boolean isDuplicated = false;
-                    if(cursor.moveToFirst()){
+                    if (cursor.moveToFirst()) {
                         do {
-                            if (cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)).equals(map.getId())){
+                            if (cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)).equals(map.getId())) {
                                 isDuplicated = true;
                             }
                         } while (cursor.moveToNext());
@@ -108,6 +108,7 @@ public class FireBaseLoader {
                                 DBUtils.writeShapeRecord(context, shape);
                             }
                         }
+                        listener.onMuseumDownloaded(map);
                     }
                 }
             }
@@ -118,5 +119,9 @@ public class FireBaseLoader {
             }
         });
 
+    }
+
+    public interface mapStatusListener {
+        void updateItem();
     }
 }

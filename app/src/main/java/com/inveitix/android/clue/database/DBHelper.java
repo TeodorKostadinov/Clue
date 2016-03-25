@@ -68,6 +68,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(DBConstants.KEY_X, door.getX());
         cv.put(DBConstants.KEY_Y, door.getY());
         cv.put(DBConstants.KEY_MAP_ID, door.getMapId());
+        cv.put(DBConstants.KEY_ROOM_ID, door.getRoomId());
         cv.put(DBConstants.KEY_ID, door.getId());
         database.insert(DBConstants.DB_TABLE_DOORS, null, cv);
     }
@@ -78,6 +79,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(DBConstants.KEY_Y, point.getY());
         cv.put(DBConstants.KEY_MAP_ID, point.getMapId());
         cv.put(DBConstants.KEY_ID, point.getId());
+        cv.put(DBConstants.KEY_ROOM_ID, point.getRoomId());
         database.insert(DBConstants.DB_TABLE_SHAPE, null, cv);
     }
 
@@ -111,6 +113,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + DBConstants.KEY_CONNECTED_TO + " TEXT, "
                 + DBConstants.KEY_MAP_ID + " TEXT, "
                 + DBConstants.KEY_ID + " TEXT, "
+                + DBConstants.KEY_ROOM_ID + " TEXT, "
                 + DBConstants.KEY_X + " REAL, "
                 + DBConstants.KEY_Y + " REAL);";
     }
@@ -118,6 +121,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private String createShapeTable() {
         return "CREATE TABLE IF NOT EXISTS " + DBConstants.DB_TABLE_SHAPE + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + DBConstants.KEY_X + " REAL, "
+                + DBConstants.KEY_ROOM_ID + " TEXT, "
                 + DBConstants.KEY_MAP_ID + " TEXT, "
                 + DBConstants.KEY_ID + " TEXT, "
                 + DBConstants.KEY_Y + " REAL);";
@@ -134,7 +138,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private String createMapTable() {
         return "CREATE TABLE IF NOT EXISTS " + DBConstants.DB_TABLE_MAPS + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + DBConstants.KEY_ROOM_ID + " INT, "
+                + DBConstants.KEY_ROOM_ID + " TEXT, "
                 + DBConstants.KEY_ID + " TEXT, "
                 + DBConstants.KEY_MUSEUM_ID + " INT, "
                 + DBConstants.KEY_ENTRANCE_ROOM_ID + " TEXT);";
@@ -172,7 +176,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void museumStatusUpdate(int museumId, int mapStatus){
+    public void museumStatusUpdate(int museumId, int mapStatus) {
         ContentValues values = new ContentValues();
         values.put(DBConstants.KEY_MAP_STATUS, mapStatus);
         database.update(DBConstants.DB_TABLE_MUSEUMS, values, DBConstants.KEY_ID + "=" + museumId, null);
@@ -183,7 +187,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor mcursor = database.rawQuery(count, null);
         mcursor.moveToFirst();
         int icount = mcursor.getInt(0);
-        if(icount>0){
+        if (icount > 0) {
             return false;
         }
         return true;
@@ -195,13 +199,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getShapeValues() {
         return this.database.query(DBConstants.DB_TABLE_SHAPE, new String[]{
-                DBConstants.KEY_X, DBConstants.KEY_Y, DBConstants.KEY_MAP_ID, DBConstants.KEY_ID},
+                        DBConstants.KEY_X, DBConstants.KEY_Y, DBConstants.KEY_ROOM_ID, DBConstants.KEY_MAP_ID, DBConstants.KEY_ID},
                 null, null, null, null, null);
     }
 
     public Cursor getDoorValues() {
         return this.database.query(DBConstants.DB_TABLE_DOORS, new String[]{DBConstants.KEY_CONNECTED_TO,
-                DBConstants.KEY_MAP_ID, DBConstants.KEY_ID, DBConstants.KEY_X, DBConstants.KEY_Y},
+                        DBConstants.KEY_MAP_ID, DBConstants.KEY_ROOM_ID, DBConstants.KEY_ID, DBConstants.KEY_X, DBConstants.KEY_Y},
                 null, null, null, null, null);
     }
 
@@ -214,7 +218,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public Cursor getMuseumValues() {
         return this.database.query(DBConstants.DB_TABLE_MUSEUMS, new String[]{DBConstants.KEY_ID,
                 DBConstants.KEY_DESCRIPTION, DBConstants.KEY_LOCATION, DBConstants.KEY_MAP_STATUS,
-                DBConstants.KEY_NAME,DBConstants.KEY_MAP_SIZE}, null, null, null, null, null);
+                DBConstants.KEY_NAME, DBConstants.KEY_MAP_SIZE}, null, null, null, null, null);
     }
 
     public Cursor getRoomValues() {
