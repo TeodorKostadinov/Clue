@@ -13,81 +13,66 @@ import com.inveitix.android.clue.cmn.Room;
 public class DBUtils {
     private static DBHelper db;
 
-    public static void writeQrRecord(Context c, QR qr) {
-        initDB(c);
+    public DBUtils(Context context) {
+        initDB(context);
+    }
+
+    public void writeQrRecord(QR qr) {
         db.insertQr(qr);
     }
 
-    public static void updateMapStatus(Context c, int museumId, int mapStatus){
-        initDB(c);
+    public void updateMapStatus(int museumId, int mapStatus) {
         db.museumStatusUpdate(museumId, mapStatus);
     }
 
-    public static void writeMuseumRecord(Context c, Museum museum) {
-        initDB(c);
+    public void writeMuseumRecord(Museum museum) {
         db.insertMuseum(museum);
     }
 
-    public static void writeRoomRecord(Context c, Room room) {
-        initDB(c);
+    public void writeRoomRecord(Room room) {
         db.insertRoom(room);
     }
 
-    public static void writeDoorRecord(Context c, Door door) {
-        initDB(c);
+    public void writeDoorRecord(Door door) {
         db.insertDoor(door);
     }
 
-    public static void writeShapeRecord(Context c, MapPoint point) {
-        initDB(c);
+    public void writeShapeRecord(MapPoint point) {
         db.insertShape(point);
     }
 
-    public static void writeMapRecord(Context c, MuseumMap map) {
-        initDB(c);
+    public void writeMapRecord(MuseumMap map) {
         db.insertMap(map);
     }
 
-    public static Cursor readQrRecord(Context context) {
-        initDB(context);
+    public Cursor readQrRecord() {
         return db.getQrValues();
     }
 
-    public static Cursor readMuseumRecord(Context context) {
-        initDB(context);
+    public Cursor readMuseumRecord() {
         return db.getMuseumValues();
     }
 
-    public static Cursor readRoomRecord(Context context) {
-        initDB(context);
+    public Cursor readRoomRecord() {
         return db.getRoomValues();
     }
 
-    public static Cursor readMapRecord(Context context) {
-        initDB(context);
+    public Cursor readMapRecord() {
         return db.getMapValues();
     }
 
-    public static Cursor readDoorRecord(Context context) {
-        initDB(context);
+    public Cursor readDoorRecord() {
         return db.getDoorValues();
     }
 
-    public static Cursor readShapeRecord(Context context) {
-        initDB(context);
+    public Cursor readShapeRecord() {
         return db.getShapeValues();
     }
 
-    private static void initDB(Context context) {
-
+    private DBHelper initDB(Context context) {
         if (db == null) {
             db = new DBHelper(context);
         }
+        return db;
     }
-
-    public static boolean isEmpty(Context context, String tableName) {
-        initDB(context);
-        return db.isEmpty(tableName);
-    }
-
 }

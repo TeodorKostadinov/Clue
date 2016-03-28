@@ -22,12 +22,14 @@ import java.util.List;
 public class FireBaseLoader {
     private static final String TAG = "FireBaseLoader";
     private static FireBaseLoader instance;
-    Context context;
+    private Context context;
+    private DBUtils dbUtils;
     private Firebase fireBaseRef;
 
     public FireBaseLoader(Context context) {
         this.context = context;
         Firebase.setAndroidContext(context);
+        dbUtils = new DBUtils(context);
         fireBaseRef = new Firebase(FireBaseConstants.FIREBASE_URL);
     }
 
@@ -51,7 +53,7 @@ public class FireBaseLoader {
 
                     if (!duplicateCheck(museums, museum)) {
                         museums.add(museum);
-                        DBUtils.writeMuseumRecord(context, museum);
+                        dbUtils.writeMuseumRecord(museum);
                     }
                 }
             }
@@ -82,7 +84,7 @@ public class FireBaseLoader {
                 for (DataSnapshot postMaps : dataSnapshot.getChildren()) {
 
                     MuseumMap map = postMaps.getValue(MuseumMap.class);
-                    Cursor cursor = DBUtils.readMapRecord(context);
+                    Cursor cursor = dbUtils.readMapRecord();
 
                     boolean isDuplicated = false;
                     if (cursor.moveToFirst()) {
@@ -93,19 +95,19 @@ public class FireBaseLoader {
                         } while (cursor.moveToNext());
                     }
                     if (!isDuplicated) {
-                        DBUtils.writeMapRecord(context, map);
+                        dbUtils.writeMapRecord(map);
                         for (Room room : map.getRooms()) {
-                            DBUtils.writeRoomRecord(context, room);
+                            dbUtils.writeRoomRecord(room);
                             for (QR qr : room.getQrs()) {
-                                DBUtils.writeQrRecord(context, qr);
+                                dbUtils.writeQrRecord(qr);
                             }
 
                             for (Door door : room.getDoors()) {
-                                DBUtils.writeDoorRecord(context, door);
+                                dbUtils.writeDoorRecord(door);
                             }
 
                             for (MapPoint shape : room.getShape()) {
-                                DBUtils.writeShapeRecord(context, shape);
+                                dbUtils.writeShapeRecord(shape);
                             }
                         }
                         listener.onMuseumDownloaded(map);
@@ -119,9 +121,5 @@ public class FireBaseLoader {
             }
         });
 
-    }
-
-    public interface mapStatusListener {
-        void updateItem();
     }
 }

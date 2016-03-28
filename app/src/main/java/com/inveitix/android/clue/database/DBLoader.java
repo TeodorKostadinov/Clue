@@ -20,12 +20,14 @@ import java.util.List;
  */
 public class DBLoader {
     private static DBLoader instance;
-    List<Museum> museums;
-    Context context;
+    private List<Museum> museums;
+    private Context context;
+    private DBUtils dbUtils;
 
     public DBLoader(Context context) {
         museums = new ArrayList<>();
         this.context = context;
+        dbUtils = new DBUtils(context);
         FireBaseLoader.getInstance(context).downloadMuseumsList();
     }
 
@@ -43,7 +45,7 @@ public class DBLoader {
 
     public void loadDownloadedMap(final DownloadListener listener) {
         List<MuseumMap> maps = new ArrayList<>();
-        Cursor cursor = DBUtils.readMapRecord(context);
+        Cursor cursor = dbUtils.readMapRecord();
         if (cursor.moveToFirst()) {
             do {
                 MuseumMap map = new MuseumMap();
@@ -56,13 +58,12 @@ public class DBLoader {
                     maps.add(map);
                 }
                 listener.onMuseumDownloaded(map);
-
             } while (cursor.moveToNext());
         }
     }
 
     public List<QR> loadQrs(String mapId, String roomId) {
-        Cursor cursor = DBUtils.readQrRecord(context);
+        Cursor cursor = dbUtils.readQrRecord();
         List<QR> qrs = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
@@ -81,14 +82,13 @@ public class DBLoader {
                         qrs.add(qr);
                     }
                 }
-
             } while (cursor.moveToNext());
         }
         return qrs;
     }
 
     public List<Door> loadDoors(String mapId, String roomId) {
-        Cursor cursor = DBUtils.readDoorRecord(context);
+        Cursor cursor = dbUtils.readDoorRecord();
         List<Door> doors = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
@@ -105,17 +105,14 @@ public class DBLoader {
                     if (!duplicateCheck(doors, door)) {
                         doors.add(door);
                     }
-
                 }
-
-
             } while (cursor.moveToNext());
         }
         return doors;
     }
 
     public List<MapPoint> loadShape(String mapId, String roomId) {
-        Cursor cursor = DBUtils.readShapeRecord(context);
+        Cursor cursor = dbUtils.readShapeRecord();
         List<MapPoint> shape = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
@@ -133,15 +130,13 @@ public class DBLoader {
                         shape.add(point);
                     }
                 }
-
-
             } while (cursor.moveToNext());
         }
         return shape;
     }
 
     public List<Room> loadRooms(String mapId) {
-        Cursor cursor = DBUtils.readRoomRecord(context);
+        Cursor cursor = dbUtils.readRoomRecord();
 
         List<Room> rooms = new ArrayList<>();
         if (cursor.moveToFirst()) {
@@ -164,7 +159,7 @@ public class DBLoader {
     }
 
     public void loadMuseumsList(final DownloadListener listener) {
-        Cursor cursor = DBUtils.readMuseumRecord(context);
+        Cursor cursor = dbUtils.readMuseumRecord();
 
         if (cursor.moveToFirst()) {
             do {
