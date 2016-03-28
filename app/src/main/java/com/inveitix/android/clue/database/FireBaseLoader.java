@@ -29,7 +29,7 @@ public class FireBaseLoader {
     public FireBaseLoader(Context context) {
         this.context = context;
         Firebase.setAndroidContext(context);
-        dbUtils = new DBUtils(context);
+        dbUtils = DBUtils.getInstance(context);
         fireBaseRef = new Firebase(FireBaseConstants.FIREBASE_URL);
     }
 

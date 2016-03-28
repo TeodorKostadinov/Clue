@@ -27,7 +27,7 @@ public class DBLoader {
     public DBLoader(Context context) {
         museums = new ArrayList<>();
         this.context = context;
-        dbUtils = new DBUtils(context);
+        dbUtils = DBUtils.getInstance(context);
         FireBaseLoader.getInstance(context).downloadMuseumsList();
     }
 

@@ -26,7 +26,6 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
     private RecyclerViewOnItemClickListener itemClickListener;
     private List<Museum> museums;
     private Context context;
-    private DBUtils dbUtils;
 
     public RecListAdapter(OnDownloadClickedListener listener, Context context) {
         this.museums = new ArrayList<>();
@@ -80,9 +79,8 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
                     museums.get(i).setMapStatus(Museum.STATUS_DOWNLOADING);
                     break;
                 } else if (museumStatus == Museum.STATUS_DOWNLOADED) {
-                    dbUtils = new DBUtils(this.context);
                     museums.get(i).setMapStatus(Museum.STATUS_DOWNLOADED);
-                    dbUtils.updateMapStatus(museumID, Museum.STATUS_DOWNLOADED);
+                    DBUtils.getInstance(this.context).updateMapStatus(museumID, Museum.STATUS_DOWNLOADED);
                     break;
                 }
             }

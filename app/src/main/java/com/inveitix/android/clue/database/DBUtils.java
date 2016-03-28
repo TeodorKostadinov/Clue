@@ -11,10 +11,19 @@ import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 
 public class DBUtils {
-    private static DBHelper db;
+    private DBHelper db;
+    private static DBUtils instance;
 
-    public DBUtils(Context context) {
+    private DBUtils(Context context) {
         initDB(context);
+    }
+
+
+    public static DBUtils getInstance(Context context) {
+        if (instance == null) {
+            instance = new DBUtils(context);
+        }
+        return instance;
     }
 
     public void writeQrRecord(QR qr) {
