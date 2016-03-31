@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         initViews();
         //this.deleteDatabase("db");
         loadingListProgress();
-        DBLoader.getInstance(this).loadContent(this);
         FireBaseLoader.getInstance(this);
+        DBLoader.getInstance(this).loadContent(this);
     }
 
     private void loadingListProgress() {

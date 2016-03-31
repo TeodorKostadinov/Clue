@@ -40,8 +40,8 @@ public class FireBaseLoader {
         return instance;
     }
 
-    public void downloadMuseumsList() {
-
+    public void downloadMuseumsList(final DownloadListener listener) {
+        final boolean isEmpty = dbUtils.isEmpty();
         fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -55,6 +55,9 @@ public class FireBaseLoader {
                         museums.add(museum);
                         dbUtils.writeMuseumRecord(museum);
                     }
+                }
+                if (isEmpty){
+                    listener.onMuseumListDownloaded(museums);
                 }
             }
 
