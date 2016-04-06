@@ -1,28 +1,35 @@
 package com.inveitix.android.clue.database;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.inveitix.android.clue.cmn.Door;
+import com.inveitix.android.clue.cmn.MapPoint;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
+import com.inveitix.android.clue.cmn.QR;
+import com.inveitix.android.clue.cmn.Room;
+import com.inveitix.android.clue.interfaces.DownloadListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Tito on 23.12.2015 г..
- */
 public class FireBaseLoader {
     private static final String TAG = "FireBaseLoader";
     private static FireBaseLoader instance;
+    private Context context;
+    private DBUtils dbUtils;
     private Firebase fireBaseRef;
 
     public FireBaseLoader(Context context) {
+        this.context = context;
         Firebase.setAndroidContext(context);
+        dbUtils = DBUtils.getInstance(context);
         fireBaseRef = new Firebase(FireBaseConstants.FIREBASE_URL);
     }
 
@@ -34,7 +41,7 @@ public class FireBaseLoader {
     }
 
     public void downloadMuseumsList(final DownloadListener listener) {
-
+        final boolean isEmpty = dbUtils.isEmpty();
         fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -43,12 +50,15 @@ public class FireBaseLoader {
                 for (DataSnapshot postMuseum : dataSnapshot.getChildren()) {
 
                     Museum museum = postMuseum.getValue(Museum.class);
-                    if (!duplicateCheck(museums, museum)){
+
+                    if (!duplicateCheck(museums, museum)) {
                         museums.add(museum);
+                        dbUtils.writeMuseumRecord(museum);
                     }
                 }
-
-                listener.onMuseumListDownloaded(museums);
+                if (isEmpty){
+                    listener.onMuseumListDownloaded(museums);
+                }
             }
 
             @Override
@@ -61,7 +71,7 @@ public class FireBaseLoader {
     private boolean duplicateCheck(List<Museum> museums, Museum museum) {
         if (museums.size() > 1) {
             for (int i = 0; i < museums.size(); i++) {
-                if (museums.get(i).getId() == museum.getId()){
+                if (museums.get(i).getId() == museum.getId()) {
                     return true;
                 }
             }
@@ -75,10 +85,36 @@ public class FireBaseLoader {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postMaps : dataSnapshot.getChildren()) {
-                    Log.e("MAP", String.valueOf(postMaps.getValue()));
+
                     MuseumMap map = postMaps.getValue(MuseumMap.class);
-                    Log.e("MAP", "MuseumID: " + String.valueOf(map.getMuseumId()));
-                    listener.onMuseumDownloaded(map);
+                    Cursor cursor = dbUtils.readMapRecord();
+
+                    boolean isDuplicated = false;
+                    if (cursor.moveToFirst()) {
+                        do {
+                            if (cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)).equals(map.getId())) {
+                                isDuplicated = true;
+                            }
+                        } while (cursor.moveToNext());
+                    }
+                    if (!isDuplicated) {
+                        dbUtils.writeMapRecord(map);
+                        for (Room room : map.getRooms()) {
+                            dbUtils.writeRoomRecord(room);
+                            for (QR qr : room.getQrs()) {
+                                dbUtils.writeQrRecord(qr);
+                            }
+
+                            for (Door door : room.getDoors()) {
+                                dbUtils.writeDoorRecord(door);
+                            }
+
+                            for (MapPoint shape : room.getShape()) {
+                                dbUtils.writeShapeRecord(shape);
+                            }
+                        }
+                        listener.onMuseumDownloaded(map);
+                    }
                 }
             }
 
@@ -88,11 +124,5 @@ public class FireBaseLoader {
             }
         });
 
-    }
-
-    public interface DownloadListener {
-        void onMuseumListDownloaded(List<Museum> museums);
-
-        void onMuseumDownloaded(MuseumMap museum);
     }
 }

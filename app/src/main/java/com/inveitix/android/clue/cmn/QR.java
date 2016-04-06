@@ -7,6 +7,7 @@ public class QR {
 
     private String id;
     private String info;
+    private String mapId;
     private String roomId;
     private double x;
     private double y;
@@ -52,5 +53,13 @@ public class QR {
 
     public void setY(double y) {
         this.y = y;
+    }
+
+    public String getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(String mapId) {
+        this.mapId = mapId;
     }
 }
