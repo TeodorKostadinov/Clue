@@ -9,10 +9,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.crashlytics.android.Crashlytics;
 import com.inveitix.android.clue.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.fabric.sdk.android.Fabric;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
@@ -24,6 +26,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_splash_screen);
         ButterKnife.bind(this);
         animateSplash();
