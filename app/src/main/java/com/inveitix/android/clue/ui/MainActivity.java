@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         ButterKnife.bind(this);
         initViews();
         //this.deleteDatabase("db");
+        
         loadingListProgress();
         FireBaseLoader.getInstance(this);
         DBLoader.getInstance(this).loadContent(this);
