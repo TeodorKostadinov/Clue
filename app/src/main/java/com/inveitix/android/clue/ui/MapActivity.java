@@ -1,15 +1,13 @@
 package com.inveitix.android.clue.ui;
 
-import android.app.Activity;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.ViewGroup;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
@@ -65,7 +63,6 @@ public class MapActivity extends AppCompatActivity {
                     intent.putExtra(EXTRA_MUSEUM_ID, museumId);
                     intent.putExtra(EXTRA_ROOM_ID, door.getConnectedTo());
                     intent.putExtra(EXTRA_PREVIOUS_ROOM_ID, room.getId());
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                 }
             });
@@ -154,7 +151,6 @@ public class MapActivity extends AppCompatActivity {
             final QR qr = room.getQrById(qrId);
             if (qr != null) {
                 roomView.updateUserPosition(new MapPoint(qr.getX(), qr.getY()));
-
             }
         }
     }
