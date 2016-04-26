@@ -23,7 +23,6 @@ public class DBLoader {
     private List<Museum> museums;
     private Context context;
     private DBUtils dbUtils;
-
     public DBLoader(Context context) {
         museums = new ArrayList<>();
         this.context = context;
@@ -37,9 +36,13 @@ public class DBLoader {
         return instance;
     }
 
+    public List<Museum> getMuseums() {
+        return museums;
+    }
+
     public void loadContent(final DownloadListener listener) {
         FireBaseLoader.getInstance(context).downloadMuseumsList(listener);
-        if (!dbUtils.isEmpty()){
+        if (!dbUtils.isEmpty()) {
             loadMuseumsList(listener);
         }
         loadDownloadedMap(listener);

@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initViews();
-        //this.deleteDatabase("db");
         
         loadingListProgress();
         FireBaseLoader.getInstance(this);
