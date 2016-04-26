@@ -102,8 +102,8 @@ public class CreateMapActivity extends AppCompatActivity implements
         museum.setMapSizeKB(512);
         List<Museum> museums = DBLoader.getInstance(this).getMuseums();
         museum.setId(museums.get(museums.size()-1).getId() + 1);
-        Toast.makeText(CreateMapActivity.this, String.valueOf(museum.getId()), Toast.LENGTH_SHORT).show();
-        //DBUtils.getInstance(this).writeMuseumRecord();
+
+        DBUtils.getInstance(this).writeMuseumRecord(museum);
     }
 
     @Override
