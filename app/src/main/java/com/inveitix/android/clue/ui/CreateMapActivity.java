@@ -8,7 +8,6 @@ import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,9 +35,11 @@ public class CreateMapActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
+
     public static final int PERMISSIONS_REQUEST_LOCATION = 0;
     public static final int PERMISSIONS_REQUEST_FINE_LOCATION = 1;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+
     @Bind(R.id.edt_museum_name)
     EditText edtMuseumName;
     @Bind(R.id.edt_description)
@@ -57,10 +58,8 @@ public class CreateMapActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_create_map);
         ButterKnife.bind(this);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                // The next two lines tell the new client that “this” current class will handle connection stuff
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                //fourth line adds the LocationServices API endpoint from GooglePlayServices
                 .addApi(LocationServices.API)
                 .build();
 
@@ -97,22 +96,24 @@ public class CreateMapActivity extends AppCompatActivity implements
     private void saveMuseum() {
         Museum museum = new Museum();
         museum.setDescription(edtDescription.getText().toString().trim());
-        museum.setLocation(currentLatitude +", " + currentLongitude);
+        museum.setLocation(currentLatitude + ", " + currentLongitude);
         museum.setName(edtMuseumName.getText().toString().trim());
         museum.setMapSizeKB(512);
         List<Museum> museums = DBLoader.getInstance(this).getMuseums();
-        museum.setId(museums.get(museums.size()-1).getId() + 1);
+        museum.setId(museums.get(museums.size() - 1).getId() + 1);
 
         DBUtils.getInstance(this).writeMuseumRecord(museum);
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestFineLocationPermission();
         }
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestLocationPermission();
         }
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
@@ -123,9 +124,8 @@ public class CreateMapActivity extends AppCompatActivity implements
         } else {
             currentLatitude = location.getLatitude();
             currentLongitude = location.getLongitude();
-            txtLocation.setText(String.valueOf("Lat: " + currentLatitude + ", \nLon: " +currentLongitude));
+            txtLocation.setText(String.valueOf("Lat: " + currentLatitude + ", \nLon: " + currentLongitude));
             gotLocation = true;
-            Toast.makeText(this, currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -137,8 +137,6 @@ public class CreateMapActivity extends AppCompatActivity implements
     public void onLocationChanged(Location location) {
         currentLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
-
-        Toast.makeText(this, currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
     }
 
     @Override
