@@ -3,15 +3,12 @@ package com.inveitix.android.clue.ui;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -20,9 +17,7 @@ import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
-import com.inveitix.android.clue.database.DBConstants;
 import com.inveitix.android.clue.database.DBLoader;
-import com.inveitix.android.clue.database.DBUtils;
 import com.inveitix.android.clue.interfaces.DownloadListener;
 import com.inveitix.android.clue.database.FireBaseLoader;
 import com.inveitix.android.clue.database.MapsInstance;
@@ -50,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initViews();
-        
+
         loadingListProgress();
         FireBaseLoader.getInstance(this);
         DBLoader.getInstance(this).loadContent(this);
@@ -151,7 +146,5 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
     public void onMuseumDownloaded(MuseumMap museum) {
         MapsInstance.getInstance().addMap(museum);
         adapter.updateItem(museum.getMuseumId(), Museum.STATUS_DOWNLOADED);
-
-
     }
 }

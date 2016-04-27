@@ -2,7 +2,6 @@ package com.inveitix.android.clue.database;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MapPoint;
@@ -15,15 +14,13 @@ import com.inveitix.android.clue.interfaces.DownloadListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Tito on 24.3.2016 г..
- */
 public class DBLoader {
     private static DBLoader instance;
     private List<Museum> museums;
     private Context context;
     private DBUtils dbUtils;
-    public DBLoader(Context context) {
+
+    private DBLoader(Context context) {
         museums = new ArrayList<>();
         this.context = context;
         dbUtils = DBUtils.getInstance(context);
@@ -179,7 +176,6 @@ public class DBLoader {
                 if (!duplicateCheck(museums, museum)) {
                     museums.add(museum);
                 }
-
             } while (cursor.moveToNext());
         }
         listener.onMuseumListDownloaded(museums);
@@ -250,5 +246,4 @@ public class DBLoader {
         }
         return false;
     }
-
 }

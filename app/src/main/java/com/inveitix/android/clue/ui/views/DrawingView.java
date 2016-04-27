@@ -23,7 +23,6 @@ import java.util.List;
 
 public class DrawingView extends SurfaceView {
 
-    private static final String TAG = "DrawingView";
     private static final float DOOR_SIZE = 30;
     private static final float POINT_RADIUS = 10;
 

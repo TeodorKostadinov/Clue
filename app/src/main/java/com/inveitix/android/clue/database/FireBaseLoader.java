@@ -22,12 +22,10 @@ import java.util.List;
 public class FireBaseLoader {
     private static final String TAG = "FireBaseLoader";
     private static FireBaseLoader instance;
-    private Context context;
     private DBUtils dbUtils;
     private Firebase fireBaseRef;
 
     public FireBaseLoader(Context context) {
-        this.context = context;
         Firebase.setAndroidContext(context);
         dbUtils = DBUtils.getInstance(context);
         fireBaseRef = new Firebase(FireBaseConstants.FIREBASE_URL);

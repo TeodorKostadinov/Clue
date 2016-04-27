@@ -5,9 +5,6 @@ import com.inveitix.android.clue.cmn.MuseumMap;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by fos on 30.12.2015 г..
- */
 public class MapsInstance {
     private static MapsInstance instance;
     private List<MuseumMap> maps;

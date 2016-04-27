@@ -82,7 +82,6 @@ public class MapActivity extends AppCompatActivity {
                     alertDialog.show();
                 }
             });
-
             setInitialUserPosition();
         }
     }
@@ -106,7 +105,6 @@ public class MapActivity extends AppCompatActivity {
                 return door;
             }
         }
-
         return null;
     }
 
