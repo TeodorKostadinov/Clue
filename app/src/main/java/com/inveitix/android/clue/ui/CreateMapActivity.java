@@ -62,7 +62,6 @@ public class CreateMapActivity extends AppCompatActivity implements
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
@@ -101,7 +100,6 @@ public class CreateMapActivity extends AppCompatActivity implements
         museum.setMapSizeKB(512);
         List<Museum> museums = DBLoader.getInstance(this).getMuseums();
         museum.setId(museums.get(museums.size() - 1).getId() + 1);
-
         DBUtils.getInstance(this).writeMuseumRecord(museum);
     }
 

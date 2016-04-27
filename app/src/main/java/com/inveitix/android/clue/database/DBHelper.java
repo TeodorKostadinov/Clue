@@ -184,13 +184,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public boolean isEmpty(String tableName) {
         String count = "SELECT count(*) FROM " + tableName;
-        Cursor mcursor = database.rawQuery(count, null);
-        mcursor.moveToFirst();
-        int icount = mcursor.getInt(0);
-        if (icount > 0) {
-            return false;
-        }
-        return true;
+        Cursor mCursor = database.rawQuery(count, null);
+        mCursor.moveToFirst();
+        int iCount = mCursor.getInt(0);
+        mCursor.close();
+        return iCount <= 0;
     }
 
     public void close() {

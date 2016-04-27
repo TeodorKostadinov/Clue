@@ -5,18 +5,15 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
@@ -29,7 +26,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 
@@ -84,21 +80,17 @@ public class CreateRoomActivity extends AppCompatActivity {
     public void animateFAB() {
 
         if (isFabOpen) {
-
             fabDoor.startAnimation(fab_close);
             fabQr.startAnimation(fab_close);
             fabDoor.setClickable(false);
             fabQr.setClickable(false);
             isFabOpen = false;
-
         } else {
-
             fabDoor.startAnimation(fab_open);
             fabQr.startAnimation(fab_open);
             fabDoor.setClickable(true);
             fabQr.setClickable(true);
             isFabOpen = true;
-
         }
     }
 
@@ -110,7 +102,6 @@ public class CreateRoomActivity extends AppCompatActivity {
         alertDialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
             }
         });
         alertDialogBuilder.setTitle(getString(R.string.txt_select_room));
@@ -126,16 +117,13 @@ public class CreateRoomActivity extends AppCompatActivity {
                 Toast.makeText(parent.getContext(), "Clicked : " +
                         parent.getItemAtPosition(position).toString(), Toast.LENGTH_LONG).show();
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
         alertDialog.show();
         alertDialog.setCanceledOnTouchOutside(false);
     }
-
 
     @OnClick(R.id.fab_door)
     void onDoorClicked() {
@@ -147,14 +135,12 @@ public class CreateRoomActivity extends AppCompatActivity {
             drawingView.setIsDoorSelected(false);
     }
 
-
     @OnClick(R.id.fab_done)
     public void draw() {
         drawingView.drawFloor();
         drawingView.setIsFloorFinished(true);
         animateFAB();
     }
-
 
     public void openDialog() {
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();

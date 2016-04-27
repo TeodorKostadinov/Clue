@@ -33,5 +33,5 @@
         android:layout_margin="15dp"
         android:clickable="true"
         android:background="@drawable/circle"
-        android:src="@drawable/ic_add_white_24dp" />
+        android:src="@drawable/ic_add_white_24dp"/>
 </RelativeLayout>

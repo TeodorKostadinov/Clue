@@ -18,7 +18,6 @@ public class DBUtils {
         initDB(context);
     }
 
-
     public static DBUtils getInstance(Context context) {
         if (instance == null) {
             instance = new DBUtils(context);
