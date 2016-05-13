@@ -17,6 +17,7 @@ import android.view.SurfaceView;
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MapPoint;
+import com.inveitix.android.clue.cmn.QR;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,9 @@ public class DrawingView extends SurfaceView {
     private boolean isFloorFinished;
     private boolean isDoorSelected;
     private DrawDoorListener drawDoorListener;
+    private DrawQrListener drawQrListener;
+    private boolean isQrSelected;
+    private List<QR> qrs;
 
     public DrawingView(Context context) {
         super(context);
@@ -51,6 +55,10 @@ public class DrawingView extends SurfaceView {
         init();
     }
 
+    public void setQrSelected(boolean qrSelected) {
+        this.isQrSelected = qrSelected;
+    }
+
     public void setIsDoorSelected(boolean isDoorSelected) {
         this.isDoorSelected = isDoorSelected;
     }
@@ -63,6 +71,10 @@ public class DrawingView extends SurfaceView {
         this.drawDoorListener = drawDoorListener;
     }
 
+    public void setDrawQrListener(DrawQrListener drawQrListener) {
+        this.drawQrListener = drawQrListener;
+    }
+
     private void init() {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         isFloorFinished = false;
@@ -72,6 +84,7 @@ public class DrawingView extends SurfaceView {
         paint.setStyle(Paint.Style.FILL);
         shape = new ArrayList<>();
         doors = new ArrayList<>();
+        qrs = new ArrayList<>();
     }
 
     private void prepareCanvas() {
@@ -111,6 +124,15 @@ public class DrawingView extends SurfaceView {
                 doors.add(door);
                 drawFloor();
                 drawDoorListener.onDoorDrawn(door);
+            }
+        } else if (event.getAction() == MotionEvent.ACTION_DOWN && isQrSelected) {
+            if (surfaceHolder.getSurface().isValid()) {
+                QR qr = new QR();
+                qr.setX(event.getX());
+                qr.setY(event.getY());
+                qrs.add(qr);
+                drawFloor();
+                drawQrListener.onQrDrawn(qr);
             }
         }
         return false;
@@ -176,6 +198,10 @@ public class DrawingView extends SurfaceView {
 
     public interface DrawDoorListener {
         void onDoorDrawn(Door door);
+    }
+
+    public interface DrawQrListener {
+        void onQrDrawn(QR qr);
     }
 }
 

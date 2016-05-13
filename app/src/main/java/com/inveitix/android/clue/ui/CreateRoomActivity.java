@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
+import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.ui.views.DrawingView;
 
@@ -59,6 +60,12 @@ public class CreateRoomActivity extends AppCompatActivity {
             @Override
             public void onDoorDrawn(Door door) {
                 openRoomsDialog();
+            }
+        });
+        drawingView.setDrawQrListener(new DrawingView.DrawQrListener() {
+            @Override
+            public void onQrDrawn(QR qr) {
+                Toast.makeText(CreateRoomActivity.this, "Qr selected", Toast.LENGTH_SHORT).show();
             }
         });
         isFabOpen = false;
@@ -117,6 +124,7 @@ public class CreateRoomActivity extends AppCompatActivity {
                 Toast.makeText(parent.getContext(), "Clicked : " +
                         parent.getItemAtPosition(position).toString(), Toast.LENGTH_LONG).show();
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -127,12 +135,14 @@ public class CreateRoomActivity extends AppCompatActivity {
 
     @OnClick(R.id.fab_door)
     void onDoorClicked() {
-            drawingView.setIsDoorSelected(true);
+        drawingView.setIsDoorSelected(true);
+        drawingView.setQrSelected(false);
     }
 
     @OnClick(R.id.fab_qr)
     void onQrClicked() {
-            drawingView.setIsDoorSelected(false);
+        drawingView.setIsDoorSelected(false);
+        drawingView.setQrSelected(true);
     }
 
     @OnClick(R.id.fab_done)

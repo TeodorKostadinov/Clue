@@ -185,6 +185,16 @@ public class RoomView extends SurfaceView implements Runnable {
 
         drawFloor(path, patternBMPshader);
         drawDoors();
+        drawQrs();
+        if (userPosition != null) {
+
+            motionPerson(USER_SPEED);
+            canvas.drawBitmap(personPoint, personX, personY, null);
+        }
+        surface.unlockCanvasAndPost(canvas);
+    }
+
+    private void drawQrs() {
         if (qrs != null && qrs.size() > 0) {
 
             for (QR qr :
@@ -193,12 +203,6 @@ public class RoomView extends SurfaceView implements Runnable {
                         maxHeight * qr.getY() - QR_SIZE, null);
             }
         }
-        if (userPosition != null) {
-
-            motionPerson(USER_SPEED);
-            canvas.drawBitmap(personPoint, personX, personY, null);
-        }
-        surface.unlockCanvasAndPost(canvas);
     }
 
     private void drawDoors() {
