@@ -150,7 +150,7 @@ public class CreateRoomActivity extends AppCompatActivity {
         drawingView.setMuseumId(getIntent().getStringExtra(getString(R.string.museum_id)));
         drawingView.setRoomId("room " + timeStamp);
     }
-    
+
     @OnClick(R.id.fab_done)
     public void draw() {
         drawingView.drawFloor();
