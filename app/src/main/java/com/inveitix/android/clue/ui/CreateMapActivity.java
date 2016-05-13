@@ -101,8 +101,8 @@ public class CreateMapActivity extends AppCompatActivity implements
         museum.setName(edtMuseumName.getText().toString().trim());
         museum.setMapSizeKB(512);
         museum.setMapStatus(Museum.STATUS_DOWNLOADED);
-        List<Museum> museums = DBLoader.getInstance(this).getMuseums();
-        museum.setId(museums.get(museums.size() - 1).getId() + 1);
+        long timeStamp = System.currentTimeMillis() / 1000;
+        museum.setId((int) timeStamp);
         DBUtils.getInstance(this).writeMuseumRecord(museum);
     }
 
