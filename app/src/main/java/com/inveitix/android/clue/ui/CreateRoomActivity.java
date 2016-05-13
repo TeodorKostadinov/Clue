@@ -2,6 +2,7 @@ package com.inveitix.android.clue.ui;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -43,6 +45,7 @@ public class CreateRoomActivity extends AppCompatActivity {
     private Animation fab_open, fab_close;
     private Boolean isFabOpen;
     private List<String> rooms;
+    private long timeStamp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,7 @@ public class CreateRoomActivity extends AppCompatActivity {
     }
 
     private void init() {
+        timeStamp = System.currentTimeMillis()/1000;
         rooms = new ArrayList<>();
         testRooms();
         drawingView.setDrawDoorListener(new DrawingView.DrawDoorListener() {
@@ -65,7 +69,7 @@ public class CreateRoomActivity extends AppCompatActivity {
         drawingView.setDrawQrListener(new DrawingView.DrawQrListener() {
             @Override
             public void onQrDrawn(QR qr) {
-                Toast.makeText(CreateRoomActivity.this, "Qr selected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreateRoomActivity.this, String.valueOf(qr.getId()), Toast.LENGTH_SHORT).show();
             }
         });
         isFabOpen = false;
@@ -143,8 +147,10 @@ public class CreateRoomActivity extends AppCompatActivity {
     void onQrClicked() {
         drawingView.setIsDoorSelected(false);
         drawingView.setQrSelected(true);
+        drawingView.setMuseumId(getIntent().getStringExtra(getString(R.string.museum_id)));
+        drawingView.setRoomId("room " + timeStamp);
     }
-
+    
     @OnClick(R.id.fab_done)
     public void draw() {
         drawingView.drawFloor();

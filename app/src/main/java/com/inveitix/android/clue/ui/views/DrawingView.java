@@ -1,6 +1,7 @@
 package com.inveitix.android.clue.ui.views;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
@@ -9,10 +10,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
+import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.EditText;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
@@ -25,13 +30,13 @@ import java.util.List;
 public class DrawingView extends SurfaceView {
 
     private static final float DOOR_SIZE = 30;
+    private static final float QR_SIZE = 30;
     private static final float POINT_RADIUS = 10;
-
+    public String museumId;
     private Paint paint;
     private Canvas canvas;
     private SurfaceHolder surfaceHolder;
     private List<MapPoint> shape;
-
     private List<Door> doors;
     private boolean isFloorFinished;
     private boolean isDoorSelected;
@@ -39,40 +44,26 @@ public class DrawingView extends SurfaceView {
     private DrawQrListener drawQrListener;
     private boolean isQrSelected;
     private List<QR> qrs;
+    private String roomId;
+    private String qrInfo;
+    private Context context;
 
     public DrawingView(Context context) {
         super(context);
+        this.context = context;
         init();
     }
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
         init();
     }
 
     public DrawingView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.context = context;
         init();
-    }
-
-    public void setQrSelected(boolean qrSelected) {
-        this.isQrSelected = qrSelected;
-    }
-
-    public void setIsDoorSelected(boolean isDoorSelected) {
-        this.isDoorSelected = isDoorSelected;
-    }
-
-    public void setIsFloorFinished(boolean isFloorFinished) {
-        this.isFloorFinished = isFloorFinished;
-    }
-
-    public void setDrawDoorListener(DrawDoorListener drawDoorListener) {
-        this.drawDoorListener = drawDoorListener;
-    }
-
-    public void setDrawQrListener(DrawQrListener drawQrListener) {
-        this.drawQrListener = drawQrListener;
     }
 
     private void init() {
@@ -127,15 +118,41 @@ public class DrawingView extends SurfaceView {
             }
         } else if (event.getAction() == MotionEvent.ACTION_DOWN && isQrSelected) {
             if (surfaceHolder.getSurface().isValid()) {
+                showQrInfoDialog();
+                long timeStamp = System.currentTimeMillis() / 1000;
                 QR qr = new QR();
                 qr.setX(event.getX());
                 qr.setY(event.getY());
+                qr.setId("qr " + timeStamp);
+                qr.setMapId(getMuseumId());
+                qr.setRoomId(this.roomId);
+                qr.setInfo(this.qrInfo);
                 qrs.add(qr);
                 drawFloor();
                 drawQrListener.onQrDrawn(qr);
             }
         }
         return false;
+    }
+
+    public void showQrInfoDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        LayoutInflater inflater =
+                (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View dialogView = inflater.inflate(R.layout.edt_dialog, null);
+        dialogBuilder.setView(dialogView);
+        final EditText edt = (EditText) dialogView.findViewById(R.id.edt_qr_dialog);
+
+        dialogBuilder.setTitle(context.getString(R.string.qr_information));
+        dialogBuilder.setMessage(context.getString(R.string.enter_qr_info));
+        dialogBuilder.setPositiveButton(context.getString(R.string.txt_done),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        setQrInfo(edt.getText().toString());
+                    }
+                });
+        AlertDialog b = dialogBuilder.create();
+        b.show();
     }
 
     public void drawFloor() {
@@ -161,6 +178,10 @@ public class DrawingView extends SurfaceView {
         if (doors.size() > 0) {
             drawDoors();
         }
+
+        if (qrs.size() > 0) {
+            drawQrs();
+        }
         surfaceHolder.unlockCanvasAndPost(canvas);
     }
 
@@ -172,6 +193,19 @@ public class DrawingView extends SurfaceView {
             if (doors != null && doors.size() > 0) {
                 for (Door door : doors) {
                     canvas.drawBitmap(bmpDoor, door.getX() - DOOR_SIZE, door.getY() - DOOR_SIZE, paint);
+                }
+            }
+        }
+    }
+
+    public void drawQrs() {
+        Bitmap bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
+        paint.setFilterBitmap(true);
+
+        synchronized (surfaceHolder) {
+            if (qrs != null && qrs.size() > 0) {
+                for (QR qr : qrs) {
+                    canvas.drawBitmap(bmpDoor, qr.getX() - QR_SIZE, qr.getY() - QR_SIZE, paint);
                 }
             }
         }
@@ -195,6 +229,43 @@ public class DrawingView extends SurfaceView {
             previousPoint = shape.get(i);
         }
     }
+
+    public void setQrSelected(boolean qrSelected) {
+        this.isQrSelected = qrSelected;
+    }
+
+    public void setIsDoorSelected(boolean isDoorSelected) {
+        this.isDoorSelected = isDoorSelected;
+    }
+
+    public void setIsFloorFinished(boolean isFloorFinished) {
+        this.isFloorFinished = isFloorFinished;
+    }
+
+    public void setDrawDoorListener(DrawDoorListener drawDoorListener) {
+        this.drawDoorListener = drawDoorListener;
+    }
+
+    public void setDrawQrListener(DrawQrListener drawQrListener) {
+        this.drawQrListener = drawQrListener;
+    }
+
+    public String getMuseumId() {
+        return museumId;
+    }
+
+    public void setMuseumId(String museumId) {
+        this.museumId = museumId;
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
+    }
+
+    public void setQrInfo(String qrInfo) {
+        this.qrInfo = qrInfo;
+    }
+
 
     public interface DrawDoorListener {
         void onDoorDrawn(Door door);

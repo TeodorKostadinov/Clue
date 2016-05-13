@@ -51,6 +51,7 @@ public class CreateMapActivity extends AppCompatActivity implements
     private LocationRequest mLocationRequest;
     private double currentLatitude;
     private double currentLongitude;
+    private Museum museum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +89,13 @@ public class CreateMapActivity extends AppCompatActivity implements
                 LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
                 mGoogleApiClient.disconnect();
             }
+            intent.putExtra(getString(R.string.museum_id), this.museum.getId());
             startActivity(intent);
         }
     }
 
     private void saveMuseum() {
-        Museum museum = new Museum();
+        museum = new Museum();
         museum.setDescription(edtDescription.getText().toString().trim());
         museum.setLocation(currentLatitude + ", " + currentLongitude);
         museum.setName(edtMuseumName.getText().toString().trim());
