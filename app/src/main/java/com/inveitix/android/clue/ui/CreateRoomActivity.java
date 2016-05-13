@@ -2,6 +2,7 @@ package com.inveitix.android.clue.ui;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,12 +12,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
+import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.ui.views.DrawingView;
 
@@ -42,6 +45,7 @@ public class CreateRoomActivity extends AppCompatActivity {
     private Animation fab_open, fab_close;
     private Boolean isFabOpen;
     private List<String> rooms;
+    private long timeStamp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +57,19 @@ public class CreateRoomActivity extends AppCompatActivity {
     }
 
     private void init() {
+        timeStamp = System.currentTimeMillis()/1000;
         rooms = new ArrayList<>();
         testRooms();
         drawingView.setDrawDoorListener(new DrawingView.DrawDoorListener() {
             @Override
             public void onDoorDrawn(Door door) {
                 openRoomsDialog();
+            }
+        });
+        drawingView.setDrawQrListener(new DrawingView.DrawQrListener() {
+            @Override
+            public void onQrDrawn(QR qr) {
+                Toast.makeText(CreateRoomActivity.this, String.valueOf(qr.getId()), Toast.LENGTH_SHORT).show();
             }
         });
         isFabOpen = false;
@@ -117,6 +128,7 @@ public class CreateRoomActivity extends AppCompatActivity {
                 Toast.makeText(parent.getContext(), "Clicked : " +
                         parent.getItemAtPosition(position).toString(), Toast.LENGTH_LONG).show();
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -127,12 +139,16 @@ public class CreateRoomActivity extends AppCompatActivity {
 
     @OnClick(R.id.fab_door)
     void onDoorClicked() {
-            drawingView.setIsDoorSelected(true);
+        drawingView.setIsDoorSelected(true);
+        drawingView.setQrSelected(false);
     }
 
     @OnClick(R.id.fab_qr)
     void onQrClicked() {
-            drawingView.setIsDoorSelected(false);
+        drawingView.setIsDoorSelected(false);
+        drawingView.setQrSelected(true);
+        drawingView.setMuseumId(getIntent().getStringExtra(getString(R.string.museum_id)));
+        drawingView.setRoomId("room " + timeStamp);
     }
 
     @OnClick(R.id.fab_done)

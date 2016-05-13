@@ -51,6 +51,7 @@ public class CreateMapActivity extends AppCompatActivity implements
     private LocationRequest mLocationRequest;
     private double currentLatitude;
     private double currentLongitude;
+    private Museum museum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,18 +89,20 @@ public class CreateMapActivity extends AppCompatActivity implements
                 LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
                 mGoogleApiClient.disconnect();
             }
+            intent.putExtra(getString(R.string.museum_id), this.museum.getId());
             startActivity(intent);
         }
     }
 
     private void saveMuseum() {
-        Museum museum = new Museum();
+        museum = new Museum();
         museum.setDescription(edtDescription.getText().toString().trim());
         museum.setLocation(currentLatitude + ", " + currentLongitude);
         museum.setName(edtMuseumName.getText().toString().trim());
         museum.setMapSizeKB(512);
-        List<Museum> museums = DBLoader.getInstance(this).getMuseums();
-        museum.setId(museums.get(museums.size() - 1).getId() + 1);
+        museum.setMapStatus(Museum.STATUS_DOWNLOADED);
+        long timeStamp = System.currentTimeMillis() / 1000;
+        museum.setId((int) timeStamp);
         DBUtils.getInstance(this).writeMuseumRecord(museum);
     }
 
