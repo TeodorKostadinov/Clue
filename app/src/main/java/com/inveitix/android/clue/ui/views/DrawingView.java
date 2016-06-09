@@ -22,7 +22,10 @@ import android.widget.EditText;
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MapPoint;
+import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.QR;
+import com.inveitix.android.clue.cmn.Room;
+import com.inveitix.android.clue.database.DBUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +50,6 @@ public class DrawingView extends SurfaceView {
     private String roomId;
     private String qrInfo;
     private Context context;
-
     public DrawingView(Context context) {
         super(context);
         this.context = context;
@@ -64,6 +66,28 @@ public class DrawingView extends SurfaceView {
         super(context, attrs, defStyleAttr);
         this.context = context;
         init();
+    }
+
+    public List<QR> getQrs() {
+        return qrs;
+    }
+
+    public List<Door> getDoors() {
+        return doors;
+    }
+
+    public List<MapPoint> getShape() {
+        return shape;
+    }
+
+    public Room getRoom() {
+        Room room = new Room();
+        room.setId(roomId);
+        room.setDoors(doors);
+        room.setMapId(getMuseumId());
+        room.setQrs(qrs);
+        room.setShape(shape);
+        return room;
     }
 
     private void init() {
@@ -98,20 +122,31 @@ public class DrawingView extends SurfaceView {
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN && !isFloorFinished) {
             if (surfaceHolder.getSurface().isValid()) {
-                shape.add(new MapPoint(event.getX(), event.getY()));
+                long timeStamp = System.currentTimeMillis() / 1000;
+                MapPoint point = new MapPoint();
+                point.setMapId(getMuseumId());
+                point.setId("point" + timeStamp);
+                point.setRoomId(this.roomId);
+                point.setX(event.getX());
+                point.setY(event.getY());
+                shape.add(point);
                 canvas = surfaceHolder.lockCanvas();
                 canvas.drawColor(Color.WHITE);
-                for (MapPoint point : shape) {
-                    canvas.drawCircle(point.getX(), point.getY(), POINT_RADIUS, paint);
+                for (MapPoint mapPoint : shape) {
+                    canvas.drawCircle(mapPoint.getX(), mapPoint.getY(), POINT_RADIUS, paint);
                 }
                 surfaceHolder.unlockCanvasAndPost(canvas);
             }
         } else if (event.getAction() == MotionEvent.ACTION_DOWN && isDoorSelected) {
             if (surfaceHolder.getSurface().isValid()) {
+                long timeStamp = System.currentTimeMillis() / 1000;
                 Door door = new Door();
+                door.setId("door" + timeStamp);
                 door.setConnectedTo("door1"); //this is for test
                 door.setX(event.getX());
                 door.setY(event.getY());
+                door.setRoomId(roomId);
+                door.setMapId(getMuseumId());
                 doors.add(door);
                 drawFloor();
                 drawDoorListener.onDoorDrawn(door);
@@ -154,6 +189,7 @@ public class DrawingView extends SurfaceView {
         AlertDialog b = dialogBuilder.create();
         b.show();
     }
+
 
     public void drawFloor() {
         Bitmap bmpFloorPattern = BitmapFactory.decodeResource(getResources(), R.drawable.floor_pattern6);
@@ -259,7 +295,9 @@ public class DrawingView extends SurfaceView {
     }
 
     public void setRoomId(String roomId) {
-        this.roomId = roomId;
+        if (this.roomId == null || this.roomId.equals("")) {
+            this.roomId = roomId;
+        }
     }
 
     public void setQrInfo(String qrInfo) {
