@@ -91,6 +91,7 @@ public class CreateMapActivity extends AppCompatActivity implements
             }
             intent.putExtra(getString(R.string.museum_id), String.valueOf(this.museum.getId()));
             startActivity(intent);
+            finish();
         }
     }
 

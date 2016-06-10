@@ -2,6 +2,7 @@ package com.inveitix.android.clue.ui;
 
 
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.inveitix.android.clue.cmn.MapPoint;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
+import com.inveitix.android.clue.database.DBConstants;
 import com.inveitix.android.clue.database.DBUtils;
 import com.inveitix.android.clue.ui.views.DrawingView;
 
@@ -46,11 +48,12 @@ public class CreateRoomActivity extends AppCompatActivity {
 
     private Animation fab_open, fab_close;
     private Boolean isFabOpen;
-    private List<String> roomsName;
-    private List<Room> rooms;
+    private ArrayList<String> roomsName;
+    private ArrayList<Room> rooms;
     private long timeStamp;
-    private List<Door> doors;
-    private List<QR> qrs;
+    private ArrayList<MapPoint> shape;
+    private ArrayList<Door> doors;
+    private ArrayList<QR> qrs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,23 +65,39 @@ public class CreateRoomActivity extends AppCompatActivity {
     }
 
     private void init() {
-        timeStamp = System.currentTimeMillis()/1000;
+        timeStamp = System.currentTimeMillis();
         roomsName = new ArrayList<>();
         doors = new ArrayList<>();
+        shape = new ArrayList<>();
         qrs = new ArrayList<>();
         rooms = new ArrayList<>();
         testRooms();
         drawingView.setMuseumId(getIntent().getStringExtra(getString(R.string.museum_id)));
+        drawingView.setRoomId("room " + timeStamp);
+
+        drawingView.setOnRoomCreatedListener(new DrawingView.onRoomCreatedListener() {
+            @Override
+            public void onRoomCreated(Room room) {
+                rooms.add(room);
+            }
+        });
         drawingView.setDrawDoorListener(new DrawingView.DrawDoorListener() {
             @Override
             public void onDoorDrawn(Door door) {
                 openRoomsDialog();
+                doors.add(door);
+            }
+        });
+        drawingView.setShapeCreatedListener(new DrawingView.ShapeCreatedListened() {
+            @Override
+            public void onShapeCreated(MapPoint point) {
+               shape.add(point);
             }
         });
         drawingView.setDrawQrListener(new DrawingView.DrawQrListener() {
             @Override
             public void onQrDrawn(QR qr) {
-                Toast.makeText(CreateRoomActivity.this, String.valueOf(qr.getId()), Toast.LENGTH_SHORT).show();
+               qrs.add(qr);
             }
         });
         isFabOpen = false;
@@ -90,13 +109,13 @@ public class CreateRoomActivity extends AppCompatActivity {
         Room room = new Room();
         room.setId("Soon...");
         roomsName.add(room.getId());
-        drawingView.setRoomId("room " + timeStamp);
     }
 
     public void animateFAB() {
 
         if (isFabOpen) {
             saveMap();
+            finish();
         } else {
             fabDoor.startAnimation(fab_open);
             fabQr.startAnimation(fab_open);
@@ -107,25 +126,19 @@ public class CreateRoomActivity extends AppCompatActivity {
     }
 
     private void saveMap() {
-        DBUtils.getInstance(this).writeRoomRecord(drawingView.getRoom());
-        rooms.add(drawingView.getRoom());
-        for (MapPoint point : drawingView.getShape()){
-            Log.d("Test", String.valueOf(point.getMapId()));
-            Log.d("Test", String.valueOf(point.getRoomId()));
+        Room room = drawingView.getRoom();
+        DBUtils.getInstance(this).writeRoomRecord(room);
+        for (MapPoint point : shape){
             DBUtils.getInstance(this).writeShapeRecord(point);
         }
-        for (Door door : drawingView.getDoors()) {
-            Log.d("Test", String.valueOf(door.getMapId()));
-            Log.d("Test", String.valueOf(door.getRoomId()));
+        for (Door door : doors) {
             DBUtils.getInstance(this).writeDoorRecord(door);
         }
-        for (QR qr : drawingView.getQrs()) {
-            Log.d("Test", String.valueOf(qr.getMapId()));
-            Log.d("Test", String.valueOf(qr.getRoomId()));
+        for (QR qr : qrs) {
             DBUtils.getInstance(this).writeQrRecord(qr);
         }
         String mapId = getIntent().getStringExtra(getString(R.string.museum_id));
-        createMap(mapId, mapId, rooms, drawingView.getRoom().getId());
+        createMap(mapId, mapId, rooms, room.getId());
     }
 
     private void createMap(String id, String museumId, List<Room> rooms, String entranceRoomId) {
@@ -135,11 +148,6 @@ public class CreateRoomActivity extends AppCompatActivity {
         map.setRooms(rooms);
         map.setEntranceRoomId(entranceRoomId);
         DBUtils.getInstance(this).writeMapRecord(map);
-        Log.d("Test", String.valueOf(map.getEntranceRoomId()));
-        Log.d("Test", String.valueOf(map.getId()));
-        Log.d("Test", String.valueOf(map.getMuseumId()));
-        Log.d("Test", String.valueOf(map.getRooms().get(0).getId()));
-
     }
 
     private void openRoomsDialog() {
@@ -163,8 +171,7 @@ public class CreateRoomActivity extends AppCompatActivity {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(parent.getContext(), "Clicked : " +
-//                        parent.getItemAtPosition(position).toString(), Toast.LENGTH_LONG).show();
+
             }
 
             @Override
@@ -179,14 +186,12 @@ public class CreateRoomActivity extends AppCompatActivity {
     void onDoorClicked() {
         drawingView.setIsDoorSelected(true);
         drawingView.setQrSelected(false);
-        drawingView.setMuseumId(getIntent().getStringExtra(getString(R.string.museum_id)));
     }
 
     @OnClick(R.id.fab_qr)
     void onQrClicked() {
         drawingView.setIsDoorSelected(false);
         drawingView.setQrSelected(true);
-
     }
 
     @OnClick(R.id.fab_done)
