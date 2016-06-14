@@ -35,7 +35,7 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
 
     public void addItems(List<Museum> museums) {
         this.museums = museums;
-        notifyDataSetChanged();
+        refreshMuseumList();
     }
 
     @Override
@@ -85,6 +85,10 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
                 }
             }
         }
+        refreshMuseumList();
+    }
+
+    public void refreshMuseumList() {
         notifyDataSetChanged();
     }
 

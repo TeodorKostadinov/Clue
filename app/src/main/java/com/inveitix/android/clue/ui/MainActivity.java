@@ -147,4 +147,10 @@ public class MainActivity extends AppCompatActivity implements RecListAdapter.On
         MapsInstance.getInstance().addMap(museum);
         adapter.updateItem(museum.getMuseumId(), Museum.STATUS_DOWNLOADED);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.refreshMuseumList();
+    }
 }
