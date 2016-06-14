@@ -14,7 +14,7 @@
     <string name="txt_museum_info">Enter museum info</string>
     <string name="txt_museum_name">Enter museum name</string>
     <string name="txt_get_museum_location">Get location</string>
-    <string name="txt_create_instructions">Touch the screen and mark the corners of the room. When you finish press done button.</string>
+    <string name="txt_create_instructions">(Beta)Touch the screen and mark the corners of the room. When you finish press done button.</string>
     <string name="txt_info">Info</string>
     <string name="txt_building_location">Get your building location</string>
     <string name="txt_add_door">DOOR ON</string>

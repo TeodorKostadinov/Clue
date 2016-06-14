@@ -54,6 +54,7 @@ public class FireBaseLoader {
                         dbUtils.writeMuseumRecord(museum);
                     }
                 }
+
                 if (isEmpty){
                     listener.onMuseumListDownloaded(museums);
                 }

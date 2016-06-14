@@ -2,11 +2,9 @@ package com.inveitix.android.clue.ui;
 
 
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -15,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
@@ -23,8 +20,11 @@ import com.inveitix.android.clue.cmn.MapPoint;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
-import com.inveitix.android.clue.database.DBConstants;
 import com.inveitix.android.clue.database.DBUtils;
+import com.inveitix.android.clue.interfaces.DrawDoorListener;
+import com.inveitix.android.clue.interfaces.DrawQrListener;
+import com.inveitix.android.clue.interfaces.ShapeCreatedListened;
+import com.inveitix.android.clue.interfaces.onRoomCreatedListener;
 import com.inveitix.android.clue.ui.views.DrawingView;
 
 
@@ -39,18 +39,15 @@ import butterknife.OnClick;
 public class CreateRoomActivity extends AppCompatActivity {
     @Bind(R.id.drawing_view)
     DrawingView drawingView;
-    @Bind(R.id.fab_done)
-    ImageButton fabDone;
     @Bind(R.id.fab_door)
     ImageButton fabDoor;
     @Bind(R.id.fab_qr)
     ImageButton fabQr;
 
-    private Animation fab_open, fab_close;
+    private Animation fab_open;
     private Boolean isFabOpen;
     private ArrayList<String> roomsName;
     private ArrayList<Room> rooms;
-    private long timeStamp;
     private ArrayList<MapPoint> shape;
     private ArrayList<Door> doors;
     private ArrayList<QR> qrs;
@@ -65,44 +62,47 @@ public class CreateRoomActivity extends AppCompatActivity {
     }
 
     private void init() {
-        timeStamp = System.currentTimeMillis();
+        long timeStamp = System.currentTimeMillis();
         roomsName = new ArrayList<>();
         doors = new ArrayList<>();
         shape = new ArrayList<>();
         qrs = new ArrayList<>();
         rooms = new ArrayList<>();
         testRooms();
+        initDrawingView(timeStamp);
+        isFabOpen = false;
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+    }
+
+    private void initDrawingView(long timeStamp) {
         drawingView.setMuseumId(getIntent().getStringExtra(getString(R.string.museum_id)));
         drawingView.setRoomId("room " + timeStamp);
 
-        drawingView.setOnRoomCreatedListener(new DrawingView.onRoomCreatedListener() {
+        drawingView.setOnRoomCreatedListener(new onRoomCreatedListener() {
             @Override
             public void onRoomCreated(Room room) {
                 rooms.add(room);
             }
         });
-        drawingView.setDrawDoorListener(new DrawingView.DrawDoorListener() {
+        drawingView.setDrawDoorListener(new DrawDoorListener() {
             @Override
             public void onDoorDrawn(Door door) {
                 openRoomsDialog();
                 doors.add(door);
             }
         });
-        drawingView.setShapeCreatedListener(new DrawingView.ShapeCreatedListened() {
+        drawingView.setShapeCreatedListener(new ShapeCreatedListened() {
             @Override
             public void onShapeCreated(MapPoint point) {
-               shape.add(point);
+                shape.add(point);
             }
         });
-        drawingView.setDrawQrListener(new DrawingView.DrawQrListener() {
+        drawingView.setDrawQrListener(new DrawQrListener() {
             @Override
             public void onQrDrawn(QR qr) {
-               qrs.add(qr);
+                qrs.add(qr);
             }
         });
-        isFabOpen = false;
-        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
     }
 
     private void testRooms() {
@@ -112,7 +112,6 @@ public class CreateRoomActivity extends AppCompatActivity {
     }
 
     public void animateFAB() {
-
         if (isFabOpen) {
             saveMap();
             finish();
@@ -126,9 +125,11 @@ public class CreateRoomActivity extends AppCompatActivity {
     }
 
     private void saveMap() {
-        Room room = drawingView.getRoom();
-        DBUtils.getInstance(this).writeRoomRecord(room);
-        for (MapPoint point : shape){
+        drawingView.initRoom();
+        for (Room room : rooms) {
+            DBUtils.getInstance(this).writeRoomRecord(room);
+        }
+        for (MapPoint point : shape) {
             DBUtils.getInstance(this).writeShapeRecord(point);
         }
         for (Door door : doors) {
@@ -138,15 +139,15 @@ public class CreateRoomActivity extends AppCompatActivity {
             DBUtils.getInstance(this).writeQrRecord(qr);
         }
         String mapId = getIntent().getStringExtra(getString(R.string.museum_id));
-        createMap(mapId, mapId, rooms, room.getId());
+        createMap(mapId, mapId, rooms, rooms.get(0).getId());
     }
 
     private void createMap(String id, String museumId, List<Room> rooms, String entranceRoomId) {
         MuseumMap map = new MuseumMap();
         map.setId(id);
-        map.setMuseumId(Integer.parseInt(museumId));
         map.setRooms(rooms);
         map.setEntranceRoomId(entranceRoomId);
+        map.setMuseumId(Integer.parseInt(museumId));
         DBUtils.getInstance(this).writeMapRecord(map);
     }
 
@@ -158,7 +159,6 @@ public class CreateRoomActivity extends AppCompatActivity {
         alertDialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
             }
         });
         alertDialogBuilder.setTitle(getString(R.string.txt_select_room));
@@ -171,13 +171,13 @@ public class CreateRoomActivity extends AppCompatActivity {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
         alertDialog.show();
         alertDialog.setCanceledOnTouchOutside(false);
     }
