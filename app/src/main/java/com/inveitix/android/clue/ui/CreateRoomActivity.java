@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
+import com.inveitix.android.clue.cmn.MapPoint;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.ui.views.DrawingView;
@@ -47,6 +48,15 @@ public class CreateRoomActivity extends AppCompatActivity {
     private List<String> rooms;
     private long timeStamp;
 
+    private List<MapPoint> shape;
+
+    //Indicates what to happen when user touches the screen
+    private int drawingState;
+    private static final int STATE_SHAPE = 1;
+    private static final int STATE_DOOR = 2;
+    private static final int STATE_QR = 3;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,25 +67,33 @@ public class CreateRoomActivity extends AppCompatActivity {
     }
 
     private void init() {
-        timeStamp = System.currentTimeMillis()/1000;
+        timeStamp = System.currentTimeMillis() / 1000;
         rooms = new ArrayList<>();
         testRooms();
-        drawingView.setDrawDoorListener(new DrawingView.DrawDoorListener() {
-            @Override
-            public void onDoorDrawn(Door door) {
-                openRoomsDialog();
-            }
-        });
-        drawingView.setDrawQrListener(new DrawingView.DrawQrListener() {
-            @Override
-            public void onQrDrawn(QR qr) {
-                Toast.makeText(CreateRoomActivity.this, String.valueOf(qr.getId()), Toast.LENGTH_SHORT).show();
-            }
-        });
+
+        drawingState = STATE_SHAPE;
+
         isFabOpen = false;
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+
+        drawingView.setOnViewClickedListener(viewClickedListener);
     }
+
+    DrawingView.OnViewClickedListener viewClickedListener = new DrawingView.OnViewClickedListener() {
+        @Override
+        public void onViewClicked(float proportionX, float proportionY) {
+            if (drawingState == STATE_SHAPE) {
+                MapPoint point = new MapPoint(proportionX, proportionY);
+                shape.add(point);
+                drawingView.setShape(shape);
+            } else if (drawingState == STATE_DOOR) {
+
+            } else if (drawingState == STATE_QR) {
+
+            }
+        }
+    };
 
     private void testRooms() {
         Room room = new Room();
@@ -139,21 +157,16 @@ public class CreateRoomActivity extends AppCompatActivity {
 
     @OnClick(R.id.fab_door)
     void onDoorClicked() {
-        drawingView.setIsDoorSelected(true);
-        drawingView.setQrSelected(false);
+        drawingState = STATE_DOOR;
     }
 
     @OnClick(R.id.fab_qr)
     void onQrClicked() {
-        drawingView.setIsDoorSelected(false);
-        drawingView.setQrSelected(true);
-        drawingView.setMuseumId(getIntent().getStringExtra(getString(R.string.museum_id)));
-        drawingView.setRoomId("room " + timeStamp);
+        drawingState = STATE_QR;
     }
 
     @OnClick(R.id.fab_done)
     public void draw() {
-        drawingView.drawFloor();
         drawingView.setIsFloorFinished(true);
         animateFAB();
     }
