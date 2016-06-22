@@ -12,6 +12,7 @@ public class Museum {
     private int mapSizeKB;
     private int mapStatus;
     private String name;
+    private String imageURL;
 
     public Museum() {
         this.mapStatus = STATUS_NOT_DOWNLOADED;
@@ -63,5 +64,13 @@ public class Museum {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 }

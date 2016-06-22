@@ -166,6 +166,7 @@ public class DBLoader {
         if (cursor.moveToFirst()) {
             do {
                 Museum museum = new Museum();
+                museum.setImageURL(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_URL)));
                 museum.setDescription(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_DESCRIPTION)));
                 museum.setLocation(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_LOCATION)));
                 museum.setMapSizeKB(cursor.getInt(cursor.getColumnIndex(DBConstants.KEY_MAP_SIZE)));

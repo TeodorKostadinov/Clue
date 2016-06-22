@@ -1,18 +1,23 @@
 package com.inveitix.android.clue.adapters;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.database.DBUtils;
 import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +51,13 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+
         Museum museum = museums.get(position);
         holder.txtName.setText(museum.getName());
         holder.museumID = museum.getId();
-
+        if (isConnected()) {
+            Picasso.with(context).load(museum.getImageURL()).into(holder.viewBackground);
+        }
         if (museum.getMapStatus() == Museum.STATUS_DOWNLOADED) {
             holder.btnDownload.setVisibility(View.INVISIBLE);
             holder.progressBar.setVisibility(View.GONE);
@@ -60,6 +68,18 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
             holder.btnDownload.setVisibility(View.GONE);
             holder.progressBar.setVisibility(View.VISIBLE);
         }
+    }
+
+    private boolean isConnected() {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) {
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI
+                    || activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -105,7 +125,8 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
+        @Bind(R.id.view_background)
+        ImageView viewBackground;
         @Bind(R.id.txt_museum_name)
         TextView txtName;
         @Bind(R.id.btn_download)
