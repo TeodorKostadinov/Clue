@@ -27,5 +27,7 @@
     <string name="qr_information">QR Information</string>
     <string name="enter_qr_info">Enter QR Information</string>
     <string name="txt_done">Done</string>
+    <string name="transition_museum_cover">Transition Museum Cover</string>
+    <string name="transition_download_button">Transition Download Button</string>
 
 </resources>

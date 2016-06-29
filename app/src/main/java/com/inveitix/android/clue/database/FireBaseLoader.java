@@ -15,6 +15,7 @@ import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.interfaces.DownloadListener;
+import com.inveitix.android.clue.interfaces.MapDownloadListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,8 @@ public class FireBaseLoader {
         fireBaseRef = new Firebase(FireBaseConstants.FIREBASE_URL);
     }
 
+
+
     public static FireBaseLoader getInstance(Context context) {
         if (instance == null) {
             instance = new FireBaseLoader(context);
@@ -39,7 +42,6 @@ public class FireBaseLoader {
     }
 
     public void downloadMuseumsList(final DownloadListener listener) {
-        final boolean isEmpty = dbUtils.isEmpty();
         fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -54,9 +56,9 @@ public class FireBaseLoader {
                         dbUtils.writeMuseumRecord(museum);
                     }
                 }
-                if (isEmpty){
-                    listener.onMuseumListDownloaded(museums);
-                }
+
+                listener.onMuseumListDownloaded(museums);
+
             }
 
             @Override
@@ -77,7 +79,7 @@ public class FireBaseLoader {
         return false;
     }
 
-    public void downloadMap(final int museumId, final DownloadListener listener) {
+    public void downloadMap(final int museumId, final MapDownloadListener listener) {
 
         fireBaseRef.child("maps").orderByChild("museumId").equalTo(museumId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -111,7 +113,7 @@ public class FireBaseLoader {
                                 dbUtils.writeShapeRecord(shape);
                             }
                         }
-                        listener.onMuseumDownloaded(map);
+                        listener.onMapDownloaded(map);
                     }
                 }
             }

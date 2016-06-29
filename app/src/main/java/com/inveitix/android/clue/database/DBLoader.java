@@ -10,6 +10,7 @@ import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.interfaces.DownloadListener;
+import com.inveitix.android.clue.interfaces.MapDownloadListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +39,21 @@ public class DBLoader {
     }
 
     public void loadContent(final DownloadListener listener) {
-        FireBaseLoader.getInstance(context).downloadMuseumsList(listener);
-        if (!dbUtils.isEmpty()) {
+
+        if (dbUtils.isEmpty()) {
+            FireBaseLoader.getInstance(context).downloadMuseumsList(new DownloadListener() {
+                @Override
+                public void onMuseumListDownloaded(List<Museum> museums) {
+                    loadMuseumsList(listener);
+                }
+            });
+        } else {
+            FireBaseLoader.getInstance(context).downloadMuseumsList(listener);
             loadMuseumsList(listener);
         }
-        loadDownloadedMap(listener);
     }
 
-    public void loadDownloadedMap(final DownloadListener listener) {
+    public void loadDownloadedMap(final MapDownloadListener listener) {
         List<MuseumMap> maps = new ArrayList<>();
         Cursor cursor = dbUtils.readMapRecord();
         if (cursor.moveToFirst()) {
@@ -59,7 +67,7 @@ public class DBLoader {
                 if (!duplicateCheck(maps, map)) {
                     maps.add(map);
                 }
-                listener.onMuseumDownloaded(map);
+                listener.onMapDownloaded(map);
             } while (cursor.moveToNext());
         }
     }

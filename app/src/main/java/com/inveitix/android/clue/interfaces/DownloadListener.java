@@ -7,6 +7,4 @@ import java.util.List;
 
 public interface DownloadListener {
     void onMuseumListDownloaded(List<Museum> museums);
-
-    void onMuseumDownloaded(MuseumMap museum);
 }
