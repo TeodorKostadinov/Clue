@@ -2,6 +2,7 @@ package com.inveitix.android.clue.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MapPoint;
@@ -144,7 +145,6 @@ public class DBLoader {
                     point.setY(cursor.getFloat(cursor.getColumnIndex(DBConstants.KEY_Y)));
                     point.setId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ID)));
                     point.setRoomId(cursor.getString(cursor.getColumnIndex(DBConstants.KEY_ROOM_ID)));
-
                     if (!duplicateCheck(shape, point)) {
                         shape.add(point);
                     }

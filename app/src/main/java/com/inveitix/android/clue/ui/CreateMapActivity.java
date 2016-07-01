@@ -92,8 +92,9 @@ public class CreateMapActivity extends AppCompatActivity implements
                 LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
                 mGoogleApiClient.disconnect();
             }
-            intent.putExtra(getString(R.string.museum_id), this.museum.getId());
+            intent.putExtra(getString(R.string.museum_id), String.valueOf(this.museum.getId()));
             startActivity(intent);
+            finish();
         }
     }
 
@@ -129,6 +130,7 @@ public class CreateMapActivity extends AppCompatActivity implements
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
         } else {
+
             currentLatitude = location.getLatitude();
             currentLongitude = location.getLongitude();
             txtLocation.setText(String.valueOf("Lat: " + currentLatitude + ", \nLon: " + currentLongitude));

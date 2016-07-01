@@ -12,12 +12,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
+import com.inveitix.android.clue.cmn.MapPoint;
+import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
+import com.inveitix.android.clue.database.DBUtils;
+import com.inveitix.android.clue.interfaces.DrawDoorListener;
+import com.inveitix.android.clue.interfaces.DrawQrListener;
+import com.inveitix.android.clue.interfaces.ShapeCreatedListened;
+import com.inveitix.android.clue.interfaces.onRoomCreatedListener;
 import com.inveitix.android.clue.ui.views.DrawingView;
 
 
@@ -32,17 +38,18 @@ import butterknife.OnClick;
 public class CreateRoomActivity extends AppCompatActivity {
     @Bind(R.id.drawing_view)
     DrawingView drawingView;
-    @Bind(R.id.fab_done)
-    ImageButton fabDone;
     @Bind(R.id.fab_door)
     ImageButton fabDoor;
     @Bind(R.id.fab_qr)
     ImageButton fabQr;
 
-    private Animation fab_open, fab_close;
+    private Animation fab_open;
     private Boolean isFabOpen;
-    private List<String> rooms;
-    private long timeStamp;
+    private ArrayList<String> roomsName;
+    private ArrayList<Room> rooms;
+    private ArrayList<MapPoint> shape;
+    private ArrayList<Door> doors;
+    private ArrayList<QR> qrs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,45 +61,60 @@ public class CreateRoomActivity extends AppCompatActivity {
     }
 
     private void init() {
-        timeStamp = System.currentTimeMillis()/1000;
+        long timeStamp = System.currentTimeMillis();
+        roomsName = new ArrayList<>();
+        doors = new ArrayList<>();
+        shape = new ArrayList<>();
+        qrs = new ArrayList<>();
         rooms = new ArrayList<>();
         testRooms();
-        drawingView.setDrawDoorListener(new DrawingView.DrawDoorListener() {
+        initDrawingView(timeStamp);
+        isFabOpen = false;
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+    }
+
+    private void initDrawingView(long timeStamp) {
+        drawingView.setMuseumId(getIntent().getStringExtra(getString(R.string.museum_id)));
+        drawingView.setRoomId("room " + timeStamp);
+
+        drawingView.setOnRoomCreatedListener(new onRoomCreatedListener() {
+            @Override
+            public void onRoomCreated(Room room) {
+                rooms.add(room);
+            }
+        });
+        drawingView.setDrawDoorListener(new DrawDoorListener() {
             @Override
             public void onDoorDrawn(Door door) {
                 openRoomsDialog();
+                doors.add(door);
             }
         });
-        drawingView.setDrawQrListener(new DrawingView.DrawQrListener() {
+        drawingView.setShapeCreatedListener(new ShapeCreatedListened() {
+            @Override
+            public void onShapeCreated(MapPoint point) {
+                shape.add(point);
+            }
+        });
+        drawingView.setDrawQrListener(new DrawQrListener() {
             @Override
             public void onQrDrawn(QR qr) {
-                Toast.makeText(CreateRoomActivity.this, String.valueOf(qr.getId()), Toast.LENGTH_SHORT).show();
+                qrs.add(qr);
             }
         });
-        isFabOpen = false;
-        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
     }
 
     //Created only for the beta
     private void testRooms() {
         Room room = new Room();
-        room.setId("room1");
-        Room room2 = new Room();
-        room2.setId("room2");
-        rooms.add(room.getId());
-        rooms.add(room2.getId());
-        rooms.add(room2.getId() + "2");
-        rooms.add(room2.getId() + "1");
+        room.setId("Soon...");
+        roomsName.add(room.getId());
     }
 
     private void animateFAB() {
         if (isFabOpen) {
-            fabDoor.startAnimation(fab_close);
-            fabQr.startAnimation(fab_close);
-            fabDoor.setClickable(false);
-            fabQr.setClickable(false);
-            isFabOpen = false;
+            saveMap();
+            finish();
         } else {
             fabDoor.startAnimation(fab_open);
             fabQr.startAnimation(fab_open);
@@ -100,6 +122,33 @@ public class CreateRoomActivity extends AppCompatActivity {
             fabQr.setClickable(true);
             isFabOpen = true;
         }
+    }
+
+    private void saveMap() {
+        drawingView.initRoom();
+        for (Room room : rooms) {
+            DBUtils.getInstance(this).writeRoomRecord(room);
+        }
+        for (MapPoint point : shape) {
+            DBUtils.getInstance(this).writeShapeRecord(point);
+        }
+        for (Door door : doors) {
+            DBUtils.getInstance(this).writeDoorRecord(door);
+        }
+        for (QR qr : qrs) {
+            DBUtils.getInstance(this).writeQrRecord(qr);
+        }
+        String mapId = getIntent().getStringExtra(getString(R.string.museum_id));
+        createMap(mapId, mapId, rooms, rooms.get(0).getId());
+    }
+
+    private void createMap(String id, String museumId, List<Room> rooms, String entranceRoomId) {
+        MuseumMap map = new MuseumMap();
+        map.setId(id);
+        map.setRooms(rooms);
+        map.setEntranceRoomId(entranceRoomId);
+        map.setMuseumId(Integer.parseInt(museumId));
+        DBUtils.getInstance(this).writeMapRecord(map);
     }
 
     private void openRoomsDialog() {
@@ -114,7 +163,7 @@ public class CreateRoomActivity extends AppCompatActivity {
         });
         alertDialogBuilder.setTitle(getString(R.string.txt_select_room));
         final AlertDialog alertDialog = alertDialogBuilder.create();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, rooms);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roomsName);
         adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         final Spinner mSpinner = (Spinner) promptsView
                 .findViewById(R.id.spn_rooms_list);
@@ -122,14 +171,13 @@ public class CreateRoomActivity extends AppCompatActivity {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(parent.getContext(), "Clicked : " +
-                        parent.getItemAtPosition(position).toString(), Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
         alertDialog.show();
         alertDialog.setCanceledOnTouchOutside(false);
     }
@@ -150,8 +198,6 @@ public class CreateRoomActivity extends AppCompatActivity {
     void onQrClicked() {
         drawingView.setIsDoorSelected(false);
         drawingView.setQrSelected(true);
-        drawingView.setMuseumId(getIntent().getStringExtra(getString(R.string.museum_id)));
-        drawingView.setRoomId("room " + timeStamp);
     }
 
     @OnClick(R.id.fab_done)
