@@ -54,7 +54,6 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
         setContentView(R.layout.activity_museum_details);
         ButterKnife.bind(this);
         animateButton();
-
         loadMuseum();
         DBLoader.getInstance(this).loadDownloadedMap(this);
         txtMuseumName.setText(museum.getName());
@@ -63,6 +62,9 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
         loadDwnBtn(museum);
     }
 
+    /**
+     * Animate Floating action button to appear and disappear when you starts and close the activity
+     */
     private void animateButton() {
         Fade mFade;
         Transition sharedElementEnterTransition;
@@ -142,7 +144,11 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
-    public void loadDwnBtn(Museum museum) {
+    /**
+     * Change the icon of the FAB according to the map status
+     * @param museum
+     */
+    private void loadDwnBtn(Museum museum) {
         if (museum.getMapStatus() == Museum.STATUS_DOWNLOADED) {
             btnDownload.setImageResource(R.drawable.ic_navigation_white_36dp);
         } else {
@@ -150,7 +156,12 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
         }
     }
 
-    public void updateItem(int museumID, int museumStatus) {
+    /**
+     * Update selected by museum ID map status
+     * @param museumID
+     * @param museumStatus
+     */
+    private void updateItem(int museumID, int museumStatus) {
 
         if (museum.getId() == museumID) {
             if (museumStatus == Museum.STATUS_DOWNLOADED) {
@@ -161,7 +172,7 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
     }
 
     @OnClick(R.id.btn_download2)
-    public void onClick() {
+    private void onClick() {
         if (museum.getMapStatus() == Museum.STATUS_DOWNLOADED) {
             startMapActivity(museum.getId());
         } else {
@@ -169,7 +180,8 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
         }
     }
 
-    public void onDownloadClicked(int museumID) {
+
+    private void onDownloadClicked(int museumID) {
         updateItem(museumID, Museum.STATUS_DOWNLOADING);
         FireBaseLoader.getInstance(this).downloadMap(museumID, this);
         progressBar.setVisibility(View.VISIBLE);

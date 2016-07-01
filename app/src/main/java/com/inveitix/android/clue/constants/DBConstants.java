@@ -1,4 +1,4 @@
-package com.inveitix.android.clue.database;
+package com.inveitix.android.clue.constants;
 
 public class DBConstants {
     public static final String DB_NAME = "db";

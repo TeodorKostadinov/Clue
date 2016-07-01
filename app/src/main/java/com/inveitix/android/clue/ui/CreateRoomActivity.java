@@ -74,6 +74,7 @@ public class CreateRoomActivity extends AppCompatActivity {
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
     }
 
+    //Created only for the beta
     private void testRooms() {
         Room room = new Room();
         room.setId("room1");
@@ -85,8 +86,7 @@ public class CreateRoomActivity extends AppCompatActivity {
         rooms.add(room2.getId() + "1");
     }
 
-    public void animateFAB() {
-
+    private void animateFAB() {
         if (isFabOpen) {
             fabDoor.startAnimation(fab_close);
             fabQr.startAnimation(fab_close);
@@ -134,12 +134,18 @@ public class CreateRoomActivity extends AppCompatActivity {
         alertDialog.setCanceledOnTouchOutside(false);
     }
 
+    /**
+     * Draws doors images when you touch the screen
+     */
     @OnClick(R.id.fab_door)
     void onDoorClicked() {
         drawingView.setIsDoorSelected(true);
         drawingView.setQrSelected(false);
     }
 
+    /**
+     * Draws QRs images when you touch the screen
+     */
     @OnClick(R.id.fab_qr)
     void onQrClicked() {
         drawingView.setIsDoorSelected(false);
@@ -155,7 +161,10 @@ public class CreateRoomActivity extends AppCompatActivity {
         animateFAB();
     }
 
-    public void openDialog() {
+    /**
+     * Dialog with instructions opens on start
+     */
+    private void openDialog() {
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle(getString(R.string.txt_create_room));
         alertDialog.setMessage(getString(R.string.txt_create_instructions));

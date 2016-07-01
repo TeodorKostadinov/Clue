@@ -38,6 +38,10 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         this.activity = activity;
     }
 
+    /**
+     * Add museums list to adapter
+     * @param museums
+     */
     public void addItems(List<Museum> museums) {
         this.museums = museums;
         refreshMuseumList();
@@ -81,6 +85,9 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         return museums.size();
     }
 
+    /**
+     * Refresh museums list when you made any change in data
+     */
     public void refreshMuseumList() {
         notifyDataSetChanged();
     }

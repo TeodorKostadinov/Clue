@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements DownloadListener 
         recView.setAdapter(adapter);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);

@@ -14,12 +14,17 @@ import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
+import com.inveitix.android.clue.constants.DBConstants;
+import com.inveitix.android.clue.constants.FireBaseConstants;
 import com.inveitix.android.clue.interfaces.DownloadListener;
 import com.inveitix.android.clue.interfaces.MapDownloadListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class downloads data from online Firebase database
+ */
 public class FireBaseLoader {
     private static final String TAG = "FireBaseLoader";
     private static FireBaseLoader instance;
@@ -33,7 +38,6 @@ public class FireBaseLoader {
     }
 
 
-
     public static FireBaseLoader getInstance(Context context) {
         if (instance == null) {
             instance = new FireBaseLoader(context);
@@ -41,6 +45,11 @@ public class FireBaseLoader {
         return instance;
     }
 
+    /**
+     * Downloads museums list and write it in the local database
+     *
+     * @param listener
+     */
     public void downloadMuseumsList(final DownloadListener listener) {
         fireBaseRef.child("museums").addValueEventListener(new ValueEventListener() {
             @Override
@@ -79,6 +88,12 @@ public class FireBaseLoader {
         return false;
     }
 
+    /**
+     * Searching and downloading map by museum id and returns it via MapDownloadListener
+     *
+     * @param museumId
+     * @param listener
+     */
     public void downloadMap(final int museumId, final MapDownloadListener listener) {
 
         fireBaseRef.child("maps").orderByChild("museumId").equalTo(museumId).addValueEventListener(new ValueEventListener() {

@@ -12,6 +12,7 @@ import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
+import com.inveitix.android.clue.constants.DBConstants;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -23,6 +24,10 @@ public class DBHelper extends SQLiteOpenHelper {
         open();
     }
 
+    /**
+     * Inserts museum data to museums table
+     * @param museum
+     */
     public void insertMuseum(Museum museum) {
         ContentValues cv = new ContentValues();
         cv.put(DBConstants.KEY_ID, museum.getId());
@@ -36,6 +41,10 @@ public class DBHelper extends SQLiteOpenHelper {
         database.insert(DBConstants.DB_TABLE_MUSEUMS, null, cv);
     }
 
+    /**
+     * Inserts room data to rooms table
+     * @param room
+     */
     public void insertRoom(Room room) {
         ContentValues cv = new ContentValues();
         cv.put(DBConstants.KEY_ID, room.getId());
@@ -52,6 +61,10 @@ public class DBHelper extends SQLiteOpenHelper {
         database.insert(DBConstants.DB_TABLE_ROOMS, null, cv);
     }
 
+    /**
+     * Insert MuseumMap data to maps table
+     * @param map
+     */
     public void insertMap(MuseumMap map) {
         ContentValues cv = new ContentValues();
         cv.put(DBConstants.KEY_ID, map.getId());
@@ -63,6 +76,10 @@ public class DBHelper extends SQLiteOpenHelper {
         database.insert(DBConstants.DB_TABLE_MAPS, null, cv);
     }
 
+    /**
+     * Inserts door data to doors table
+     * @param door
+     */
     public void insertDoor(Door door) {
         ContentValues cv = new ContentValues();
         cv.put(DBConstants.KEY_CONNECTED_TO, door.getConnectedTo());
@@ -74,6 +91,10 @@ public class DBHelper extends SQLiteOpenHelper {
         database.insert(DBConstants.DB_TABLE_DOORS, null, cv);
     }
 
+    /**
+     * Inserts rooms corner points to shapes table
+     * @param point
+     */
     public void insertShape(MapPoint point) {
         ContentValues cv = new ContentValues();
         cv.put(DBConstants.KEY_X, point.getX());
@@ -84,6 +105,11 @@ public class DBHelper extends SQLiteOpenHelper {
         database.insert(DBConstants.DB_TABLE_SHAPE, null, cv);
     }
 
+
+    /**
+     * Inserts QR data to QRs table
+     * @param qr
+     */
     public void insertQr(QR qr) {
         ContentValues cv = new ContentValues();
         cv.put(DBConstants.KEY_ID, qr.getId());
@@ -178,12 +204,22 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /**
+     * Select museum from th database by ID and change map status
+     * @param museumId
+     * @param mapStatus
+     */
     public void museumStatusUpdate(int museumId, int mapStatus) {
         ContentValues values = new ContentValues();
         values.put(DBConstants.KEY_MAP_STATUS, mapStatus);
         database.update(DBConstants.DB_TABLE_MUSEUMS, values, DBConstants.KEY_ID + "=" + museumId, null);
     }
 
+    /**
+     * Check if specific table is empty and returns true or false
+     * @param tableName
+     * @return boolean
+     */
     public boolean isEmpty(String tableName) {
         String count = "SELECT count(*) FROM " + tableName;
         Cursor mCursor = database.rawQuery(count, null);
@@ -197,24 +233,40 @@ public class DBHelper extends SQLiteOpenHelper {
         database.close();
     }
 
+    /**
+     * Method for reading data from shapes table
+     * @return Cursor
+     */
     public Cursor getShapeValues() {
         return this.database.query(DBConstants.DB_TABLE_SHAPE, new String[]{
                         DBConstants.KEY_X, DBConstants.KEY_Y, DBConstants.KEY_ROOM_ID, DBConstants.KEY_MAP_ID, DBConstants.KEY_ID},
                 null, null, null, null, null);
     }
 
+    /**
+     * Method for reading data from doors table
+     * @return Cursor
+     */
     public Cursor getDoorValues() {
         return this.database.query(DBConstants.DB_TABLE_DOORS, new String[]{DBConstants.KEY_CONNECTED_TO,
                         DBConstants.KEY_MAP_ID, DBConstants.KEY_ROOM_ID, DBConstants.KEY_ID, DBConstants.KEY_X, DBConstants.KEY_Y},
                 null, null, null, null, null);
     }
 
+    /**
+     * Method for reading data from QRs table
+     * @return Cursor
+     */
     public Cursor getQrValues() {
         return this.database.query(DBConstants.DB_TABLE_QRS, new String[]{DBConstants.KEY_ID,
                 DBConstants.KEY_INFO, DBConstants.KEY_X, DBConstants.KEY_Y, DBConstants.KEY_MAP_ID,
                 DBConstants.KEY_ROOM_ID}, null, null, null, null, null);
     }
 
+    /**
+     * Method for reading data from museums table
+     * @return Cursor
+     */
     public Cursor getMuseumValues() {
         return this.database.query(DBConstants.DB_TABLE_MUSEUMS, new String[]{DBConstants.KEY_ID,
                 DBConstants.KEY_DESCRIPTION, DBConstants.KEY_LOCATION, DBConstants.KEY_MAP_STATUS,
@@ -222,12 +274,20 @@ public class DBHelper extends SQLiteOpenHelper {
                 , null, null, null, null, null);
     }
 
+    /**
+     * Method for reading data from rooms table
+     * @return Cursor
+     */
     public Cursor getRoomValues() {
         return this.database.query(DBConstants.DB_TABLE_ROOMS, new String[]{DBConstants.KEY_ID,
                 DBConstants.KEY_DOORS, DBConstants.KEY_MAP_ID, DBConstants.KEY_SHAPE,
                 DBConstants.KEY_QRS}, null, null, null, null, null);
     }
 
+    /**
+     * Method for reading data from maps table
+     * @return Cursor
+     */
     public Cursor getMapValues() {
         return this.database.query(DBConstants.DB_TABLE_MAPS, new String[]{DBConstants.KEY_ID,
                 DBConstants.KEY_ROOM_ID, DBConstants.KEY_MUSEUM_ID, DBConstants.KEY_ENTRANCE_ROOM_ID}
