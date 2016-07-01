@@ -26,6 +26,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void insertMuseum(Museum museum) {
         ContentValues cv = new ContentValues();
         cv.put(DBConstants.KEY_ID, museum.getId());
+        cv.put(DBConstants.KEY_URL, museum.getImageURL());
         cv.put(DBConstants.KEY_DESCRIPTION, museum.getDescription());
         cv.put(DBConstants.KEY_LOCATION, museum.getLocation());
         cv.put(DBConstants.KEY_NAME, museum.getName());
@@ -150,6 +151,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + DBConstants.KEY_DESCRIPTION + " TEXT, "
                 + DBConstants.KEY_LOCATION + " TEXT, "
                 + DBConstants.KEY_NAME + " TEXT, "
+                + DBConstants.KEY_URL + " TEXT, "
                 + DBConstants.KEY_MAP_STATUS + " INT, "
                 + DBConstants.KEY_MAP_SIZE + " INT);";
     }
@@ -216,7 +218,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public Cursor getMuseumValues() {
         return this.database.query(DBConstants.DB_TABLE_MUSEUMS, new String[]{DBConstants.KEY_ID,
                 DBConstants.KEY_DESCRIPTION, DBConstants.KEY_LOCATION, DBConstants.KEY_MAP_STATUS,
-                DBConstants.KEY_NAME, DBConstants.KEY_MAP_SIZE}, null, null, null, null, null);
+                DBConstants.KEY_NAME, DBConstants.KEY_MAP_SIZE, DBConstants.KEY_URL}
+                , null, null, null, null, null);
     }
 
     public Cursor getRoomValues() {

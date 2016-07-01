@@ -22,10 +22,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Museum;
-import com.inveitix.android.clue.database.DBLoader;
 import com.inveitix.android.clue.database.DBUtils;
-
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
