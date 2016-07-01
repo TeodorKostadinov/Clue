@@ -69,7 +69,7 @@ public class CreateMapActivity extends AppCompatActivity implements
     }
 
     @OnClick(R.id.btn_get_location)
-    private void getLocation() {
+    public void getLocation() {
         mGoogleApiClient.connect();
     }
 
@@ -77,7 +77,7 @@ public class CreateMapActivity extends AppCompatActivity implements
      * If data inserted from the user is correct starts CreateRoomActivity
      */
     @OnClick(R.id.btn_create_room)
-    private void openRoom() {
+    public void openRoom() {
         String museumName = edtMuseumName.getText().toString().trim();
         String museumInfo = edtDescription.getText().toString().trim();
         if (museumName.equalsIgnoreCase("") || museumName.length() < 3) {

@@ -172,7 +172,7 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
     }
 
     @OnClick(R.id.btn_download2)
-    private void onClick() {
+    public void onClick() {
         if (museum.getMapStatus() == Museum.STATUS_DOWNLOADED) {
             startMapActivity(museum.getId());
         } else {
