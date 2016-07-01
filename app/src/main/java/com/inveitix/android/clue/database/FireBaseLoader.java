@@ -65,9 +65,7 @@ public class FireBaseLoader {
                         dbUtils.writeMuseumRecord(museum);
                     }
                 }
-
                 listener.onMuseumListDownloaded(museums);
-
             }
 
             @Override

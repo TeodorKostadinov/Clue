@@ -15,6 +15,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
 
+/**
+ * Activity which starts splash screen with Inveitix logo animation
+ */
 public class SplashScreenActivity extends AppCompatActivity {
 
     @Bind(R.id.img_splash)
