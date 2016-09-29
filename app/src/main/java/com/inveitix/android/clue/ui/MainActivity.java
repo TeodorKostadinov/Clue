@@ -80,12 +80,6 @@ public class MainActivity extends AppCompatActivity implements DownloadListener 
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick(R.id.btn_add_museum)
-    public void addMuseum() {
-        Intent createMapIntent = new Intent(MainActivity.this, CreateMapActivity.class);
-        startActivity(createMapIntent);
-    }
-
     @Override
     public void onMuseumListDownloaded(List<Museum> museums) {
         adapter.addItems(museums);

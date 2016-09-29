@@ -16,7 +16,7 @@
             android:background="@color/common_action_bar_splitter"
             android:elevation="6dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/c"
+            android:src="@drawable/mock_museum_image"
             android:transitionName="@string/transition_museum_cover" />
 
         <ImageView
