@@ -31,11 +31,13 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
     private List<Museum> museums;
     private Context context;
     private Activity activity;
+    private List<Museum> museumsCopy;
 
     public RecListAdapter(Activity activity) {
         this.museums = new ArrayList<>();
         this.context = activity.getApplicationContext();
         this.activity = activity;
+        this.museumsCopy = new ArrayList<>();
     }
 
     /**
@@ -44,6 +46,7 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
      */
     public void addItems(List<Museum> museums) {
         this.museums = museums;
+        this.museumsCopy.addAll(museums);
         refreshMuseumList();
     }
 
@@ -89,6 +92,24 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
      * Refresh museums list when you made any change in data
      */
     public void refreshMuseumList() {
+        notifyDataSetChanged();
+    }
+
+    public void searchFilter(String nameSearch) {
+        if (nameSearch.isEmpty()) {
+            museums.clear();
+            museums.addAll(museumsCopy);
+        } else {
+            ArrayList<Museum> result = new ArrayList<>();
+            nameSearch = nameSearch.toLowerCase();
+            for (Museum item : museumsCopy) {
+                if (item.getName().toLowerCase().contains(nameSearch)) {
+                    result.add(item);
+                }
+            }
+            museums.clear();
+            museums.addAll(result);
+        }
         notifyDataSetChanged();
     }
 
