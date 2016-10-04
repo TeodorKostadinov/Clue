@@ -185,7 +185,7 @@ public class DBHelper extends SQLiteOpenHelper {
         database.update(DBConstants.DB_TABLE_MUSEUMS, values, DBConstants.KEY_ID + "=" + museumId, null);
     }
 
-    public boolean isEmpty(String tableName) {
+    public boolean isTableEmpty(String tableName) {
         String count = "SELECT count(*) FROM " + tableName;
         Cursor mCursor = database.rawQuery(count, null);
         mCursor.moveToFirst();

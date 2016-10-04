@@ -85,7 +85,7 @@ public class DBUtils {
         return db;
     }
 
-    public boolean isEmpty() {
-        return db.isEmpty(DBConstants.DB_TABLE_MUSEUMS);
+    public boolean isTableEmpty() {
+        return db.isTableEmpty(DBConstants.DB_TABLE_MUSEUMS);
     }
 }

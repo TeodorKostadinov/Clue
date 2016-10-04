@@ -2,7 +2,6 @@ package com.inveitix.android.clue.database;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MapPoint;
@@ -42,7 +41,7 @@ public class DBLoader {
 
     public void loadContent(final DownloadListener listener) {
 
-        if (dbUtils.isEmpty()) {
+        if (dbUtils.isTableEmpty()) {
             FireBaseLoader.getInstance(context).downloadMuseumsList(new DownloadListener() {
                 @Override
                 public void onMuseumListDownloaded(List<Museum> museums) {
