@@ -25,8 +25,6 @@ import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.database.DBLoader;
 import com.inveitix.android.clue.database.DBUtils;
 
-import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -89,8 +87,9 @@ public class CreateMapActivity extends AppCompatActivity implements
                 LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
                 mGoogleApiClient.disconnect();
             }
-            intent.putExtra(getString(R.string.museum_id), this.museum.getId());
+            intent.putExtra(getString(R.string.museum_id), String.valueOf(this.museum.getId()));
             startActivity(intent);
+            finish();
         }
     }
 
@@ -121,7 +120,6 @@ public class CreateMapActivity extends AppCompatActivity implements
 
         if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
         } else {
             currentLatitude = location.getLatitude();
             currentLongitude = location.getLongitude();

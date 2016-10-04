@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/view_details_back"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/common_action_bar_splitter"
+            android:elevation="6dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/mock_museum_image"
+            android:transitionName="@string/transition_museum_cover" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="#66000000"
+            android:elevation="6dp"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/txt_museum_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="14dp"
+            android:elevation="6dp"
+            android:text="@string/txt_name"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/view_details_back"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:id="@+id/txt_museum_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp"
+                android:paddingBottom="12dp"
+                android:text="@string/txt_museum_info"
+                android:textColor="#000"
+                android:textSize="18sp" />
+        </ScrollView>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/view_details_back"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:indeterminate="true" />
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_download2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@color/colorAccent"
+        android:elevation="7dp"
+        android:src="@drawable/ic_file_download_white_36dp"
+        android:theme="@style/Base.Widget.AppCompat.ImageButton"
+        app:borderWidth="0dp"
+        app:layout_anchor="@id/view_details_back"
+        app:layout_anchorGravity="bottom|right|end" />
+</android.support.design.widget.CoordinatorLayout>

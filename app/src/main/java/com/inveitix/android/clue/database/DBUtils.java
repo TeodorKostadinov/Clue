@@ -9,10 +9,11 @@ import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
+import com.inveitix.android.clue.constants.DBConstants;
 
 public class DBUtils {
-    private DBHelper db;
     private static DBUtils instance;
+    private DBHelper db;
 
     private DBUtils(Context context) {
         initDB(context);
@@ -84,7 +85,7 @@ public class DBUtils {
         return db;
     }
 
-    public boolean isEmpty() {
-        return db.isEmpty(DBConstants.DB_TABLE_MUSEUMS);
+    public boolean isTableEmpty() {
+        return db.isTableEmpty(DBConstants.DB_TABLE_MUSEUMS);
     }
 }

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/grp_map_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/view_details_back"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/museum_image_heigh_dimension"
+            android:background="@color/common_action_bar_splitter"
+            android:elevation="6dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/mock_museum_image"
+            android:transitionName="@string/transition_museum_cover" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/museum_image_heigh_dimension"
+            android:background="#66000000"
+            android:elevation="6dp"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/txt_museum_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimension_margin_from_both_sides"
+            android:elevation="6dp"
+            android:text="@string/txt_name"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/view_details_back"
+            android:paddingBottom="@dimen/dimension_12dp"
+            android:paddingTop="@dimen/dimension_12dp">
+
+            <TextView
+                android:id="@+id/txt_museum_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dimension_12dp"
+                android:paddingBottom="@dimen/dimension_12dp"
+                android:text="@string/txt_museum_info"
+                android:textColor="#000"
+                android:textSize="18sp" />
+        </ScrollView>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimension_12dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/view_details_back"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:indeterminate="true" />
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_download2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@color/colorAccent"
+        android:elevation="7dp"
+        android:src="@drawable/ic_file_download_white_36dp"
+        android:theme="@style/Base.Widget.AppCompat.ImageButton"
+        app:borderWidth="0dp"
+        app:layout_anchor="@id/view_details_back"
+        app:layout_anchorGravity="bottom|right|end" />
+</android.support.design.widget.CoordinatorLayout>

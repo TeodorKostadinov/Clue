@@ -1,4 +1,4 @@
-package com.inveitix.android.clue.database;
+package com.inveitix.android.clue.constants;
 
 public class DBConstants {
     public static final String DB_NAME = "db";
@@ -26,4 +26,5 @@ public class DBConstants {
     public static final String KEY_CONNECTED_TO = "CONNECTED_TO";
     public static final String DB_TABLE_SHAPE = "SHAPE";
     public static final String KEY_MAP_STATUS = "MUSEUM_STATUS";
+    public static final String KEY_URL = "MUSEUM_URL";
 }
