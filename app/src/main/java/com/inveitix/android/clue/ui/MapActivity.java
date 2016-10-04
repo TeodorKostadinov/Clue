@@ -8,11 +8,18 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.MapPoint;
+import com.inveitix.android.clue.cmn.MyScaleGestureListener;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.database.MapsInstance;
@@ -31,9 +38,12 @@ public class MapActivity extends AppCompatActivity {
     private static final String TAG = "MapActivity";
     private static final String EXTRA_ROOM_ID = "roomId";
     private static final String EXTRA_PREVIOUS_ROOM_ID = "previousRoomId";
-
+    int museumId = 0;
     @Bind(R.id.room)
     RoomView roomView;
+    private GestureDetector mGestureDetector;
+    private ScaleGestureDetector mScaleGestureDetector;
+    private FrameLayout.LayoutParams mRootParam;
     private Room room;
 
     @Override
@@ -42,9 +52,20 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_map);
         ButterKnife.bind(this);
 
-        final int museumId = getIntent().getIntExtra(EXTRA_MUSEUM_ID, NO_EXTRA);
+        mRootParam = (FrameLayout.LayoutParams) (findViewById(R.id.grp_map)).getLayoutParams();
+        museumId = getIntent().getIntExtra(EXTRA_MUSEUM_ID, NO_EXTRA);
         MuseumMap map = MapsInstance.getInstance().getMapByMuseumId(museumId);
         String roomId = getIntent().getStringExtra(EXTRA_ROOM_ID);
+        mScaleGestureDetector = new ScaleGestureDetector(this, new MyScaleGestureListener(mRootParam, roomView));
+        mGestureDetector = new GestureDetector(this, new MySimpleOnGestureListener());
+        roomView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mScaleGestureDetector.onTouchEvent(event);
+                mGestureDetector.onTouchEvent(event);
+                return true;
+            }
+        });
 
         if (roomId == null) {
             roomId = map.getEntranceRoomId();
@@ -151,5 +172,48 @@ public class MapActivity extends AppCompatActivity {
                 roomView.updateUserPosition(new MapPoint(qr.getX(), qr.getY()));
             }
         }
+    }
+
+    private class MySimpleOnGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if (roomView == null) {
+                roomView.setShape(room.getShape());
+                roomView.setQrs(room.getQrs());
+                roomView.setDoors(room.getDoors());
+                roomView.setWidthToHeightRatio(0.89f);
+
+                roomView.setOnDoorClickedListener(new RoomView.OnDoorClickedListener() {
+                    @Override
+                    public void onDoorClicked(Door door) {
+                        Intent intent = new Intent(MapActivity.this, MapActivity.class);
+                        intent.putExtra(EXTRA_MUSEUM_ID, museumId);
+                        intent.putExtra(EXTRA_ROOM_ID, door.getConnectedTo());
+                        intent.putExtra(EXTRA_PREVIOUS_ROOM_ID, room.getId());
+                        startActivity(intent);
+                    }
+                });
+
+                roomView.setOnQrClickedListener(new RoomView.OnQrClickedListener() {
+                    @Override
+                    public void onQrClicked(QR qr) {
+                        AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+                        alertDialog.setTitle(getString(R.string.txt_info));
+                        alertDialog.setMessage(qr.getInfo());
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
+                });
+                setInitialUserPosition();
+            }
+            return true;
+        }
+
     }
 }

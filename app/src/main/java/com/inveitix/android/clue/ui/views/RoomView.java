@@ -246,6 +246,16 @@ public class RoomView extends SurfaceView implements Runnable {
         thread = null;
     }
 
+    /**
+     * Resize view by using SurfaceHolder.setFixedSize(...). See {@link android.view.SurfaceHolder#setFixedSize}
+     * @param width
+     * @param height
+     */
+    public void setFixedViewSize(int width, int height)
+    {
+        getHolder().setFixedSize(width, height);
+    }
+
     public void resume(Context context) {
         wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         canDraw = true;

@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/grp_map_container"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/grp_map"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <com.inveitix.android.clue.ui.views.RoomView
-        android:id="@+id/room"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_scan"
-        style="@style/PurpleButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/txt_move"
-        android:layout_margin="2dp"
-        android:textColor="@color/white"
-        android:background="@drawable/button_selector"/>
+        <com.inveitix.android.clue.ui.views.RoomView
+            android:id="@+id/room"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-
-
-</LinearLayout>
+        <Button
+            android:id="@+id/btn_scan"
+            style="@style/PurpleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:background="@drawable/button_selector"
+            android:text="@string/txt_move"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</FrameLayout>
