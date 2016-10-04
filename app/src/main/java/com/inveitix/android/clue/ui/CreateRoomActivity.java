@@ -2,17 +2,15 @@ package com.inveitix.android.clue.ui;
 
 
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -23,7 +21,6 @@ import com.inveitix.android.clue.cmn.MapPoint;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.ui.views.DrawingView;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +89,16 @@ public class CreateRoomActivity extends AppCompatActivity {
             } else if (drawingState == STATE_QR) {
 
             }
+        }
+
+        @Override
+        public void onDoorClicked(Door door) {
+
+        }
+
+        @Override
+        public void onQrClicked(QR qr) {
+
         }
     };
 
