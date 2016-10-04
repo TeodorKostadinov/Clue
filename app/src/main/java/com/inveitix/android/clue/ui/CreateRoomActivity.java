@@ -182,18 +182,12 @@ public class CreateRoomActivity extends AppCompatActivity {
         alertDialog.setCanceledOnTouchOutside(false);
     }
 
-    /**
-     * Draws doors images when you touch the screen
-     */
     @OnClick(R.id.fab_door)
     void onDoorClicked() {
         drawingView.setIsDoorSelected(true);
         drawingView.setQrSelected(false);
     }
 
-    /**
-     * Draws QRs images when you touch the screen
-     */
     @OnClick(R.id.fab_qr)
     void onQrClicked() {
         drawingView.setIsDoorSelected(false);
@@ -207,9 +201,6 @@ public class CreateRoomActivity extends AppCompatActivity {
         animateFAB();
     }
 
-    /**
-     * Dialog with instructions opens on start
-     */
     private void openDialog() {
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle(getString(R.string.txt_create_room));

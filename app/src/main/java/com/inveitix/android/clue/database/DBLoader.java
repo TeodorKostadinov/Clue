@@ -40,10 +40,6 @@ public class DBLoader {
         return museums;
     }
 
-    /**
-     * Loading downloaded museums list
-     * @param listener
-     */
     public void loadContent(final DownloadListener listener) {
 
         if (dbUtils.isEmpty()) {
@@ -59,10 +55,6 @@ public class DBLoader {
         }
     }
 
-    /**
-     * Reading the downloaded maps from the database
-     * @param mapDownloadListener
-     */
     public void loadDownloadedMap(final MapDownloadListener mapDownloadListener) {
         List<MuseumMap> maps = new ArrayList<>();
         Cursor cursor = dbUtils.readMapRecord();

@@ -59,12 +59,9 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
         txtMuseumName.setText(museum.getName());
         txtMuseumInfo.setText(museum.getDescription());
         loadImage();
-        loadDwnBtn(museum);
+        loadDownloadBtn(museum);
     }
 
-    /**
-     * Animate Floating action button to appear and disappear when you starts and close the activity
-     */
     private void animateButton() {
         Fade mFade;
         Transition sharedElementEnterTransition;
@@ -144,11 +141,7 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
-    /**
-     * Change the icon of the FAB according to the map status
-     * @param museum
-     */
-    private void loadDwnBtn(Museum museum) {
+    private void loadDownloadBtn(Museum museum) {
         if (museum.getMapStatus() == Museum.STATUS_DOWNLOADED) {
             btnDownload.setImageResource(R.drawable.ic_navigation_white_36dp);
         } else {
@@ -156,11 +149,6 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
         }
     }
 
-    /**
-     * Update selected by museum ID map status
-     * @param museumID
-     * @param museumStatus
-     */
     private void updateItem(int museumID, int museumStatus) {
 
         if (museum.getId() == museumID) {

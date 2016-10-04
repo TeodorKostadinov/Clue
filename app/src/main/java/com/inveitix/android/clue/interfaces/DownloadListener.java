@@ -6,9 +6,5 @@ import com.inveitix.android.clue.cmn.MuseumMap;
 import java.util.List;
 
 public interface DownloadListener {
-    /**
-     * Gets downloaded museums
-     * @param museums
-     */
     void onMuseumListDownloaded(List<Museum> museums);
 }

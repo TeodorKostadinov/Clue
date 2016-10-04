@@ -29,9 +29,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * Activity where user inserts custom museum details
- */
 public class CreateMapActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -73,9 +70,6 @@ public class CreateMapActivity extends AppCompatActivity implements
         mGoogleApiClient.connect();
     }
 
-    /**
-     * If data inserted from the user is correct starts CreateRoomActivity
-     */
     @OnClick(R.id.btn_create_room)
     public void openRoom() {
         String museumName = edtMuseumName.getText().toString().trim();
@@ -99,9 +93,6 @@ public class CreateMapActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Saves data to local database
-     */
     private void saveMuseum() {
         museum = new Museum();
         museum.setDescription(edtDescription.getText().toString().trim());

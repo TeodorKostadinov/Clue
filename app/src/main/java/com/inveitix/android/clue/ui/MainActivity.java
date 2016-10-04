@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements DownloadListener,
         if (searchView != null) {
             searchView.setSearchableInfo(
                     searchManager.getSearchableInfo(getComponentName()));
-            //Setting listeners
             searchView.setOnQueryTextListener(this);
             changeSearchViewTextColor(searchView);
         }
