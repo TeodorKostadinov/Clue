@@ -2,7 +2,6 @@ package com.inveitix.android.clue.database;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MapPoint;
@@ -10,7 +9,9 @@ import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
+import com.inveitix.android.clue.constants.DBConstants;
 import com.inveitix.android.clue.interfaces.DownloadListener;
+import com.inveitix.android.clue.interfaces.MapDownloadListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +40,21 @@ public class DBLoader {
     }
 
     public void loadContent(final DownloadListener listener) {
-        FireBaseLoader.getInstance(context).downloadMuseumsList(listener);
-        if (!dbUtils.isEmpty()) {
+
+        if (dbUtils.isTableEmpty()) {
+            FireBaseLoader.getInstance(context).downloadMuseumsList(new DownloadListener() {
+                @Override
+                public void onMuseumListDownloaded(List<Museum> museums) {
+                    loadMuseumsList(listener);
+                }
+            });
+        } else {
+            FireBaseLoader.getInstance(context).downloadMuseumsList(listener);
             loadMuseumsList(listener);
         }
-        loadDownloadedMap(listener);
     }
 
-    public void loadDownloadedMap(final DownloadListener listener) {
+    public void loadDownloadedMap(final MapDownloadListener mapDownloadListener) {
         List<MuseumMap> maps = new ArrayList<>();
         Cursor cursor = dbUtils.readMapRecord();
         if (cursor.moveToFirst()) {
@@ -60,12 +68,12 @@ public class DBLoader {
                 if (!duplicateCheck(maps, map)) {
                     maps.add(map);
                 }
-                listener.onMuseumDownloaded(map);
+                mapDownloadListener.onMapDownloaded(map);
             } while (cursor.moveToNext());
         }
     }
 
-    public List<QR> loadQrs(String mapId, String roomId) {
+    private List<QR> loadQrs(String mapId, String roomId) {
         Cursor cursor = dbUtils.readQrRecord();
         List<QR> qrs = new ArrayList<>();
 
@@ -90,7 +98,7 @@ public class DBLoader {
         return qrs;
     }
 
-    public List<Door> loadDoors(String mapId, String roomId) {
+    private List<Door> loadDoors(String mapId, String roomId) {
         Cursor cursor = dbUtils.readDoorRecord();
         List<Door> doors = new ArrayList<>();
 
@@ -114,7 +122,7 @@ public class DBLoader {
         return doors;
     }
 
-    public List<MapPoint> loadShape(String mapId, String roomId) {
+    private List<MapPoint> loadShape(String mapId, String roomId) {
         Cursor cursor = dbUtils.readShapeRecord();
         List<MapPoint> shape = new ArrayList<>();
 
@@ -137,7 +145,7 @@ public class DBLoader {
         return shape;
     }
 
-    public List<Room> loadRooms(String mapId) {
+    private List<Room> loadRooms(String mapId) {
         Cursor cursor = dbUtils.readRoomRecord();
 
         List<Room> rooms = new ArrayList<>();
@@ -160,7 +168,7 @@ public class DBLoader {
         return rooms;
     }
 
-    public void loadMuseumsList(final DownloadListener listener) {
+    private void loadMuseumsList(final DownloadListener listener) {
         Cursor cursor = dbUtils.readMuseumRecord();
 
         if (cursor.moveToFirst()) {

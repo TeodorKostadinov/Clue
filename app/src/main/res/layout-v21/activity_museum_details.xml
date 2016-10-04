@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/grp_map_container"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,7 +12,7 @@
         <ImageView
             android:id="@+id/view_details_back"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/museum_image_heigh_dimension"
+            android:layout_height="200dp"
             android:background="@color/common_action_bar_splitter"
             android:elevation="6dp"
             android:scaleType="centerCrop"
@@ -21,7 +21,7 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/museum_image_heigh_dimension"
+            android:layout_height="200dp"
             android:background="#66000000"
             android:elevation="6dp"
             android:scaleType="centerCrop" />
@@ -30,7 +30,7 @@
             android:id="@+id/txt_museum_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dimension_margin_from_both_sides"
+            android:layout_margin="14dp"
             android:elevation="6dp"
             android:text="@string/txt_name"
             android:textColor="@color/white"
@@ -45,15 +45,15 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/view_details_back"
-            android:paddingBottom="@dimen/dimension_12dp"
-            android:paddingTop="@dimen/dimension_12dp">
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp">
 
             <TextView
                 android:id="@+id/txt_museum_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dimension_12dp"
-                android:paddingBottom="@dimen/dimension_12dp"
+                android:layout_margin="12dp"
+                android:paddingBottom="12dp"
                 android:text="@string/txt_museum_info"
                 android:textColor="#000"
                 android:textSize="18sp" />
@@ -63,7 +63,7 @@
             android:id="@+id/progress_bar"
             style="@android:style/Widget.Holo.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dimension_12dp"
+            android:layout_height="12dp"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/view_details_back"
             android:layout_gravity="center"

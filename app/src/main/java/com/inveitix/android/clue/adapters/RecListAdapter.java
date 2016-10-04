@@ -1,22 +1,23 @@
 package com.inveitix.android.clue.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Museum;
-import com.inveitix.android.clue.database.DBUtils;
-import com.inveitix.android.clue.interfaces.RecyclerViewOnItemClickListener;
+import com.inveitix.android.clue.constants.MuseumConstants;
+import com.inveitix.android.clue.ui.MuseumDetailsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -27,19 +28,21 @@ import butterknife.ButterKnife;
 
 public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHolder> {
 
-    private final OnDownloadClickedListener listener;
-    private RecyclerViewOnItemClickListener itemClickListener;
     private List<Museum> museums;
     private Context context;
+    private Activity activity;
+    private List<Museum> museumsCopy;
 
-    public RecListAdapter(OnDownloadClickedListener listener, Context context) {
+    public RecListAdapter(Activity activity) {
         this.museums = new ArrayList<>();
-        this.listener = listener;
-        this.context = context;
+        this.context = activity.getApplicationContext();
+        this.activity = activity;
+        this.museumsCopy = new ArrayList<>();
     }
 
     public void addItems(List<Museum> museums) {
         this.museums = museums;
+        this.museumsCopy.addAll(museums);
         refreshMuseumList();
     }
 
@@ -56,17 +59,11 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         holder.txtName.setText(museum.getName());
         holder.museumID = museum.getId();
         if (isConnected()) {
-            Picasso.with(context).load(museum.getImageURL()).into(holder.viewBackground);
-        }
-        if (museum.getMapStatus() == Museum.STATUS_DOWNLOADED) {
-            holder.btnDownload.setVisibility(View.INVISIBLE);
-            holder.progressBar.setVisibility(View.GONE);
-        } else if (museum.getMapStatus() == Museum.STATUS_NOT_DOWNLOADED) {
-            holder.btnDownload.setVisibility(View.VISIBLE);
-            holder.progressBar.setVisibility(View.GONE);
-        } else {
-            holder.btnDownload.setVisibility(View.GONE);
-            holder.progressBar.setVisibility(View.VISIBLE);
+            Picasso.with(context)
+                    .load(museum.getImageURL())
+                    .resize(300, 200)
+                    .centerCrop()
+                    .into(holder.viewBackground);
         }
     }
 
@@ -87,41 +84,26 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         return museums.size();
     }
 
-    public void setOnItemClickListener(final RecyclerViewOnItemClickListener listener) {
-        this.itemClickListener = listener;
-    }
-
-    public void updateItem(int museumID, int museumStatus) {
-
-        for (int i = 0; i < museums.size(); i++) {
-            if (museums.get(i).getId() == museumID) {
-                if (museumStatus == Museum.STATUS_DOWNLOADING) {
-                    museums.get(i).setMapStatus(Museum.STATUS_DOWNLOADING);
-                    break;
-                } else if (museumStatus == Museum.STATUS_DOWNLOADED) {
-                    museums.get(i).setMapStatus(Museum.STATUS_DOWNLOADED);
-                    DBUtils.getInstance(this.context).updateMapStatus(museumID, Museum.STATUS_DOWNLOADED);
-                    break;
-                }
-            }
-        }
-        refreshMuseumList();
-    }
-
     public void refreshMuseumList() {
         notifyDataSetChanged();
     }
 
-    private Museum getItemById(int museumId) {
-        for (Museum mus :
-                museums) {
-            if (mus.getId() == museumId) return mus;
+    public void searchFilter(String nameSearch) {
+        if (nameSearch.isEmpty()) {
+            museums.clear();
+            museums.addAll(museumsCopy);
+        } else {
+            ArrayList<Museum> result = new ArrayList<>();
+            nameSearch = nameSearch.toLowerCase();
+            for (Museum item : museumsCopy) {
+                if (item.getName().toLowerCase().contains(nameSearch)) {
+                    result.add(item);
+                }
+            }
+            museums.clear();
+            museums.addAll(result);
         }
-        return null;
-    }
-
-    public interface OnDownloadClickedListener {
-        void onDownloadClicked(int museumID);
+        notifyDataSetChanged();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -129,28 +111,24 @@ public class RecListAdapter extends RecyclerView.Adapter<RecListAdapter.ViewHold
         ImageView viewBackground;
         @Bind(R.id.txt_museum_name)
         TextView txtName;
-        @Bind(R.id.btn_download)
-        Button btnDownload;
-        @Bind(R.id.progress_bar)
-        ProgressBar progressBar;
         int museumID;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
-            btnDownload.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            if (v.getId() == R.id.btn_download) {
-                listener.onDownloadClicked(museumID);
-            } else {
-                if (itemClickListener != null) {
-                    itemClickListener.onItemClick(getItemById(museumID));
-                }
-            }
+            Intent intentDetails = new Intent(activity, MuseumDetailsActivity.class);
+            intentDetails.putExtra(MuseumConstants.MUSEUM_ID, museumID);
+            String transitionName = activity.getString(R.string.transition_museum_cover);
+            ActivityOptionsCompat options =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+                            viewBackground,
+                            transitionName);
+            ActivityCompat.startActivity(activity, intentDetails, options.toBundle());
         }
     }
 }

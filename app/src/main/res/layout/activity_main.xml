@@ -22,15 +22,15 @@
             android:layout_height="match_parent" />
 
     </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/btn_add_museum"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="15dp"
-        android:clickable="true"
-        android:background="@drawable/circle"
-        android:src="@drawable/ic_add_white_24dp"/>
+    <!--Removed custom map creation for first version-->
+    <!--<ImageButton-->
+        <!--android:id="@+id/btn_add_museum"-->
+        <!--android:layout_width="70dp"-->
+        <!--android:layout_height="70dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_margin="15dp"-->
+        <!--android:clickable="true"-->
+        <!--android:background="@drawable/circle"-->
+        <!--android:src="@drawable/ic_add_white_24dp"/>-->
 </RelativeLayout>

@@ -104,13 +104,14 @@ public class CreateRoomActivity extends AppCompatActivity {
         });
     }
 
+    //Created only for the beta
     private void testRooms() {
         Room room = new Room();
         room.setId("Soon...");
         roomsName.add(room.getId());
     }
 
-    public void animateFAB() {
+    private void animateFAB() {
         if (isFabOpen) {
             saveMap();
             finish();
@@ -200,7 +201,7 @@ public class CreateRoomActivity extends AppCompatActivity {
         animateFAB();
     }
 
-    public void openDialog() {
+    private void openDialog() {
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle(getString(R.string.txt_create_room));
         alertDialog.setMessage(getString(R.string.txt_create_instructions));
