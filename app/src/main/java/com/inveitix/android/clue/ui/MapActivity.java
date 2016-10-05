@@ -11,14 +11,14 @@ import android.util.Log;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
-import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.MapPoint;
+import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.database.MapsInstance;
 import com.inveitix.android.clue.scanner.IntentIntegrator;
 import com.inveitix.android.clue.scanner.IntentResult;
-import com.inveitix.android.clue.ui.views.RoomView;
+import com.inveitix.android.clue.ui.views.DrawingView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,7 +33,7 @@ public class MapActivity extends AppCompatActivity {
     private static final String EXTRA_PREVIOUS_ROOM_ID = "previousRoomId";
 
     @Bind(R.id.room)
-    RoomView roomView;
+    DrawingView roomView;
     private Room room;
 
     @Override
@@ -46,17 +46,23 @@ public class MapActivity extends AppCompatActivity {
         MuseumMap map = MapsInstance.getInstance().getMapByMuseumId(museumId);
         String roomId = getIntent().getStringExtra(EXTRA_ROOM_ID);
 
-        if (roomId == null) {
+        if (roomId == null && map != null) {
             roomId = map.getEntranceRoomId();
         }
         room = map.getRoomById(roomId);
         if (room != null) {
+            roomView.setIsFloorFinished(true);
             roomView.setShape(room.getShape());
             roomView.setQrs(room.getQrs());
             roomView.setDoors(room.getDoors());
             roomView.setWidthToHeightRatio(0.89f);
 
-            roomView.setOnDoorClickedListener(new RoomView.OnDoorClickedListener() {
+            roomView.setOnViewClickedListener(new DrawingView.OnViewClickedListener() {
+                @Override
+                public void onViewClicked(float proportionX, float proportionY) {
+
+                }
+
                 @Override
                 public void onDoorClicked(Door door) {
                     Intent intent = new Intent(MapActivity.this, MapActivity.class);
@@ -65,9 +71,7 @@ public class MapActivity extends AppCompatActivity {
                     intent.putExtra(EXTRA_PREVIOUS_ROOM_ID, room.getId());
                     startActivity(intent);
                 }
-            });
 
-            roomView.setOnQrClickedListener(new RoomView.OnQrClickedListener() {
                 @Override
                 public void onQrClicked(QR qr) {
                     AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
@@ -89,8 +93,21 @@ public class MapActivity extends AppCompatActivity {
     private void setInitialUserPosition() {
         Door door = getEntranceDoor();
         if (door != null) {
-            roomView.updateUserPosition(new MapPoint(door.getX(), door.getY()));
+            roomView.setUserPosition(new MapPoint(door.getX(), door.getY()));
+        } else {
+            roomView.setUserPosition(getDefaultDoor());
         }
+    }
+
+    private MapPoint getDefaultDoor() {
+        for (Door door :                room.getDoors()) {
+            if (door != null) {
+                Log.e(TAG, "No entrance door, setting user to first available door");
+                return new MapPoint(door.getX(), door.getY());
+            }
+        }
+        Log.e(TAG, "No doors in room, setting user in corner");
+        return new MapPoint(0, 0);
     }
 
     private Door getEntranceDoor() {
@@ -130,13 +147,11 @@ public class MapActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        roomView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        roomView.resume(this);
     }
 
     @Override

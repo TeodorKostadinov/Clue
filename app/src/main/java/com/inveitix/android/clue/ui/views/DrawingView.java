@@ -1,67 +1,59 @@
 package com.inveitix.android.clue.ui.views;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Shader;
-import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
-import android.widget.EditText;
+import android.view.animation.DecelerateInterpolator;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MapPoint;
 import com.inveitix.android.clue.cmn.QR;
-import com.inveitix.android.clue.cmn.Room;
-import com.inveitix.android.clue.interfaces.DrawDoorListener;
-import com.inveitix.android.clue.interfaces.DrawQrListener;
-import com.inveitix.android.clue.interfaces.ShapeCreatedListened;
-import com.inveitix.android.clue.interfaces.onRoomCreatedListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class DrawingView extends SurfaceView {
+public class DrawingView extends View {
 
-    private static final float DOOR_SIZE = 30;
-    private static final float QR_SIZE = 30;
-    private static final float POINT_RADIUS = 10;
-    public static final String POINT_PREFIX = "point";
-    public static final String DOOR_PREFIX = "door";
-    public static final String QR_PREFIX = "qr ";
-    public static final String DRAWING_VIEW = "DrawingView";
-    public String museumId;
-    private Paint paint;
-    private Canvas canvas;
-    private SurfaceHolder surfaceHolder;
+    private static final String TAG = "DrawingView";
+    private static final long ANIMATION_DURATION = 2000;
+    //Metrics
+    private float height;
+    private float width;
+    private float shapePointRadius;
+    private float clickPrecision;
+
+    //Drawing components
+    private Paint shapePaint;
+    private Paint roomPaint;
+    private Paint doorPaint;
+    private Paint qrPaint;
+    private Bitmap bmpDoor;
+    private Bitmap bmpQr;
+
+    //Data
     private List<MapPoint> shape;
     private List<Door> doors;
-    private boolean isFloorFinished;
-    private boolean isDoorSelected;
-    private DrawDoorListener drawDoorListener;
-    private DrawQrListener drawQrListener;
-    private boolean isQrSelected;
     private List<QR> qrs;
-    private QR qr;
-    private String roomId;
-    private String qrInfo;
+    private MapPoint userPosition;
+    private MapPoint userPositionOnScreen;
+    private Bitmap personPoint;
+
+    //States
+    private boolean isFloorFinished;
+
     private Context context;
-    private ShapeCreatedListened shapeListener;
-    private onRoomCreatedListener roomListener;
-    private int maxWidth;
-    private int maxHeight;
+    private OnViewClickedListener listener;
+    private ValueAnimator animator;
 
     public DrawingView(Context context) {
         super(context);
@@ -81,216 +73,181 @@ public class DrawingView extends SurfaceView {
         init();
     }
 
-    public List<MapPoint> getShape() {
-        return shape;
-    }
-
-    public void initRoom() {
-        Room room = new Room();
-        room.setId(roomId);
-        room.setDoors(doors);
-        room.setMapId(getMuseumId());
-        room.setQrs(qrs);
-        room.setShape(shape);
-        roomListener.onRoomCreated(room);
-    }
-
     private void init() {
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        isFloorFinished = false;
-        surfaceHolder = this.getHolder();
-        prepareCanvas();
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL);
-        shape = new ArrayList<>();
-        doors = new ArrayList<>();
-        qrs = new ArrayList<>();
+        shapePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        shapePaint.setColor(context.getResources().getColor(R.color.dark_blue));
+        shapePointRadius = context.getResources().getDimensionPixelSize(R.dimen.room_view_point_radius);
+        clickPrecision = context.getResources().getDimensionPixelSize(R.dimen.room_view_click_precision);
+
+        roomPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        roomPaint.setStyle(Paint.Style.FILL);
+        roomPaint.setColor(Color.RED);
+
+        bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
+        bmpQr = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
+        personPoint = BitmapFactory.decodeResource(getResources(), R.drawable.ic_room_white_36dp);
     }
 
-    private void prepareCanvas() {
-        surfaceHolder.addCallback(new SurfaceHolder.Callback() {
-            public void surfaceDestroyed(SurfaceHolder holder) {
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        this.width = w;
+        this.height = h;
+    }
 
-            }
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if (isFloorFinished) {
+            drawFloor(canvas);
+            drawDoors(canvas);
+            drawQrs(canvas);
+            drawUser(canvas);
+        } else {
+            drawShape(canvas);
+        }
+    }
 
-            public void surfaceCreated(SurfaceHolder holder) {
-                canvas = holder.lockCanvas();
-                canvas.drawColor(Color.WHITE);
-                holder.unlockCanvasAndPost(canvas);
-            }
+    private void drawUser(Canvas canvas) {
+        if (userPositionOnScreen != null) {
+            canvas.drawBitmap(personPoint,
+                    userPositionOnScreen.getX() * width - personPoint.getWidth() / 2,
+                    userPositionOnScreen.getY() * height - personPoint.getHeight() + 10,
+                    null);
+        }
+    }
 
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    private void drawShape(Canvas canvas) {
+        if (shape != null) {
+            for (MapPoint point : shape) {
+                canvas.drawCircle(point.getX() * width, point.getY() * height, shapePointRadius, shapePaint);
             }
-        });
+        }
+    }
+
+    private void drawFloor(Canvas canvas) {
+        if (shape != null) {
+            Path path = new Path();
+            path.reset();
+            for (MapPoint p : shape) {
+                path.lineTo(width * p.getX(), height * p.getY());
+            }
+            if (shape.size() > 0) {
+                path.lineTo(width * shape.get(0).getX(), height * shape.get(0).getY());
+            }
+            path.close();
+            canvas.drawPath(path, shapePaint);
+        }
+    }
+
+    private void drawDoors(Canvas canvas) {
+        if (doors != null && doors.size() > 0) {
+            for (Door door : doors) {
+                canvas.drawBitmap(bmpDoor, width * door.getX() - bmpDoor.getWidth() / 2,
+                        height * door.getY() - bmpDoor.getHeight() / 2, null);
+                canvas.drawCircle(width * door.getX(), height * door.getY(), 10, roomPaint);
+            }
+        }
+    }
+
+    private void drawQrs(Canvas canvas) {
+        if (qrs != null && qrs.size() > 0) {
+            for (QR qr : qrs) {
+                canvas.drawBitmap(bmpQr, width * qr.getX() - bmpQr.getWidth() / 2,
+                        height * qr.getY() - bmpQr.getHeight() / 2, null);
+                canvas.drawCircle(width * qr.getX(), height * qr.getY(), 10, roomPaint);
+            }
+        }
+
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN && !isFloorFinished) {
-            drawTouchedPoints(event);
-        } else if (event.getAction() == MotionEvent.ACTION_DOWN && isDoorSelected) {
-            drawTouchedDoor(event);
-        } else if (event.getAction() == MotionEvent.ACTION_DOWN && isQrSelected) {
-            drawTouchedQr(event);
-        }
-        return false;
+        gestureDetector.onTouchEvent(event);
+        return true;
     }
 
-    private void drawTouchedQr(MotionEvent event) {
-        if (surfaceHolder.getSurface().isValid()) {
-            showQrInfoDialog();
-            long timeStamp = System.currentTimeMillis();
-            qr = new QR();
-            qr.setX(event.getX() / maxWidth);
-            qr.setY(event.getY() / maxHeight);
-            qr.setId(QR_PREFIX + timeStamp);
-            qr.setMapId(getMuseumId());
-            qr.setRoomId(this.roomId);
-            qrs.add(qr);
-            drawFloor();
-        }
-    }
-
-    private void drawTouchedDoor(MotionEvent event) {
-        if (surfaceHolder.getSurface().isValid()) {
-            long timeStamp = System.currentTimeMillis();
-            Door door = new Door();
-            door.setId(DOOR_PREFIX + timeStamp);
-            door.setConnectedTo("door1"); //this is for test
-            door.setX(event.getX() / maxWidth);
-            door.setY(event.getY() / maxHeight);
-            door.setRoomId(roomId);
-            door.setMapId(getMuseumId());
-            doors.add(door);
-            drawFloor();
-            drawDoorListener.onDoorDrawn(door);
-        }
-    }
-
-    private void drawTouchedPoints(MotionEvent event) {
-        if (surfaceHolder.getSurface().isValid()) {
-            long timeStamp = System.currentTimeMillis();
-            MapPoint point = new MapPoint();
-            point.setMapId(getMuseumId());
-            point.setId(POINT_PREFIX + timeStamp);
-            point.setRoomId(this.roomId);
-            point.setX(event.getX() / maxWidth);
-            point.setY(event.getY() / maxHeight);
-            shape.add(point);
-            shapeListener.onShapeCreated(point);
-            canvas = surfaceHolder.lockCanvas();
-            canvas.drawColor(Color.WHITE);
-            for (MapPoint mapPoint : shape) {
-                canvas.drawCircle(maxWidth * mapPoint.getX(), maxHeight * mapPoint.getY(), POINT_RADIUS, paint);
-            }
-            surfaceHolder.unlockCanvasAndPost(canvas);
-        }
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int minw = getPaddingLeft() + getPaddingRight() + getSuggestedMinimumWidth();
-        int minh = getPaddingBottom() + getPaddingTop() + getSuggestedMinimumHeight();
-        this.maxWidth = resolveSizeAndState(minw, widthMeasureSpec, 1);
-        this.maxHeight = resolveSizeAndState(minh, heightMeasureSpec, 1);
-        setMeasuredDimension(maxWidth, maxHeight);
-    }
-
-
-    public void showQrInfoDialog() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-        LayoutInflater inflater =
-                (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View dialogView = inflater.inflate(R.layout.edt_dialog, null);
-        dialogBuilder.setView(dialogView);
-        final EditText edt = (EditText) dialogView.findViewById(R.id.edt_qr_dialog);
-
-        dialogBuilder.setTitle(context.getString(R.string.qr_information));
-        dialogBuilder.setMessage(context.getString(R.string.enter_qr_info));
-        dialogBuilder.setPositiveButton(context.getString(R.string.txt_done),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        setQrInfo(edt.getText().toString());
-                        qr.setInfo(qrInfo);
-                        drawQrListener.onQrDrawn(qr);
-                    }
-                });
-        AlertDialog b = dialogBuilder.create();
-        b.show();
-    }
-
-
-    public void drawFloor() {
-        Bitmap bmpFloorPattern = BitmapFactory.decodeResource(getResources(), R.drawable.floor_pattern6);
-        BitmapShader patternBMPshader = new BitmapShader(bmpFloorPattern,
-                Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
-        canvas = surfaceHolder.lockCanvas();
-        Path path = new Path();
-        path.reset();
-
-        if (shape != null) {
-            path.moveTo(maxWidth * shape.get(0).getX(), maxHeight * shape.get(0).getY());
-            alignPoints(path);
-            canvas.drawColor(Color.WHITE);
-            for (int i = 0; i < shape.size(); i++) {
-                path.lineTo(maxWidth * shape.get(i).getX(), maxHeight * shape.get(i).getY());
-            }
-        }
-        paint.setShader(patternBMPshader);
-        path.close();
-        canvas.drawPath(path, paint);
-        paint.setShader(null);
-        if (doors.size() > 0) {
-            drawDoors();
+    private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.OnGestureListener() {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
         }
 
-        if (qrs.size() > 0) {
-            drawQrs();
+        @Override
+        public void onShowPress(MotionEvent e) {
+
         }
-        surfaceHolder.unlockCanvasAndPost(canvas);
-    }
 
-    public void drawDoors() {
-        Bitmap bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
-        paint.setFilterBitmap(true);
-
-        synchronized (surfaceHolder) {
-            if (doors != null && doors.size() > 0) {
-                for (Door door : doors) {
-                    canvas.drawBitmap(bmpDoor, maxWidth * door.getX() - DOOR_SIZE,
-                            maxHeight * door.getY() - DOOR_SIZE, paint);
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            Log.e(TAG, "View clicked");
+            if (listener != null) {
+                listener.onViewClicked(e.getX() / width, e.getY() / height);
+                Door clickedDoor = getIsDoorClicked(e.getX(), e.getY());
+                if (clickedDoor != null) {
+                    listener.onDoorClicked(clickedDoor);
+                }
+                QR clickedQr = getIsQrClicked(e.getX(), e.getY());
+                if (clickedQr != null) {
+                    listener.onQrClicked(clickedQr);
                 }
             }
+            return true;
         }
-    }
 
-    public void drawQrs() {
-        Bitmap bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
-        paint.setFilterBitmap(true);
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return false;
+        }
 
-        synchronized (surfaceHolder) {
-            if (qrs != null && qrs.size() > 0) {
-                for (QR qr : qrs) {
-                    canvas.drawBitmap(bmpDoor, maxWidth * qr.getX() - QR_SIZE,
-                            maxHeight * qr.getY() - QR_SIZE, paint);
-                }
+        @Override
+        public void onLongPress(MotionEvent e) {
+
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            return false;
+        }
+    });
+
+    private QR getIsQrClicked(float x, float y) {
+        for (QR qr : qrs) {
+            float qrX = qr.getX() * width;
+            float qrY = qr.getY() * height;
+            if (Math.abs(x - qrX) < clickPrecision &&
+                    Math.abs(y - qrY) < clickPrecision) {
+                return qr;
             }
         }
+        return null;
+    }
+
+    private Door getIsDoorClicked(float x, float y) {
+        for (Door door :
+                doors) {
+            float doorX = door.getX() * width;
+            float doorY = door.getY() * height;
+            if (Math.abs(x - doorX) < clickPrecision &&
+                    Math.abs(y - doorY) < clickPrecision) {
+                return door;
+            }
+        }
+        return null;
     }
 
     private void alignPoints(Path path) {
         MapPoint previousPoint = null;
         for (int i = 0; i < shape.size(); i++) {
-            float x = maxWidth * shape.get(i).getX();
-            float y = maxHeight * shape.get(i).getY();
+            float x = shape.get(i).getX();
+            float y = shape.get(i).getY();
             if (previousPoint != null) {
-                float deltaX = Math.abs(x - maxWidth * previousPoint.getX());
-                float deltaY = Math.abs(y - maxHeight * previousPoint.getY());
+                float deltaX = Math.abs(x - previousPoint.getX());
+                float deltaY = Math.abs(y - previousPoint.getY());
                 if (Math.max(deltaX, deltaY) == deltaX) {
-                    x = maxWidth * previousPoint.getX();
+                    x = previousPoint.getX();
                 } else {
-                    y = maxHeight * previousPoint.getY();
+                    y = previousPoint.getY();
                 }
             }
             path.lineTo(x, y);
@@ -298,51 +255,76 @@ public class DrawingView extends SurfaceView {
         }
     }
 
-    public void setQrSelected(boolean qrSelected) {
-        this.isQrSelected = qrSelected;
-    }
-
-    public void setIsDoorSelected(boolean isDoorSelected) {
-        this.isDoorSelected = isDoorSelected;
-    }
-
     public void setIsFloorFinished(boolean isFloorFinished) {
         this.isFloorFinished = isFloorFinished;
+        invalidate();
+        requestLayout();
     }
 
-    public void setDrawDoorListener(DrawDoorListener drawDoorListener) {
-        this.drawDoorListener = drawDoorListener;
+    public void setShape(List<MapPoint> shape) {
+        this.shape = shape;
+        invalidate();
+        requestLayout();
     }
 
-    public void setDrawQrListener(DrawQrListener drawQrListener) {
-        this.drawQrListener = drawQrListener;
+    public void setDoors(List<Door> doors) {
+        this.doors = doors;
+        invalidate();
+        requestLayout();
     }
 
-    public void setOnRoomCreatedListener(onRoomCreatedListener roomListener) {
-        this.roomListener = roomListener;
+    public void setQrs(List<QR> qrs) {
+        this.qrs = qrs;
+        invalidate();
+        requestLayout();
     }
 
-    public void setShapeCreatedListener(ShapeCreatedListened shapeListener) {
-        this.shapeListener = shapeListener;
+    public void setOnViewClickedListener(OnViewClickedListener listener) {
+        this.listener = listener;
     }
 
-    public String getMuseumId() {
-        return museumId;
+    public void setWidthToHeightRatio(float widthToHeight) {
+        this.height = widthToHeight * width;
+        invalidate();
+        requestLayout();
     }
 
-    public void setMuseumId(String museumId) {
-        this.museumId = museumId;
-    }
-
-    public void setRoomId(String roomId) {
-        if (this.roomId == null || this.roomId.equals("")) {
-            this.roomId = roomId;
+    public void updateUserPosition(MapPoint mapPoint) {
+        this.userPosition = mapPoint;
+        final float startX = userPositionOnScreen.getX();
+        final float startY = userPositionOnScreen.getY();
+        if (animator != null) {
+            animator.cancel();
         }
+        animator = ValueAnimator.ofFloat(0, 1).setDuration(ANIMATION_DURATION);
+        animator.setInterpolator(new DecelerateInterpolator());
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float fraction = animation.getAnimatedFraction();
+                float x = userPosition.getX() * fraction + startX * (1 - fraction);
+                float y = userPosition.getY() * fraction + startY * (1 - fraction);
+                userPositionOnScreen.setX(x);
+                userPositionOnScreen.setY(y);
+                invalidate();
+            }
+        });
+        animator.start();
     }
 
-    public void setQrInfo(String qrInfo) {
-        this.qrInfo = qrInfo;
+    public void setUserPosition(MapPoint userPosition) {
+        this.userPosition = userPosition;
+        this.userPositionOnScreen = userPosition;
+        invalidate();
+        requestLayout();
+    }
+
+    public interface OnViewClickedListener {
+        void onViewClicked(float proportionX, float proportionY);
+
+        void onDoorClicked(Door door);
+
+        void onQrClicked(QR qr);
     }
 
 }
-
