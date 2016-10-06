@@ -8,17 +8,9 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MapPoint;
-import com.inveitix.android.clue.cmn.MyScaleGestureListener;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
@@ -39,7 +31,9 @@ public class MapActivity extends AppCompatActivity {
     private static final String EXTRA_ROOM_ID = "roomId";
     private static final String EXTRA_PREVIOUS_ROOM_ID = "previousRoomId";
     int museumId = 0;
+    @Bind(R.id.room)
     DrawingView roomView;
+
     private Room room;
 
     @Override
@@ -47,7 +41,6 @@ public class MapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         ButterKnife.bind(this);
-
         museumId = getIntent().getIntExtra(EXTRA_MUSEUM_ID, NO_EXTRA);
         MuseumMap map = MapsInstance.getInstance().getMapByMuseumId(museumId);
         String roomId = getIntent().getStringExtra(EXTRA_ROOM_ID);

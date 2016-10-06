@@ -12,8 +12,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
@@ -50,10 +53,54 @@ public class DrawingView extends View {
 
     //States
     private boolean isFloorFinished;
-
+    private ScaleGestureDetector mScaleDetector;
+    private float mScaleFactor = 1.f;
     private Context context;
     private OnViewClickedListener listener;
     private ValueAnimator animator;
+    private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.OnGestureListener() {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            Log.e(TAG, "View clicked");
+            if (listener != null) {
+                listener.onViewClicked(e.getX() / width, e.getY() / height);
+                Door clickedDoor = getIsDoorClicked(e.getX(), e.getY());
+                if (clickedDoor != null) {
+                    listener.onDoorClicked(clickedDoor);
+                }
+                QR clickedQr = getIsQrClicked(e.getX(), e.getY());
+                if (clickedQr != null) {
+                    listener.onQrClicked(clickedQr);
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            return false;
+        }
+    });
 
     public DrawingView(Context context) {
         super(context);
@@ -74,6 +121,7 @@ public class DrawingView extends View {
     }
 
     private void init() {
+        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         shapePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         shapePaint.setColor(context.getResources().getColor(R.color.dark_blue));
         shapePointRadius = context.getResources().getDimensionPixelSize(R.dimen.room_view_point_radius);
@@ -98,6 +146,8 @@ public class DrawingView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        canvas.save();
+        canvas.scale(mScaleFactor, mScaleFactor);
         if (isFloorFinished) {
             drawFloor(canvas);
             drawDoors(canvas);
@@ -106,6 +156,7 @@ public class DrawingView extends View {
         } else {
             drawShape(canvas);
         }
+        canvas.restore();
     }
 
     private void drawUser(Canvas canvas) {
@@ -164,52 +215,9 @@ public class DrawingView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         gestureDetector.onTouchEvent(event);
+        mScaleDetector.onTouchEvent(event);
         return true;
     }
-
-    private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.OnGestureListener() {
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public void onShowPress(MotionEvent e) {
-
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            Log.e(TAG, "View clicked");
-            if (listener != null) {
-                listener.onViewClicked(e.getX() / width, e.getY() / height);
-                Door clickedDoor = getIsDoorClicked(e.getX(), e.getY());
-                if (clickedDoor != null) {
-                    listener.onDoorClicked(clickedDoor);
-                }
-                QR clickedQr = getIsQrClicked(e.getX(), e.getY());
-                if (clickedQr != null) {
-                    listener.onQrClicked(clickedQr);
-                }
-            }
-            return true;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            return false;
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            return false;
-        }
-    });
 
     private QR getIsQrClicked(float x, float y) {
         for (QR qr : qrs) {
@@ -325,6 +333,21 @@ public class DrawingView extends View {
         void onDoorClicked(Door door);
 
         void onQrClicked(QR qr);
+    }
+
+
+    private class ScaleListener
+            extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            mScaleFactor *= detector.getScaleFactor();
+
+            // Don't let the object get too small or too large.
+            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
+
+            invalidate();
+            return true;
+        }
     }
 
 }

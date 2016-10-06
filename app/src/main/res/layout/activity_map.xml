@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/grp_map_container"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/grp_map"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.inveitix.android.clue.ui.views.DrawingView
-        android:id="@+id/room"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btn_scan"
-        style="@style/PurpleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="2dp"
-        android:background="@drawable/button_selector"
-        android:text="@string/txt_move"
-        android:textColor="@color/white" />
+        <com.inveitix.android.clue.ui.views.DrawingView
+            android:id="@+id/room"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/btn_scan"
+            style="@style/PurpleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="2dp"
+            android:background="@drawable/button_selector"
+            android:text="@string/txt_move"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+</FrameLayout>
