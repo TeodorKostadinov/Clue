@@ -53,42 +53,50 @@ public class MapActivity extends AppCompatActivity {
         }
         room = map.getRoomById(roomId);
         if (room != null) {
-            roomView.setIsFloorFinished(true);
-            roomView.setShape(room.getShape());
-            roomView.setQrs(room.getQrs());
-            roomView.setDoors(room.getDoors());
-            roomView.setWidthToHeightRatio(0.89f);
-            roomView.setOnViewClickedListener(new DrawingView.OnViewClickedListener() {
-                @Override
-                public void onViewClicked(float proportionX, float proportionY) {
-
-                }
-
-                @Override
-                public void onDoorClicked(Door door) {
-                    Intent intent = new Intent(MapActivity.this, MapActivity.class);
-                    intent.putExtra(EXTRA_MUSEUM_ID, museumId);
-                    intent.putExtra(EXTRA_ROOM_ID, door.getConnectedTo());
-                    intent.putExtra(EXTRA_PREVIOUS_ROOM_ID, room.getId());
-                    startActivity(intent);
-                }
-
-                @Override
-                public void onQrClicked(QR qr) {
-                    AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
-                    alertDialog.setTitle(getString(R.string.txt_info));
-                    alertDialog.setMessage(qr.getInfo());
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.show();
-                }
-            });
+            initRoomView();
+            initRoomViewListener();
             setInitialUserPosition();
         }
+    }
+
+    private void initRoomViewListener() {
+        roomView.setOnViewClickedListener(new DrawingView.OnViewClickedListener() {
+            @Override
+            public void onViewClicked(float proportionX, float proportionY) {
+
+            }
+
+            @Override
+            public void onDoorClicked(Door door) {
+                Intent intent = new Intent(MapActivity.this, MapActivity.class);
+                intent.putExtra(EXTRA_MUSEUM_ID, museumId);
+                intent.putExtra(EXTRA_ROOM_ID, door.getConnectedTo());
+                intent.putExtra(EXTRA_PREVIOUS_ROOM_ID, room.getId());
+                startActivity(intent);
+            }
+
+            @Override
+            public void onQrClicked(QR qr) {
+                AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+                alertDialog.setTitle(getString(R.string.txt_info));
+                alertDialog.setMessage(qr.getInfo());
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+        });
+    }
+
+    private void initRoomView() {
+        roomView.setIsFloorFinished(true);
+        roomView.setShape(room.getShape());
+        roomView.setQrs(room.getQrs());
+        roomView.setDoors(room.getDoors());
+        roomView.setWidthToHeightRatio(0.89f);
     }
 
     private void setInitialUserPosition() {
