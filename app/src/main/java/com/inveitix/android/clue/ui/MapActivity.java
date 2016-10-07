@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MapPoint;
@@ -33,17 +34,19 @@ public class MapActivity extends AppCompatActivity {
     int museumId = 0;
     @Bind(R.id.room)
     DrawingView roomView;
-
     private Room room;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
         ButterKnife.bind(this);
         museumId = getIntent().getIntExtra(EXTRA_MUSEUM_ID, NO_EXTRA);
         MuseumMap map = MapsInstance.getInstance().getMapByMuseumId(museumId);
         String roomId = getIntent().getStringExtra(EXTRA_ROOM_ID);
+
+
 
         if (roomId == null && map != null) {
             roomId = map.getEntranceRoomId();
@@ -55,7 +58,6 @@ public class MapActivity extends AppCompatActivity {
             roomView.setQrs(room.getQrs());
             roomView.setDoors(room.getDoors());
             roomView.setWidthToHeightRatio(0.89f);
-
             roomView.setOnViewClickedListener(new DrawingView.OnViewClickedListener() {
                 @Override
                 public void onViewClicked(float proportionX, float proportionY) {

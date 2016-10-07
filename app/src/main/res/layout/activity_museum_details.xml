@@ -56,7 +56,7 @@
                 android:paddingBottom="@dimen/dimension_12dp"
                 android:text="@string/txt_museum_info"
                 android:textColor="#000"
-                android:textSize="18sp" />
+                android:textSize="20sp" />
         </ScrollView>
 
         <ProgressBar

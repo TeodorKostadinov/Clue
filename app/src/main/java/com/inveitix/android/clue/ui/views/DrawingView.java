@@ -57,6 +57,8 @@ public class DrawingView extends View {
     private float mScaleFactor = 1.f;
     private Context context;
     private OnViewClickedListener listener;
+    private OnTouchListener touchListener;
+    float dX, dY;
     private ValueAnimator animator;
     private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.OnGestureListener() {
         @Override
@@ -122,6 +124,7 @@ public class DrawingView extends View {
 
     private void init() {
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
+        handleDragging();
         shapePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         shapePaint.setColor(context.getResources().getColor(R.color.dark_blue));
         shapePointRadius = context.getResources().getDimensionPixelSize(R.dimen.room_view_point_radius);
@@ -134,6 +137,34 @@ public class DrawingView extends View {
         bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
         bmpQr = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
         personPoint = BitmapFactory.decodeResource(getResources(), R.drawable.ic_room_white_36dp);
+    }
+
+    private void handleDragging() {
+        touchListener = new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getAction()) {
+
+                    case MotionEvent.ACTION_DOWN:
+
+                        dX = view.getX() - event.getRawX();
+                        dY = view.getY() - event.getRawY();
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+
+                        view.setX(event.getRawX() + dX);
+                        view.setY(event.getRawY() + dY);
+                        invalidate();
+                        requestLayout();
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+
+        };
     }
 
     @Override
@@ -216,6 +247,7 @@ public class DrawingView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         gestureDetector.onTouchEvent(event);
         mScaleDetector.onTouchEvent(event);
+        touchListener.onTouch(this, event);
         return true;
     }
 
