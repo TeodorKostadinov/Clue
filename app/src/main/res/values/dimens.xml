@@ -7,4 +7,6 @@
     <dimen name="dimension_margin_from_both_sides">14dp</dimen>
     <dimen name="dimension_12dp">12dp</dimen>
     <dimen name="room_view_click_precision">16dp</dimen>
+    <dimen name="room_view_outline">4dp</dimen>
+    <dimen name="room_view_qr_size">16dp</dimen>
 </resources>

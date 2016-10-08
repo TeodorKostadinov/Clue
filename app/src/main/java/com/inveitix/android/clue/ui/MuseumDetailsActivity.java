@@ -17,6 +17,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.inveitix.android.clue.R;
+import com.inveitix.android.clue.cmn.JustifyTextView;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.constants.MuseumConstants;
@@ -41,7 +42,7 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
     @Bind(R.id.scrollView)
     ScrollView scrollView;
     @Bind(R.id.txt_museum_info)
-    TextView txtMuseumInfo;
+    JustifyTextView txtMuseumInfo;
     @Bind(R.id.btn_download2)
     FloatingActionButton btnDownload;
     @Bind(R.id.progress_bar)

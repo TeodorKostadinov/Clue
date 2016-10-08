@@ -25,14 +25,11 @@
 
         <TextView
             android:id="@+id/txt_museum_name"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:layout_weight="2"
             android:textStyle="bold"
             android:layout_gravity="bottom"
-            android:ellipsize="end"
-            android:singleLine="true"
             android:text="@string/txt_name"
             android:textColor="@color/white"
             android:textSize="20sp" />

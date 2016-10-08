@@ -48,7 +48,7 @@
             android:paddingBottom="12dp"
             android:paddingTop="12dp">
 
-            <TextView
+            <com.inveitix.android.clue.cmn.JustifyTextView
                 android:id="@+id/txt_museum_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
@@ -26,6 +27,8 @@ public class DrawingView extends View {
 
     private static final String TAG = "DrawingView";
     private static final long ANIMATION_DURATION = 2000;
+    private static final float SCALE_STEP = 0.2f;
+
     //Metrics
     private float height;
     private float width;
@@ -35,6 +38,7 @@ public class DrawingView extends View {
     //Drawing components
     private Paint shapePaint;
     private Paint roomPaint;
+    private Paint whiteLinePaint;
     private Paint doorPaint;
     private Paint qrPaint;
     private Bitmap bmpDoor;
@@ -50,10 +54,11 @@ public class DrawingView extends View {
 
     //States
     private boolean isFloorFinished;
-
+    private float scaleFactor = 1.f;
     private Context context;
     private OnViewClickedListener listener;
     private ValueAnimator animator;
+    private int qrSizePixels;
 
     public DrawingView(Context context) {
         super(context);
@@ -83,9 +88,15 @@ public class DrawingView extends View {
         roomPaint.setStyle(Paint.Style.FILL);
         roomPaint.setColor(Color.RED);
 
+        whiteLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        whiteLinePaint.setStyle(Paint.Style.STROKE);
+        whiteLinePaint.setStrokeWidth(context.getResources().getDimensionPixelSize(R.dimen.room_view_outline));
+        whiteLinePaint.setColor(Color.WHITE);
+
         bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
-        bmpQr = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
+        bmpQr = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode3);
         personPoint = BitmapFactory.decodeResource(getResources(), R.drawable.ic_room_white_36dp);
+        qrSizePixels = context.getResources().getDimensionPixelSize(R.dimen.room_view_qr_size);
     }
 
     @Override
@@ -137,6 +148,7 @@ public class DrawingView extends View {
             }
             path.close();
             canvas.drawPath(path, shapePaint);
+            canvas.drawPath(path, whiteLinePaint);
         }
     }
 
@@ -152,11 +164,13 @@ public class DrawingView extends View {
 
     private void drawQrs(Canvas canvas) {
         if (qrs != null && qrs.size() > 0) {
+            whiteLinePaint.setStyle(Paint.Style.FILL);
             for (QR qr : qrs) {
+                canvas.drawCircle(width * qr.getX(), height * qr.getY(), qrSizePixels, whiteLinePaint);
                 canvas.drawBitmap(bmpQr, width * qr.getX() - bmpQr.getWidth() / 2,
                         height * qr.getY() - bmpQr.getHeight() / 2, null);
-                canvas.drawCircle(width * qr.getX(), height * qr.getY(), 10, roomPaint);
             }
+            whiteLinePaint.setStyle(Paint.Style.STROKE);
         }
 
     }
@@ -164,52 +178,10 @@ public class DrawingView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         gestureDetector.onTouchEvent(event);
+        mScaleDetector.onTouchEvent(event);
+        touchListener.onTouch(this, event);
         return true;
     }
-
-    private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.OnGestureListener() {
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public void onShowPress(MotionEvent e) {
-
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            Log.e(TAG, "View clicked");
-            if (listener != null) {
-                listener.onViewClicked(e.getX() / width, e.getY() / height);
-                Door clickedDoor = getIsDoorClicked(e.getX(), e.getY());
-                if (clickedDoor != null) {
-                    listener.onDoorClicked(clickedDoor);
-                }
-                QR clickedQr = getIsQrClicked(e.getX(), e.getY());
-                if (clickedQr != null) {
-                    listener.onQrClicked(clickedQr);
-                }
-            }
-            return true;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            return false;
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            return false;
-        }
-    });
 
     private QR getIsQrClicked(float x, float y) {
         for (QR qr : qrs) {
@@ -327,4 +299,106 @@ public class DrawingView extends View {
         void onQrClicked(QR qr);
     }
 
+    private void scale() {
+        // Don't let the object get too small or too large.
+        scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 2.0f));
+        setScaleX(scaleFactor);
+        setScaleY(scaleFactor);
+    }
+
+    public void scaleUp() {
+        scaleFactor+= SCALE_STEP;
+        scale();
+    }
+
+    public void scaleDown() {
+        scaleFactor-= SCALE_STEP;
+        scale();
+    }
+
+    /* Touch handling */
+
+    private OnTouchListener touchListener = new OnTouchListener() {
+        private float dX, dY;
+
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            switch (event.getAction()) {
+
+                case MotionEvent.ACTION_DOWN:
+                    dX = view.getX() - event.getRawX();
+                    dY = view.getY() - event.getRawY();
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+                    if (event.getRawX() + dX < width / 2 && event.getRawX() + dX > width / -2) {
+                        view.setX(event.getRawX() + dX);
+                    }
+                    if (event.getRawY() + dY < height / 2 && event.getRawY() + dY > height / -2) {
+                        view.setY(event.getRawY() + dY);
+                    }
+                    invalidate();
+                    requestLayout();
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        }
+
+    };
+
+    private ScaleGestureDetector mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            scaleFactor *= detector.getScaleFactor();
+            scale();
+
+            return false;
+        }
+    });
+
+    private GestureDetector gestureDetector = new GestureDetector(getContext(), new GestureDetector.OnGestureListener() {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            Log.e(TAG, "View clicked");
+            if (listener != null) {
+                listener.onViewClicked(e.getX() / width, e.getY() / height);
+                Door clickedDoor = getIsDoorClicked(e.getX(), e.getY());
+                if (clickedDoor != null) {
+                    listener.onDoorClicked(clickedDoor);
+                }
+                QR clickedQr = getIsQrClicked(e.getX(), e.getY());
+                if (clickedQr != null) {
+                    listener.onQrClicked(clickedQr);
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            return false;
+        }
+    });
 }
