@@ -27,6 +27,7 @@ public class DrawingView extends View {
 
     private static final String TAG = "DrawingView";
     private static final long ANIMATION_DURATION = 2000;
+    private static final float SCALE_STEP = 0.2f;
 
     //Metrics
     private float height;
@@ -298,6 +299,23 @@ public class DrawingView extends View {
         void onQrClicked(QR qr);
     }
 
+    private void scale() {
+        // Don't let the object get too small or too large.
+        scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 2.0f));
+        setScaleX(scaleFactor);
+        setScaleY(scaleFactor);
+    }
+
+    public void scaleUp() {
+        scaleFactor+= SCALE_STEP;
+        scale();
+    }
+
+    public void scaleDown() {
+        scaleFactor-= SCALE_STEP;
+        scale();
+    }
+
     /* Touch handling */
 
     private OnTouchListener touchListener = new OnTouchListener() {
@@ -334,13 +352,7 @@ public class DrawingView extends View {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             scaleFactor *= detector.getScaleFactor();
-            // Don't let the object get too small or too large.
-            scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 2.0f));
-            setPivotX(detector.getFocusX());
-            setPivotY(detector.getFocusY());
-            setScaleX(scaleFactor);
-            setScaleY(scaleFactor);
-
+            scale();
 
             return false;
         }

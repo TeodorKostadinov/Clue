@@ -176,4 +176,14 @@ public class MapActivity extends AppCompatActivity {
             }
         }
     }
+
+    @OnClick(R.id.btn_scale_up)
+    public void scaleUpView() {
+        roomView.scaleUp();
+    }
+
+    @OnClick(R.id.btn_scale_down)
+    public void scaleDownView() {
+        roomView.scaleDown();
+    }
 }
