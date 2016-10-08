@@ -37,6 +37,7 @@ public class DrawingView extends View {
     //Drawing components
     private Paint shapePaint;
     private Paint roomPaint;
+    private Paint whiteLinePaint;
     private Paint doorPaint;
     private Paint qrPaint;
     private Bitmap bmpDoor;
@@ -56,6 +57,7 @@ public class DrawingView extends View {
     private Context context;
     private OnViewClickedListener listener;
     private ValueAnimator animator;
+    private int qrSizePixels;
 
     public DrawingView(Context context) {
         super(context);
@@ -85,9 +87,15 @@ public class DrawingView extends View {
         roomPaint.setStyle(Paint.Style.FILL);
         roomPaint.setColor(Color.RED);
 
+        whiteLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        whiteLinePaint.setStyle(Paint.Style.STROKE);
+        whiteLinePaint.setStrokeWidth(context.getResources().getDimensionPixelSize(R.dimen.room_view_outline));
+        whiteLinePaint.setColor(Color.WHITE);
+
         bmpDoor = BitmapFactory.decodeResource(getResources(), R.drawable.door32);
-        bmpQr = BitmapFactory.decodeResource(getResources(), R.drawable.ic_info_white_36dp);
+        bmpQr = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode3);
         personPoint = BitmapFactory.decodeResource(getResources(), R.drawable.ic_room_white_36dp);
+        qrSizePixels = context.getResources().getDimensionPixelSize(R.dimen.room_view_qr_size);
     }
 
     @Override
@@ -100,8 +108,6 @@ public class DrawingView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //canvas.save();
-        //canvas.scale(scaleFactor, scaleFactor);
         if (isFloorFinished) {
             drawFloor(canvas);
             drawDoors(canvas);
@@ -110,7 +116,6 @@ public class DrawingView extends View {
         } else {
             drawShape(canvas);
         }
-        //canvas.restore();
     }
 
     private void drawUser(Canvas canvas) {
@@ -142,6 +147,7 @@ public class DrawingView extends View {
             }
             path.close();
             canvas.drawPath(path, shapePaint);
+            canvas.drawPath(path, whiteLinePaint);
         }
     }
 
@@ -157,11 +163,13 @@ public class DrawingView extends View {
 
     private void drawQrs(Canvas canvas) {
         if (qrs != null && qrs.size() > 0) {
+            whiteLinePaint.setStyle(Paint.Style.FILL);
             for (QR qr : qrs) {
+                canvas.drawCircle(width * qr.getX(), height * qr.getY(), qrSizePixels, whiteLinePaint);
                 canvas.drawBitmap(bmpQr, width * qr.getX() - bmpQr.getWidth() / 2,
                         height * qr.getY() - bmpQr.getHeight() / 2, null);
-                canvas.drawCircle(width * qr.getX(), height * qr.getY(), 10, roomPaint);
             }
+            whiteLinePaint.setStyle(Paint.Style.STROKE);
         }
 
     }
