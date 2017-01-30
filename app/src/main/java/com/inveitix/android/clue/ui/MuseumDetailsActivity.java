@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.transition.TransitionManager;
@@ -17,7 +17,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.inveitix.android.clue.R;
-import com.inveitix.android.clue.ui.views.JustifyTextView;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.constants.MuseumConstants;
@@ -26,6 +25,7 @@ import com.inveitix.android.clue.database.DBUtils;
 import com.inveitix.android.clue.database.FireBaseLoader;
 import com.inveitix.android.clue.database.MapsInstance;
 import com.inveitix.android.clue.interfaces.MapDownloadListener;
+import com.inveitix.android.clue.ui.views.JustifyTextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -73,7 +73,9 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             mFade = new Fade(Fade.IN);
             TransitionManager.beginDelayedTransition(scrollView, mFade);
-            btnDownload.hide();
+            if (android.os.Build.VERSION.SDK_INT != android.os.Build.VERSION_CODES.KITKAT) {
+                btnDownload.hide();
+            }
         }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             sharedElementEnterTransition = getWindow().getSharedElementEnterTransition();
@@ -147,6 +149,7 @@ public class MuseumDetailsActivity extends AppCompatActivity implements MapDownl
 
     /**
      * Change the icon of the FAB according to the map status
+     *
      * @param museum
      */
     private void loadDownloadBtn(Museum museum) {
