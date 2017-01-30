@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
@@ -77,9 +79,15 @@ public class MapActivity extends AppCompatActivity {
 
             @Override
             public void onQrClicked(QR qr) {
+                LayoutInflater factory = LayoutInflater.from(MapActivity.this);
+                final View view = factory.inflate(R.layout.image_view_layout, null);
+
                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+
                 alertDialog.setTitle(getString(R.string.txt_info));
+                alertDialog.setView(view);
                 alertDialog.setMessage(qr.getInfo());
+
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
