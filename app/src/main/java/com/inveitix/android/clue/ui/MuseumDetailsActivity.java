@@ -17,7 +17,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.inveitix.android.clue.R;
-import com.inveitix.android.clue.cmn.JustifyTextView;
+import com.inveitix.android.clue.ui.views.JustifyTextView;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.constants.MuseumConstants;

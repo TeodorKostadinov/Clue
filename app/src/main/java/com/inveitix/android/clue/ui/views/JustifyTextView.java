@@ -1,4 +1,4 @@
-package com.inveitix.android.clue.cmn;
+package com.inveitix.android.clue.ui.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
