@@ -13,7 +13,6 @@
             android:id="@+id/view_details_back"
             android:layout_width="match_parent"
             android:layout_height="@dimen/museum_image_heigh_dimension"
-            android:background="@color/common_action_bar_splitter"
             android:elevation="6dp"
             android:scaleType="centerCrop"
             android:src="@drawable/mock_museum_image"

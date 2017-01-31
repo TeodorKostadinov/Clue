@@ -5,13 +5,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MapPoint;
@@ -34,6 +40,9 @@ public class MapActivity extends AppCompatActivity {
     private static final String TAG = "MapActivity";
     private static final String EXTRA_ROOM_ID = "roomId";
     private static final String EXTRA_PREVIOUS_ROOM_ID = "previousRoomId";
+    //private static final String FIREBASE_STORAGE_BUCKET_NAME = "gs://firebase-clueapp.appspot.com";
+    private static final String FIREBASE_STORAGE_ROOT_FOLDER = "Museums";
+    private StorageReference mStorageRef;
     int museumId = 0;
     @Bind(R.id.room)
     DrawingView roomView;
@@ -45,6 +54,8 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_map);
 
         ButterKnife.bind(this);
+
+        mStorageRef = FirebaseStorage.getInstance().getReference();
         museumId = getIntent().getIntExtra(EXTRA_MUSEUM_ID, NO_EXTRA);
         MuseumMap map = MapsInstance.getInstance().getMapByMuseumId(museumId);
         String roomId = getIntent().getStringExtra(EXTRA_ROOM_ID);
@@ -79,11 +90,26 @@ public class MapActivity extends AppCompatActivity {
 
             @Override
             public void onQrClicked(QR qr) {
+                String imageName = qr.getMapId() + "_" + qr.getRoomId() + "_" + qr.getId() + "_00.jpg";
                 LayoutInflater factory = LayoutInflater.from(MapActivity.this);
                 final View view = factory.inflate(R.layout.image_view_layout, null);
 
                 TextView txtItemDescription = (TextView) view.findViewById(R.id.txt_item_description);
                 txtItemDescription.setText(qr.getInfo());
+                final ImageView imgQr00 = (ImageView) view.findViewById(R.id.img_qr_00);
+
+                StorageReference rootRef = mStorageRef.child(FIREBASE_STORAGE_ROOT_FOLDER);
+                rootRef.child(imageName).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        imgQr00.setImageURI(uri);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle any errors
+                    }
+                });
 
                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
                 alertDialog.setTitle(getString(R.string.txt_info));
