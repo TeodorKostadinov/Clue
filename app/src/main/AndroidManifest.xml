@@ -44,7 +44,8 @@
             android:name="io.fabric.ApiKey"
             android:value="2c37a6da2b87c0d89884215e996733435c81413c" />
 
-        <activity android:name=".ui.MuseumDetailsActivity"></activity>
+        <activity android:name=".ui.MuseumDetailsActivity" />
+        <activity android:name=".ui.AboutActivity"></activity>
     </application>
 
 </manifest>
