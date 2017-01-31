@@ -80,7 +80,7 @@ public class MapActivity extends AppCompatActivity {
                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
                 alertDialog.setTitle(getString(R.string.txt_info));
                 alertDialog.setMessage(qr.getInfo());
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
