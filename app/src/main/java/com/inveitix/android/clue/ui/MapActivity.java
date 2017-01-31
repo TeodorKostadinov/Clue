@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.cmn.Door;
@@ -47,7 +50,6 @@ public class MapActivity extends AppCompatActivity {
         String roomId = getIntent().getStringExtra(EXTRA_ROOM_ID);
 
 
-
         if (roomId == null && map != null) {
             roomId = map.getEntranceRoomId();
         }
@@ -77,10 +79,16 @@ public class MapActivity extends AppCompatActivity {
 
             @Override
             public void onQrClicked(QR qr) {
+                LayoutInflater factory = LayoutInflater.from(MapActivity.this);
+                final View view = factory.inflate(R.layout.image_view_layout, null);
+
+                TextView txtItemDescription = (TextView) view.findViewById(R.id.txt_item_description);
+                txtItemDescription.setText(qr.getInfo());
+
                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
                 alertDialog.setTitle(getString(R.string.txt_info));
-                alertDialog.setMessage(qr.getInfo());
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
+                alertDialog.setView(view);
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -109,7 +117,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private MapPoint getDefaultDoor() {
-        for (Door door :                room.getDoors()) {
+        for (Door door : room.getDoors()) {
             if (door != null) {
                 Log.e(TAG, "No entrance door, setting user to first available door");
                 return new MapPoint(door.getX(), door.getY());
