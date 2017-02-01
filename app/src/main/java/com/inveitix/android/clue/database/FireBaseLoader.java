@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.inveitix.android.clue.cmn.Door;
@@ -16,7 +16,6 @@ import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
 import com.inveitix.android.clue.constants.DBConstants;
-import com.inveitix.android.clue.constants.FireBaseConstants;
 import com.inveitix.android.clue.interfaces.DownloadListener;
 import com.inveitix.android.clue.interfaces.MapDownloadListener;
 
@@ -30,7 +29,6 @@ public class FireBaseLoader {
     private DatabaseReference fireBaseRef;
 
     public FireBaseLoader(Context context) {
-        //FirebaseDatabase.getInstance();
         fireBaseRef = FirebaseDatabase.getInstance().getReference();
         dbUtils = DBUtils.getInstance(context);
     }

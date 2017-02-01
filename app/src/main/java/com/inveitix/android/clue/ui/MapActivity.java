@@ -3,6 +3,8 @@ package com.inveitix.android.clue.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -34,6 +36,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.inveitix.android.clue.constants.FireBaseConstants.FIREBASE_STORAGE_ROOT_FOLDER;
+import static com.inveitix.android.clue.constants.FireBaseConstants.ONE_MEGABYTE;
 
 public class MapActivity extends AppCompatActivity {
 
@@ -54,13 +57,11 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_map);
 
         ButterKnife.bind(this);
-
         mStorageRef = FirebaseStorage.getInstance().getReference();
-        Log.d(TAG, "Image ref is: " + mStorageRef);
+
         museumId = getIntent().getIntExtra(EXTRA_MUSEUM_ID, NO_EXTRA);
         MuseumMap map = MapsInstance.getInstance().getMapByMuseumId(museumId);
         String roomId = getIntent().getStringExtra(EXTRA_ROOM_ID);
-
 
         if (roomId == null && map != null) {
             roomId = map.getEntranceRoomId();
@@ -93,24 +94,24 @@ public class MapActivity extends AppCompatActivity {
             public void onQrClicked(QR qr) {
                 final String imageName = qr.getMapId() + "_" + qr.getRoomId() + "_" + qr.getId() + "_00.jpg";
                 LayoutInflater factory = LayoutInflater.from(MapActivity.this);
-                final View view = factory.inflate(R.layout.image_view_layout, null);
 
+                final View view = factory.inflate(R.layout.image_view_layout, null);
                 TextView txtItemDescription = (TextView) view.findViewById(R.id.txt_item_description);
                 txtItemDescription.setText(qr.getInfo());
                 final ImageView imgQr00 = (ImageView) view.findViewById(R.id.img_qr_00);
 
-                StorageReference rootRef = mStorageRef.child(FIREBASE_STORAGE_ROOT_FOLDER);
-                rootRef.child(imageName).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                StorageReference rootRef = mStorageRef.child(FIREBASE_STORAGE_ROOT_FOLDER).child(imageName);
+                rootRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
-                    public void onSuccess(Uri uri) {
-                        Log.d(TAG, "Onsuccess download imageName. Image name: "+ imageName);
-                        imgQr00.setImageURI(uri);
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        imgQr00.setImageBitmap(bitmap);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         exception.printStackTrace();
-                        Log.d(TAG, "Error with imageName. Image name: " + imageName);
+                        Log.d(TAG, "Error with downloading imageName. Image name: " + imageName);
                     }
                 });
 
