@@ -13,19 +13,7 @@
 
 
     <TextView
-        android:id="@+id/txt_inveitix_sait"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:autoLink="web"
-        android:textColorLink="#fff"
-        android:textSize="18sp"
-        android:text="http://www.inveitix.com"
-        android:clickable="true"
-        android:layout_below="@+id/txt_version"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="33dp" />
-
-    <TextView
+        android:id="@+id/txt_copyright"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="© INVEITIX 2017. All rights reserved."
@@ -50,5 +38,31 @@
         android:textSize="22sp"
         android:layout_marginTop="28dp"
         android:layout_below="@+id/img_clue_logo"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/txt_clue_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:textSize="18sp"
+        android:text="@string/txt_clue_description"
+        android:textAlignment="center"
+        android:layout_marginTop="19dp"
+        android:layout_below="@+id/txt_version"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/txt_inveitix_sait"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:textColorLink="#fff"
+        android:textSize="18sp"
+        android:text="http://www.inveitix.com"
+        android:clickable="true"
+        android:layout_marginBottom="40dp"
+        android:layout_above="@+id/txt_copyright"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

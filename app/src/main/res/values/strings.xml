@@ -29,5 +29,9 @@
     <string name="txt_done">Done</string>
     <string name="transition_museum_cover">Transition Museum Cover</string>
     <string name="transition_download_button">Transition Download Button</string>
+    <string name="txt_clue_description">\nClue is an app for navigation inside buildings and closed spaces.
+    It uses barcode- and symbol scanning to allow the person to navigate.
+    The main advantage of the app is that it`s easily and cheaply implemented for any type of building.
+    Navigation is done by a map with points of interest or by augmented reality directions.</string>
 
 </resources>
