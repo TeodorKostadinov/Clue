@@ -34,7 +34,7 @@
         android:layout_centerHorizontal="true" />
 
     <ImageView
-        android:id="@+id/img_inveitix_logo"
+        android:id="@+id/img_clue_logo"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:src="@drawable/ic_clue"
@@ -49,6 +49,6 @@
         android:text="Version 1.0.0"
         android:textSize="22sp"
         android:layout_marginTop="28dp"
-        android:layout_below="@+id/img_inveitix_logo"
+        android:layout_below="@+id/img_clue_logo"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
