@@ -4,10 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.inveitix.android.clue.cmn.Door;
 import com.inveitix.android.clue.cmn.MapPoint;
 import com.inveitix.android.clue.cmn.Museum;
@@ -26,12 +27,12 @@ public class FireBaseLoader {
     private static final String TAG = "FireBaseLoader";
     private static FireBaseLoader instance;
     private DBUtils dbUtils;
-    private Firebase fireBaseRef;
+    private DatabaseReference fireBaseRef;
 
     public FireBaseLoader(Context context) {
-        Firebase.setAndroidContext(context);
+        //FirebaseDatabase.getInstance();
+        fireBaseRef = FirebaseDatabase.getInstance().getReference();
         dbUtils = DBUtils.getInstance(context);
-        fireBaseRef = new Firebase(FireBaseConstants.FIREBASE_URL);
     }
 
 
@@ -61,7 +62,7 @@ public class FireBaseLoader {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError firebaseError) {
                 Log.e(TAG, firebaseError.toString());
             }
         });
@@ -118,7 +119,7 @@ public class FireBaseLoader {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError firebaseError) {
                 Log.e(TAG, firebaseError.toString());
             }
         });

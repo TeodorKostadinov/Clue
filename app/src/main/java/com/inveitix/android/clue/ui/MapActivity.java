@@ -33,6 +33,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.inveitix.android.clue.constants.FireBaseConstants.FIREBASE_STORAGE_ROOT_FOLDER;
+
 public class MapActivity extends AppCompatActivity {
 
     public static final String EXTRA_MUSEUM_ID = "museumId";
@@ -40,8 +42,6 @@ public class MapActivity extends AppCompatActivity {
     private static final String TAG = "MapActivity";
     private static final String EXTRA_ROOM_ID = "roomId";
     private static final String EXTRA_PREVIOUS_ROOM_ID = "previousRoomId";
-    //private static final String FIREBASE_STORAGE_BUCKET_NAME = "gs://firebase-clueapp.appspot.com";
-    private static final String FIREBASE_STORAGE_ROOT_FOLDER = "Museums";
     private StorageReference mStorageRef;
     int museumId = 0;
     @Bind(R.id.room)
@@ -56,6 +56,7 @@ public class MapActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
+        Log.d(TAG, "Image ref is: " + mStorageRef);
         museumId = getIntent().getIntExtra(EXTRA_MUSEUM_ID, NO_EXTRA);
         MuseumMap map = MapsInstance.getInstance().getMapByMuseumId(museumId);
         String roomId = getIntent().getStringExtra(EXTRA_ROOM_ID);
@@ -90,7 +91,7 @@ public class MapActivity extends AppCompatActivity {
 
             @Override
             public void onQrClicked(QR qr) {
-                String imageName = qr.getMapId() + "_" + qr.getRoomId() + "_" + qr.getId() + "_00.jpg";
+                final String imageName = qr.getMapId() + "_" + qr.getRoomId() + "_" + qr.getId() + "_00.jpg";
                 LayoutInflater factory = LayoutInflater.from(MapActivity.this);
                 final View view = factory.inflate(R.layout.image_view_layout, null);
 
@@ -102,12 +103,14 @@ public class MapActivity extends AppCompatActivity {
                 rootRef.child(imageName).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
+                        Log.d(TAG, "Onsuccess download imageName. Image name: "+ imageName);
                         imgQr00.setImageURI(uri);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        // Handle any errors
+                        exception.printStackTrace();
+                        Log.d(TAG, "Error with imageName. Image name: " + imageName);
                     }
                 });
 

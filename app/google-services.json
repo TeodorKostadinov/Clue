@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "521969717844-qikp0rkhp9a7893j5klfaela2np7l7gr.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.inveitix.android.clue",
-            "certificate_hash": "646C5459AB84E5F98DE49C260A5D8506B56C4D16"
-          }
-        },
-        {
           "client_id": "521969717844-3c9rnshdqhspon20jllq3mirnajkscdo.apps.googleusercontent.com",
           "client_type": 3
         }
