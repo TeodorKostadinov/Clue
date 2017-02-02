@@ -80,13 +80,13 @@ public class DrawingView extends View {
 
     private void init() {
         shapePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        shapePaint.setColor(context.getResources().getColor(R.color.dark_blue));
+        shapePaint.setColor(Color.LTGRAY);
         shapePointRadius = context.getResources().getDimensionPixelSize(R.dimen.room_view_point_radius);
         clickPrecision = context.getResources().getDimensionPixelSize(R.dimen.room_view_click_precision);
 
         roomPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         roomPaint.setStyle(Paint.Style.FILL);
-        roomPaint.setColor(Color.RED);
+        roomPaint.setColor(Color.TRANSPARENT);
 
         whiteLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         whiteLinePaint.setStyle(Paint.Style.STROKE);

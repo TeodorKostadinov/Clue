@@ -6,17 +6,21 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/img_splash"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
-        android:layout_centerInParent="true"
-        android:src="@drawable/ic_inveitix" />
-    <ImageView
         android:layout_below="@+id/img_splash"
         android:id="@+id/img_text"
         android:layout_width="128dp"
         android:layout_height="64dp"
         android:layout_centerInParent="true"
         android:src="@drawable/ic_inv_text" />
+
+    <ImageView
+    android:id="@+id/img_splash"
+    android:layout_width="128dp"
+    android:layout_height="128dp"
+        android:src="@drawable/ic_inveitix"
+        android:layout_marginTop="180dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/img_text"
+        android:layout_alignStart="@+id/img_text" />
 
 </RelativeLayout>

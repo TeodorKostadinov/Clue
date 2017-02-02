@@ -103,7 +103,8 @@ public class RoomView extends SurfaceView implements Runnable {
 
         roomPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         roomPaint.setStyle(Paint.Style.FILL);
-        roomPaint.setColor(Color.BLACK);
+
+        roomPaint.setColor(Color.LTGRAY);
     }
 
     public void setDoors(List<Door> doors) {
@@ -175,11 +176,8 @@ public class RoomView extends SurfaceView implements Runnable {
         Rect rec = new Rect(RECT_LEFT_POINT, RECT_TOP_POINT, width, height);
         canvas.drawRect(rec, roomPaint);
 
-        roomPaint.setColor(Color.BLACK);
-        canvas.drawCircle(CIRCLE_X, CIRCLE_Y, CIRCLE_RADIUS, roomPaint);
-        canvas.drawCircle(maxWidth, CIRCLE_Y, CIRCLE_RADIUS, roomPaint);
-        canvas.drawCircle(CIRCLE_X, maxHeight, CIRCLE_RADIUS, roomPaint);
-        canvas.drawCircle(maxWidth, maxHeight, CIRCLE_RADIUS, roomPaint);
+        roomPaint.setColor(Color.LTGRAY);
+
         Path path = new Path();
         path.reset();
 

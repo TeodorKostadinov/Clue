@@ -3,9 +3,11 @@ package com.inveitix.android.clue.ui;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,6 +32,8 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.R.attr.value;
 
 public class MainActivity extends AppCompatActivity implements DownloadListener, SearchView.OnQueryTextListener {
 
@@ -106,8 +110,8 @@ public class MainActivity extends AppCompatActivity implements DownloadListener,
         switch (item.getItemId()) {
             case R.id.action_search:
                 return true;
-            case R.id.action_settings:
-                Toast.makeText(MainActivity.this, "Settings pressed", Toast.LENGTH_SHORT).show();
+            case R.id.action_about:
+                openAboutActivity();
                 return true;
             default:
                 super.onOptionsItemSelected(item);
@@ -139,5 +143,11 @@ public class MainActivity extends AppCompatActivity implements DownloadListener,
         recView.setAdapter(adapter);
         adapter.searchFilter(newText);
         return false;
+    }
+
+    public void openAboutActivity() {
+        Intent intent = new Intent(this, AboutActivity.class);
+        intent.putExtra("Key_About_Activity", value);
+        startActivity(intent);
     }
 }
