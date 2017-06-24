@@ -108,6 +108,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(createQrsTable());
         db.execSQL(createDoorsTable());
         db.execSQL(createShapeTable());
+        db.execSQL(createImagesTable());
     }
 
     private String createDoorsTable() {
@@ -167,15 +168,21 @@ public class DBHelper extends SQLiteOpenHelper {
                 + DBConstants.KEY_Y + " REAL);";
     }
 
+    private String createImagesTable() {
+        return "CREATE TABLE IF NOT EXISTS " + DBConstants.DB_TABLE_IMAGES + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + DBConstants.KEY_IMAGE_NAME + " TEXT, "
+                + DBConstants.KEY_IMAGE_URL + " TEXT);";
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
         db.execSQL("DROP TABLE IF EXISTS " + DBConstants.DB_TABLE_MUSEUMS);
         db.execSQL("DROP TABLE IF EXISTS " + DBConstants.DB_TABLE_MAPS);
         db.execSQL("DROP TABLE IF EXISTS " + DBConstants.DB_TABLE_ROOMS);
         db.execSQL("DROP TABLE IF EXISTS " + DBConstants.DB_TABLE_QRS);
         db.execSQL("DROP TABLE IF EXISTS " + DBConstants.DB_TABLE_DOORS);
         db.execSQL("DROP TABLE IF EXISTS " + DBConstants.DB_TABLE_SHAPE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBConstants.DB_TABLE_IMAGES);
         onCreate(db);
     }
 
@@ -230,8 +237,29 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getMapValues() {
-        return this.database.query(DBConstants.DB_TABLE_MAPS, new String[]{DBConstants.KEY_ID,
+        Cursor c = this.database.query(DBConstants.DB_TABLE_MAPS, new String[]{DBConstants.KEY_ID,
                 DBConstants.KEY_ROOM_ID, DBConstants.KEY_MUSEUM_ID, DBConstants.KEY_ENTRANCE_ROOM_ID}
                 , null, null, null, null, null);
+        if(c == null) {
+            return null;
+        }
+        if(c.getCount() == 0) return null;
+        return c;
+    }
+
+    public Cursor getImageUrl(String imageName) {
+        return this.database.query(DBConstants.DB_TABLE_IMAGES, new String[]{DBConstants.KEY_IMAGE_URL},
+                DBConstants.KEY_IMAGE_NAME + "=?", new String[]{imageName}, null, null, null);
+    }
+
+    public void insertOrUpdateImageUrl(String imageName, String path) {
+        ContentValues cv = new ContentValues();
+        cv.put(DBConstants.KEY_IMAGE_NAME, imageName);
+        cv.put(DBConstants.KEY_IMAGE_URL, path);
+        if(getImageUrl(imageName) == null) {
+            database.insert(DBConstants.DB_TABLE_IMAGES, null, cv);
+        } else {
+            database.update(DBConstants.DB_TABLE_IMAGES, cv, DBConstants.KEY_IMAGE_NAME + "=?", new String[]{imageName});
+        }
     }
 }

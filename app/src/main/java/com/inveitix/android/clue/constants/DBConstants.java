@@ -8,6 +8,8 @@ public class DBConstants {
     public static final String DB_TABLE_MAPS = "DB_TABLE_MAPS";
     public static final String DB_TABLE_QRS = "DB_TABLE_QRS";
     public static final String DB_TABLE_DOORS = "DB_TABLE_DOORS";
+    public static final String DB_TABLE_IMAGES = "DB_TABLE_IMAGES";
+
     public static final String KEY_ID = "IDS";
     public static final String KEY_DESCRIPTION = "DESCRIPTION";
     public static final String KEY_MAP_SIZE = "MAP_SIZE";
@@ -27,4 +29,6 @@ public class DBConstants {
     public static final String DB_TABLE_SHAPE = "SHAPE";
     public static final String KEY_MAP_STATUS = "MUSEUM_STATUS";
     public static final String KEY_URL = "MUSEUM_URL";
+    public static final String KEY_IMAGE_NAME = "IMAGE_NAME";
+    public static final String KEY_IMAGE_URL = "IMAGE_URL";
 }

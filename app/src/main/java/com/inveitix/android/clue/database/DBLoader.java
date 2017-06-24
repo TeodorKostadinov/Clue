@@ -57,7 +57,7 @@ public class DBLoader {
     public void loadDownloadedMap(final MapDownloadListener mapDownloadListener) {
         List<MuseumMap> maps = new ArrayList<>();
         Cursor cursor = dbUtils.readMapRecord();
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             do {
                 MuseumMap map = new MuseumMap();
                 map.setMuseumId(cursor.getInt(cursor.getColumnIndex(DBConstants.KEY_MUSEUM_ID)));

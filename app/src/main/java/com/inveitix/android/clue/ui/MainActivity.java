@@ -3,11 +3,9 @@ package com.inveitix.android.clue.ui;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,19 +17,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.inveitix.android.clue.R;
 import com.inveitix.android.clue.adapters.RecListAdapter;
 import com.inveitix.android.clue.cmn.Museum;
 import com.inveitix.android.clue.database.DBLoader;
 import com.inveitix.android.clue.interfaces.DownloadListener;
+import com.inveitix.android.clue.refactoring.ui.activities.AboutActivity;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static android.R.attr.value;
 
