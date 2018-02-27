@@ -78,6 +78,12 @@ public class DBUtils {
         return db.getShapeValues();
     }
 
+    public String getImageUrl(String imageName) {
+        Cursor cursor = db.getImageUrl(imageName);
+        if(cursor == null) return null;
+        return cursor.getString(cursor.getColumnIndex(DBConstants.KEY_IMAGE_URL));
+    }
+
     private DBHelper initDB(Context context) {
         if (db == null) {
             db = new DBHelper(context);
@@ -87,5 +93,9 @@ public class DBUtils {
 
     public boolean isTableEmpty() {
         return db.isTableEmpty(DBConstants.DB_TABLE_MUSEUMS);
+    }
+
+    public void saveImageUrl(String imageName, String path) {
+        db.insertOrUpdateImageUrl(imageName, path);
     }
 }

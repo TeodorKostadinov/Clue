@@ -7,7 +7,7 @@
     android:layout_gravity="center"
     android:background="@drawable/about_activity_background"
     android:orientation="vertical"
-    tools:context="com.inveitix.android.clue.ui.AboutActivity">
+    tools:context="com.inveitix.android.clue.refactoring.ui.activities.AboutActivity">
 
     <ImageView
         android:id="@+id/img_clue_logo"
@@ -31,7 +31,6 @@
         android:id="@+id/txt_clue_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/txt_clue_description"
         android:layout_marginLeft="28dp"
         android:textSize="16sp"
         android:textColor="#fff" />

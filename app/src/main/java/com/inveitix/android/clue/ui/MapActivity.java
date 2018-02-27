@@ -26,10 +26,13 @@ import com.inveitix.android.clue.cmn.MapPoint;
 import com.inveitix.android.clue.cmn.MuseumMap;
 import com.inveitix.android.clue.cmn.QR;
 import com.inveitix.android.clue.cmn.Room;
+import com.inveitix.android.clue.database.DBUtils;
 import com.inveitix.android.clue.database.MapsInstance;
 import com.inveitix.android.clue.scanner.IntentIntegrator;
 import com.inveitix.android.clue.scanner.IntentResult;
 import com.inveitix.android.clue.ui.views.DrawingView;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -100,20 +103,36 @@ public class MapActivity extends AppCompatActivity {
                 txtItemDescription.setText(qr.getInfo());
                 final ImageView imgQr00 = (ImageView) view.findViewById(R.id.img_qr_00);
 
-                StorageReference rootRef = mStorageRef.child(FIREBASE_STORAGE_ROOT_FOLDER).child(imageName);
-                rootRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        imgQr00.setImageBitmap(bitmap);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        exception.printStackTrace();
-                        Log.d(TAG, "Error with downloading imageName. Image name: " + imageName);
-                    }
-                });
+
+                Log.e(TAG, "Loading path:" + DBUtils.getInstance(MapActivity.this).getImageUrl(imageName));
+                Picasso
+                        .with(MapActivity.this)
+                        .load(DBUtils.getInstance(MapActivity.this).getImageUrl(imageName))
+                        .into(imgQr00, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                Log.e(TAG, "Picasso loaded successfully");
+                            }
+
+                            @Override
+                            public void onError() {
+                                Log.e(TAG, "Picasso failed to load");
+
+                                final StorageReference rootRef = mStorageRef.child(FIREBASE_STORAGE_ROOT_FOLDER).child(imageName);
+                                rootRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        Log.e(TAG, "Storage succeeded to get URL:" + uri.getPath());
+
+                                        Picasso.with(MapActivity.this).load(uri).into(imgQr00);
+                                        DBUtils.getInstance(MapActivity.this).saveImageUrl(imageName, uri.getPath());
+                                    }
+                                });
+                            }
+                        }
+                );
+
+
 
                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
                 alertDialog.setTitle(getString(R.string.txt_info));
